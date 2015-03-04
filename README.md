@@ -1,6 +1,6 @@
 **THE (POSSIBLY IMAGINARY) PROBLEM!**
 
-It's a bit haphazard at the moment... but the idea is this.
+It's all a bit vague at the moment... but the idea is this.
 
 If you're a C# programmer and you want to call a native function, you can do one of two things:
 
@@ -28,8 +28,66 @@ I've been trying to write that gizmo.  At the moment it's very much at the PoC s
 
 2. Use Sws.Spinvoke.Ninject.Extensions.
 
-3. Call BindingToSyntaxExtensions.Configure with a native library loader for your OS (I've only included a Linux implementation but a Windows one is extremely easy - Google LoadLibrary Kernel32).  I'm leaving this up to the client for now, as I can't imagine every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.
+3. Call BindingToSyntaxExtensions.Configure with a native library loader for your OS (I've only included a Linux implementation but a Windows one is extremely easy - Google LoadLibrary Kernel32).  I'm leaving this up to the client for now, as I can't think of every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.
 
 4. Call Bind<T>().ToNative(libraryName) to bind interface T to a native library which implements the required functions.
 
 There is a NativeDelegateDefinitionOverride attribute which you can add to the interface methods to change stuff like the function name and the calling convention, but it's a work in progress.
+
+**UNTESTED EXAMPLE!**
+
+C functions defined in libNativeCalculator.so:
+
+
+```
+#!c
+
+int add(int x, int y);
+int subtract(int x, int y);
+int divide(int x, int y);
+int multiply(int x, int y);
+```
+
+
+C# interface:
+
+
+```
+#!c#
+
+public interface INativeCalculator
+{
+    int add(int x, int y);
+    int subtract(int x, int y);
+    int divide(int x, int y);
+    int multiply(int x, int y);
+}
+```
+
+
+Wiring:
+
+
+```
+#!c#
+
+BindingToSyntaxExtensions.Configure(new LinuxNativeLibraryLoader());
+
+var kernel = new StandardKernel();
+kernel.Bind<INativeCalculator>().ToNative("libNativeCalculator.so");
+
+var nativeCalculator = kernel.Get<INativeCalculator>();
+
+```
+
+Usage:
+
+
+```
+#!c#
+
+var nativeAddResult = nativeCalculator.add(4, 5);
+var nativeSubtractResult = nativeCalculator.subtract(11, 2);
+var nativeDivideResult = nativeCalculator.divide(18, 2);
+var nativeMultiplyResult = nativeCalculator.multiply(3, 3);
+```
