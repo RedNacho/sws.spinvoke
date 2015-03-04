@@ -8,6 +8,8 @@ If you're a C# programmer and you want to call a native function, you can do one
 
 2. Define a delegate type to match the function signature, load the library dynamically and get hold of the function pointer (e.g. using Kernel32 on Windows), then do some funky stuff with Marshal to create a delegate instance.
 
+*Edit: You can also try some other things, like wrapping up the native code with some more friendly intermediary such as managed C++, but some of us prefer to be home by dinner time.*
+
 It occurred to me the other day that both of these approaches are quite annoying when it comes to dependency injection.
 
 In the first case, your methods must be static, which sort of makes sense, given that they actually are, but in order to abstract it away behind an interface, you need to repeat all your method definitions in the interface, then create a singleton implementation to wrap the extern calls, etc, etc...
