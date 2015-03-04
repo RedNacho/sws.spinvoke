@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Sws.Spinvoke.Core</RootNamespace>
+    <AssemblyName>Sws.Spinvoke.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="IDelegateTypeProvider.cs" />
+    <Compile Include="Delegates\DynamicAssemblyDelegateTypeProvider.cs" />
+    <Compile Include="INativeDelegateProvider.cs" />
+    <Compile Include="INativeLibraryLoader.cs" />
+    <Compile Include="Exceptions\NativeLibraryLoadException.cs" />
+    <Compile Include="Delegates\CachedDelegateTypeProvider.cs" />
+    <Compile Include="Caching\SimpleCompositeKeyedCache.cs" />
+    <Compile Include="Caching\ICompositeKeyedCache.cs" />
+    <Compile Include="Native\FrameworkNativeDelegateProvider.cs" />
+    <Compile Include="DelegateSignature.cs" />
+    <Compile Include="NativeDelegateDefinition.cs" />
+    <Compile Include="INativeDelegateResolver.cs" />
+    <Compile Include="Resolver\DefaultNativeDelegateResolver.cs" />
+    <Compile Include="CacheKey.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Delegates\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Caching\" />
+    <Folder Include="Native\" />
+    <Folder Include="Resolver\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
