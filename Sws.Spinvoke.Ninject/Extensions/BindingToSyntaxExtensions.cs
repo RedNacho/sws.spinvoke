@@ -2,9 +2,7 @@
 
 using Castle.DynamicProxy;
 
-using Ninject;
 using Ninject.Activation;
-using Ninject.Infrastructure;
 using Ninject.Infrastructure.Introspection;
 using Ninject.Planning.Bindings;
 using Ninject.Syntax;
@@ -21,19 +19,15 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 		private static ProxyGenerator ProxyGenerator = new ProxyGenerator();
 
-		public static void Configure(INativeLibraryLoader nativeLibraryLoader)
+		internal static void Configure(INativeDelegateResolver nativeDelegateResolver)
 		{
-			using (var kernel = new StandardKernel ()) {
-				kernel.Bind<INativeLibraryLoader> ().ToConstant (nativeLibraryLoader);
-				kernel.Load (new SpinvokeModule (StandardScopeCallbacks.Transient, "BindingToSyntaxExtensions"));
-				NativeDelegateResolver = kernel.Get<INativeDelegateResolver> ();
-			}
+			NativeDelegateResolver = nativeDelegateResolver;
 		}
 
 		private static void VerifyConfigured()
 		{
 			if (NativeDelegateResolver == null) {
-				throw new InvalidOperationException ("You must call BindingToSyntaxExtensions.Configure first");
+				throw new InvalidOperationException ("You must call SpinvokeNinjectExtensionsConfiguration.Configure first");
 			}
 		}
 

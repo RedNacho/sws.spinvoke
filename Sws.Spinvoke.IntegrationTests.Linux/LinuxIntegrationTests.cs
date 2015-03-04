@@ -65,7 +65,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		{
 			var kernel = new StandardKernel();
 
-			BindingToSyntaxExtensions.Configure (new LinuxNativeLibraryLoader());
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader());
 
 			kernel.Bind<IDynamicProxyTest>().ToNative("libSws.Spinvoke.IntegrationTests.so");
 

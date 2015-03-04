@@ -71,7 +71,7 @@ Wiring:
 ```
 #!c#
 
-BindingToSyntaxExtensions.Configure(new LinuxNativeLibraryLoader());
+SpinvokeNinjectExtensionsConfiguration.Configure(new LinuxNativeLibraryLoader());
 
 var kernel = new StandardKernel();
 kernel.Bind<INativeCalculator>().ToNative("libNativeCalculator.so");
