@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Core.Exceptions;
 
+// This is really easy to implement for Windows.
+// I just haven't done it because I can't test it right now.
 namespace Sws.Spinvoke.Linux
 {
 	public class LinuxNativeLibraryLoader : INativeLibraryLoader
