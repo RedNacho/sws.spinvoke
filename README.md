@@ -28,7 +28,7 @@ I've been trying to write that gizmo.  At the moment it's very much at the PoC s
 
 2. Use Sws.Spinvoke.Ninject.Extensions.
 
-3. Call BindingToSyntaxExtensions.Configure with a native library loader for your OS (I've only included a Linux implementation but a Windows one is extremely easy - Google LoadLibrary Kernel32).  I'm leaving this up to the client for now, as I can't think of every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.
+3. Call SpinvokeNinjectExtensionsConfiguration.Configure with a native library loader for your OS (I've only included a Linux implementation but a Windows one is extremely easy - Google LoadLibrary Kernel32).  I'm leaving this up to the client for now, as I can't think of every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.
 
 4. Call Bind<T>().ToNative(libraryName) to bind interface T to a native library which implements the required functions.
 
