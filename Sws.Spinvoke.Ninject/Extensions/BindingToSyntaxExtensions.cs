@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 using Castle.DynamicProxy;
 
@@ -31,7 +32,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 			}
 		}
 
-		public static IBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, string libraryName)
+		public static IBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, string libraryName, CallingConvention? callingConvention = null)
 			where T : class
 		{
 			Type serviceType;
@@ -44,15 +45,15 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				serviceType = bindingBuilder.Binding.Service;
 			}
 
-			return ToNative (bindingToSyntax, serviceType, libraryName);
+			return ToNative (bindingToSyntax, serviceType, libraryName, callingConvention);
 		}
 
-		public static IBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, Type serviceType, string libraryName)
+		public static IBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, Type serviceType, string libraryName, CallingConvention? callingConvention = null)
 			where T : class
 		{
 			VerifyConfigured ();
 
-			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (serviceType, libraryName);
+			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (serviceType, libraryName, callingConvention.GetValueOrDefault(CallingConvention.Winapi));
 
 			return new BindingConfigurationBuilder<T> (bindingToSyntax.BindingConfiguration, serviceType.Format(), bindingToSyntax.Kernel);
 		}
@@ -64,7 +65,9 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 			private readonly string _libraryName;
 
-			public NativeProxyProvider(Type serviceType, string libraryName)
+			private readonly CallingConvention _callingConvention;
+
+			public NativeProxyProvider(Type serviceType, string libraryName, CallingConvention callingConvention)
 			{
 				if (serviceType == null)
 					throw new ArgumentNullException("serviceType");
@@ -74,11 +77,12 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 				_serviceType = serviceType;
 				_libraryName = libraryName;
+				_callingConvention = callingConvention;
 			}
 
 			protected override T CreateInstance (IContext context)
 			{
-				var nativeDelegateInterceptor = new NativeDelegateInterceptor (_libraryName, NativeDelegateResolver);
+				var nativeDelegateInterceptor = new NativeDelegateInterceptor (_libraryName, _callingConvention, NativeDelegateResolver);
 
 				if (_serviceType == typeof(T)) {
 					return ProxyGenerator.CreateInterfaceProxyWithoutTarget<T> (nativeDelegateInterceptor);

@@ -12,9 +12,11 @@ namespace Sws.Spinvoke.DynamicProxy
 	{
 		private readonly string _libraryName;
 
+		private readonly CallingConvention _callingConvention;
+
 		private readonly INativeDelegateResolver _nativeDelegateResolver;
 
-		public NativeDelegateInterceptor(string libraryName, INativeDelegateResolver nativeDelegateResolver)
+		public NativeDelegateInterceptor(string libraryName, CallingConvention callingConvention, INativeDelegateResolver nativeDelegateResolver)
 		{
 			if (libraryName == null)
 				throw new ArgumentNullException ("libraryName");
@@ -23,6 +25,7 @@ namespace Sws.Spinvoke.DynamicProxy
 				throw new ArgumentNullException ("nativeDelegateResolver");
 
 			_libraryName = libraryName;
+			_callingConvention = callingConvention;
 			_nativeDelegateResolver = nativeDelegateResolver;
 		}
 
@@ -48,7 +51,7 @@ namespace Sws.Spinvoke.DynamicProxy
 
 			var outputType = definitionOverrideAttribute.OutputType ?? invocation.Method.ReturnType;
 
-			var callingConvention = definitionOverrideAttribute.CallingConvention.GetValueOrDefault (CallingConvention.Winapi);
+			var callingConvention = definitionOverrideAttribute.CallingConvention.GetValueOrDefault (_callingConvention);
 
 			var delegateSignature = new DelegateSignature (inputTypes, outputType, callingConvention);
 

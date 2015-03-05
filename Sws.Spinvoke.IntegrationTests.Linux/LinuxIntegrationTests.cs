@@ -51,7 +51,9 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			using (var nativeDelegateResolver = kernel.Get<INativeDelegateResolver>())
 			{
-				var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IDynamicProxyTest>(new NativeDelegateInterceptor("libSws.Spinvoke.IntegrationTests.so",
+				var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IDynamicProxyTest>(new NativeDelegateInterceptor(
+					"libSws.Spinvoke.IntegrationTests.so",
+					CallingConvention.Winapi,
 					nativeDelegateResolver));
 			
 				var result = proxy.Add(2, 3);
