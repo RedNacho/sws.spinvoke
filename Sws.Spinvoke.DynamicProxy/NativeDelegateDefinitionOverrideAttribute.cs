@@ -1,6 +1,5 @@
 ﻿using System;
-
-using Sws.Spinvoke.Core;
+using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.DynamicProxy
 {
@@ -12,7 +11,11 @@ namespace Sws.Spinvoke.DynamicProxy
 
 		public string FunctionName { get; set; }
 
-		public DelegateSignature DelegateSignature { get; set; }
+		public Type[] InputTypes { get; set; }
+
+		public Type OutputType { get; set; }
+
+		public CallingConvention? CallingConvention { get; set; }
 	}
 }
 

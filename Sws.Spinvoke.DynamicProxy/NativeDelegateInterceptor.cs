@@ -44,7 +44,13 @@ namespace Sws.Spinvoke.DynamicProxy
 
 			var functionName = definitionOverrideAttribute.FunctionName ?? invocation.Method.Name;
 
-			var delegateSignature = definitionOverrideAttribute.DelegateSignature ?? new DelegateSignature (invocation.Method.GetParameters ().Select (parameter => parameter.ParameterType).ToArray (), invocation.Method.ReturnType, CallingConvention.Winapi);
+			var inputTypes = definitionOverrideAttribute.InputTypes ?? invocation.Method.GetParameters ().Select (parameter => parameter.ParameterType).ToArray ();
+
+			var outputType = definitionOverrideAttribute.OutputType ?? invocation.Method.ReturnType;
+
+			var callingConvention = definitionOverrideAttribute.CallingConvention.GetValueOrDefault (CallingConvention.Winapi);
+
+			var delegateSignature = new DelegateSignature (inputTypes, outputType, callingConvention);
 
 			var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature));
 
