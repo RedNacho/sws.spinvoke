@@ -57,8 +57,6 @@ namespace Sws.Spinvoke.Core.Delegates
 
 				var methodBuilder = typeBuilder.DefineMethod (DelegateInvokeMethodName, MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual, outputType, inputTypes);
 
-				typeBuilder.GetCustomAttribute<UnmanagedFunctionPointerAttribute> ();
-
 				methodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime | MethodImplAttributes.Managed);
 
 				return typeBuilder.CreateType ();
