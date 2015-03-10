@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.DynamicProxy
 {
+	[AttributeUsage(AttributeTargets.Method)]
 	public class NativeDelegateDefinitionOverrideAttribute : Attribute
 	{
 		public bool? MapNative { get; set; }
