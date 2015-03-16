@@ -29,7 +29,7 @@ namespace Sws.Spinvoke.DynamicProxy
 			return Convert.ChangeType (input, _requiredType);
 		}
 
-		public void Dispose (object processedInput)
+		public void DestroyProcessedInput (object processedInput)
 		{
 			var disposable = processedInput as IDisposable;
 

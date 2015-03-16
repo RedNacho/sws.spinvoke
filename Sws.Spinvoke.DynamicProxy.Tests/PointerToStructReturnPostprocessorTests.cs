@@ -66,8 +66,6 @@ namespace Sws.Spinvoke.DynamicProxy.Tests
 
 			var result = subject.Process (ptr, typeof(TestStruct));
 
-			Marshal.FreeHGlobal (ptr);
-
 			Assert.AreEqual (testData, result);
 		}
 	}

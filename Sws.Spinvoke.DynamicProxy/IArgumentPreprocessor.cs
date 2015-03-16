@@ -6,7 +6,7 @@ namespace Sws.Spinvoke.DynamicProxy
 	{
 		bool CanProcess(object input);
 		object Process(object input);
-		void Dispose(object processedInput);
+		void DestroyProcessedInput(object processedInput);
 	}
 }
 

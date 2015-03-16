@@ -77,12 +77,51 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			Assert.AreEqual(5, result);
 		}
+
+		[Test ()]
+		public void NativeCodeInvokedWithPointerConversion()
+		{
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader());
+
+			kernel.Bind<IDynamicProxyPointerTest>().ToNative("libSws.Spinvoke.IntegrationTests.so");
+
+			var proxy = kernel.Get<IDynamicProxyPointerTest>();
+
+			var result = proxy.Add(2, 3);
+
+			Assert.AreEqual(5, result);
+		}
 	}
 
 	public interface IDynamicProxyTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "add")]
 		int Add(int x, int y);
+	}
+
+	public class PointerTestReturnDefinitionOverrideAttribute : NativeReturnDefinitionOverrideAttribute
+	{
+		public PointerTestReturnDefinitionOverrideAttribute()
+			: base(new PointerToStructReturnPostprocessor(), typeof(IntPtr))
+		{
+		}
+	}
+
+	public class PointerTestArgumentDefinitionOverrideAttribute : NativeArgumentDefinitionOverrideAttribute
+	{
+		public PointerTestArgumentDefinitionOverrideAttribute()
+			: base(new StructToPointerArgumentPreprocessor(), typeof(IntPtr))
+		{
+		}
+	}
+
+	public interface IDynamicProxyPointerTest
+	{
+		[NativeDelegateDefinitionOverride(FunctionName = "pointerAdd")]
+		[return: PointerTestReturnDefinitionOverride()]
+		int Add([PointerTestArgumentDefinitionOverride()] int x, [PointerTestArgumentDefinitionOverride()] int y);
 	}
 }
 

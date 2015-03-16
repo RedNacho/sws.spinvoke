@@ -19,7 +19,7 @@ namespace Sws.Spinvoke.DynamicProxy
 			return ptr;
 		}
 
-		public void Dispose (object processedInput)
+		public void DestroyProcessedInput (object processedInput)
 		{
 			Marshal.FreeHGlobal ((IntPtr)processedInput);
 		}
