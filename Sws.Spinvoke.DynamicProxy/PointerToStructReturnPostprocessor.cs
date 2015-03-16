@@ -1,0 +1,35 @@
+﻿using System;
+using System.Runtime.InteropServices;
+
+namespace Sws.Spinvoke.DynamicProxy
+{
+	public class PointerToStructReturnPostprocessor : IReturnPostprocessor
+	{
+		public bool CanProcess (object output, Type requiredReturnType)
+		{
+			return output is IntPtr && requiredReturnType.IsValueType;
+		}
+
+		public object Process (object output, Type requiredReturnType)
+		{
+			var genericType = typeof(PtrToStructureTyped<>);
+			var specificType = genericType.MakeGenericType (requiredReturnType);
+			var specificInstance = Activator.CreateInstance (specificType) as PtrToStructureBase;
+			return specificInstance.Invoke ((IntPtr)output);
+		}
+
+		private abstract class PtrToStructureBase
+		{
+			public abstract object Invoke(IntPtr ptr);
+		}
+
+		private class PtrToStructureTyped<T> : PtrToStructureBase
+		{
+			public override object Invoke (IntPtr ptr)
+			{
+				return Marshal.PtrToStructure<T> (ptr);
+			}
+		}
+	}
+}
+
