@@ -44,6 +44,9 @@
     <Compile Include="NativeArgumentDefinitionOverrideAttribute.cs" />
     <Compile Include="ChangeTypeArgumentPreprocessor.cs" />
     <Compile Include="ChangeTypeReturnPostprocessor.cs" />
+    <Compile Include="NativeReturnDefinitionOverrideAttribute.cs" />
+    <Compile Include="DefaultNativeArgumentDefinitionOverrideAttribute.cs" />
+    <Compile Include="DefaultNativeReturnDefinitionOverrideAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

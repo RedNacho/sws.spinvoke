@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
@@ -47,31 +49,80 @@ namespace Sws.Spinvoke.DynamicProxy
 
 			var functionName = definitionOverrideAttribute.FunctionName ?? invocation.Method.Name;
 
-			var inputTypes = definitionOverrideAttribute.InputTypes ?? invocation.Method.GetParameters ().Select (parameter => parameter.ParameterType).ToArray ();
+			var parameters = invocation.Method.GetParameters ();
+
+			var inputTypes = definitionOverrideAttribute.InputTypes ?? parameters.Select (parameter => parameter.ParameterType).ToArray ();
 
 			var outputType = definitionOverrideAttribute.OutputType ?? invocation.Method.ReturnType;
 
 			var callingConvention = definitionOverrideAttribute.CallingConvention.GetValueOrDefault (_callingConvention);
 
-			var delegateSignature = new DelegateSignature (inputTypes, outputType, callingConvention);
+			var argumentDefinitionOverrideAttributes = parameters.Zip(inputTypes, (parameter, inputType) =>
+				parameter.GetCustomAttributes()
+					.Select(attribute => attribute as NativeArgumentDefinitionOverrideAttribute)
+					.Where(attribute => attribute != null)
+					.DefaultIfEmpty(new DefaultNativeArgumentDefinitionOverrideAttribute(inputType))
+					.First());
 
-			var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature));
+			var returnDefinitionOverrideAttribute = invocation.Method.ReturnParameter.GetCustomAttributes()
+				.Select(attribute => attribute as NativeReturnDefinitionOverrideAttribute)
+				.Where(attribute => attribute != null)
+				.DefaultIfEmpty(new DefaultNativeReturnDefinitionOverrideAttribute())
+				.First();
 
-			var argumentPreprocessors = inputTypes.Select (inputType => new ChangeTypeArgumentPreprocessor (inputType));
+			inputTypes = inputTypes.Zip (argumentDefinitionOverrideAttributes, (inputType, attribute) => attribute.InputType ?? inputType).ToArray();
 
-			var typedArguments = invocation.Arguments.Zip (argumentPreprocessors, (arg, argPreprocessor) => Tuple.Create(argPreprocessor, argPreprocessor.Process(arg))).ToArray();
+			outputType = returnDefinitionOverrideAttribute.OutputType ?? outputType;
 
-			var returnPostprocessor = new ChangeTypeReturnPostprocessor();
+			var processedArguments = new List<ProcessedArgument> ();
+
+			List<Exception> exceptionList = new List<Exception> ();
 
 			try {
-				invocation.ReturnValue = returnPostprocessor.Process(delegateInstance.DynamicInvoke (typedArguments.Select(arg => arg.Item2).ToArray()), invocation.Method.ReturnType);
+				foreach (var pair in invocation.Arguments.Zip(argumentDefinitionOverrideAttributes, (arg, attribute) => new { Arg = arg, Attribute = attribute })) {
+					processedArguments.Add(new ProcessedArgument { Arg = pair.Attribute.ArgumentPreprocessor.Process(pair.Arg), Source = pair.Attribute.ArgumentPreprocessor });
+				}
+
+				inputTypes = inputTypes.Zip (processedArguments, (inputType, arg) => inputType.IsInstanceOfType (arg.Arg) ? inputType : arg.Arg.GetType ()).ToArray();
+			
+				var delegateSignature = new DelegateSignature (inputTypes, outputType, callingConvention);
+
+				var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature));
+
+				var returnPostprocessor = returnDefinitionOverrideAttribute.ReturnPostprocessor;
+
+				invocation.ReturnValue = returnPostprocessor.Process(delegateInstance.DynamicInvoke (processedArguments.Select(arg => arg.Arg).ToArray()), invocation.Method.ReturnType);
+			}
+			catch (Exception ex) {
+				exceptionList.Add (ex);
 			}
 			finally {
-				foreach (var typedArgument in typedArguments) {
-					typedArgument.Item1.Dispose (typedArgument.Item2);
+				foreach (var typedArgument in processedArguments) {
+					try {
+						typedArgument.Source.DestroyProcessedInput (typedArgument.Arg);
+					}
+					catch (Exception ex) {
+						exceptionList.Add(ex);
+					}
 				}
 			}
 
+			var exceptionCount = exceptionList.Count;
+
+			if (exceptionCount == 0) {
+				return;
+			} else if (exceptionCount == 1) {
+				throw exceptionList.Single ();
+			} else {
+				throw new AggregateException (exceptionList);
+			}
+		}
+
+		private class ProcessedArgument
+		{
+			public object Arg { get; set; }
+
+			public IArgumentPreprocessor Source { get; set; }
 		}
 	}
 }
