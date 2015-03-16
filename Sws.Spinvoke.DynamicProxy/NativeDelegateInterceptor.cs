@@ -57,8 +57,21 @@ namespace Sws.Spinvoke.DynamicProxy
 
 			var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature));
 
-			invocation.ReturnValue = delegateInstance.DynamicInvoke (invocation.Arguments);
+			var argumentPreprocessors = inputTypes.Select (inputType => new ChangeTypeArgumentPreprocessor (inputType));
+
+			var typedArguments = invocation.Arguments.Zip (argumentPreprocessors, (arg, argPreprocessor) => Tuple.Create(argPreprocessor, argPreprocessor.Process(arg))).ToArray();
+
+			var returnPostprocessor = new ChangeTypeReturnPostprocessor();
+
+			try {
+				invocation.ReturnValue = returnPostprocessor.Process(delegateInstance.DynamicInvoke (typedArguments.Select(arg => arg.Item2).ToArray()), invocation.Method.ReturnType);
+			}
+			finally {
+				foreach (var typedArgument in typedArguments) {
+					typedArgument.Item1.Dispose (typedArgument.Item2);
+				}
+			}
+
 		}
 	}
 }
-

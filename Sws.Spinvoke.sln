@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Ninject", "Sws.Spinvoke.Ninject\Sws.Spinvoke.Ninject.csproj", "{664932B5-8879-401C-B444-C3EDA8945037}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.DynamicProxy.Tests", "Sws.Spinvoke.DynamicProxy.Tests\Sws.Spinvoke.DynamicProxy.Tests.csproj", "{FE0212AC-62FE-46AA-9EC8-6500020C5479}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -45,6 +47,10 @@ Global
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Debug|x86.Build.0 = Debug|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Release|x86.ActiveCfg = Release|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Release|x86.Build.0 = Release|Any CPU
+		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Debug|x86.Build.0 = Debug|Any CPU
+		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Release|x86.ActiveCfg = Release|Any CPU
+		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Release|x86.Build.0 = Release|Any CPU
 		{FF49DD79-253B-4541-A455-B472CB36F212}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{FF49DD79-253B-4541-A455-B472CB36F212}.Debug|x86.Build.0 = Debug|Any CPU
 		{FF49DD79-253B-4541-A455-B472CB36F212}.Release|x86.ActiveCfg = Release|Any CPU

@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{07B0EAEF-E365-4145-AC9A-04760D888F18}</ProjectGuid>
+    <ProjectGuid>{FE0212AC-62FE-46AA-9EC8-6500020C5479}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sws.Spinvoke.DynamicProxy</RootNamespace>
-    <AssemblyName>Sws.Spinvoke.DynamicProxy</AssemblyName>
+    <RootNamespace>Sws.Spinvoke.DynamicProxy.Tests</RootNamespace>
+    <AssemblyName>Sws.Spinvoke.DynamicProxy.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,30 +29,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Castle.Core">
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="NativeDelegateDefinitionOverrideAttribute.cs" />
-    <Compile Include="NativeDelegateInterceptor.cs" />
-    <Compile Include="IArgumentPreprocessor.cs" />
-    <Compile Include="IReturnPostprocessor.cs" />
-    <Compile Include="StructToPointerArgumentPreprocessor.cs" />
-    <Compile Include="PointerToStructReturnPostprocessor.cs" />
-    <Compile Include="NativeArgumentDefinitionOverrideAttribute.cs" />
-    <Compile Include="ChangeTypeArgumentPreprocessor.cs" />
-    <Compile Include="ChangeTypeReturnPostprocessor.cs" />
+    <Compile Include="StructToPointerArgumentPreprocessorTests.cs" />
+    <Compile Include="PointerToStructReturnPostprocessorTests.cs" />
+    <Compile Include="ChangeTypeArgumentPreprocessorTests.cs" />
+    <Compile Include="ChangeTypeReturnPostprocessorTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
-      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
-      <Name>Sws.Spinvoke.Core</Name>
+    <ProjectReference Include="..\Sws.Spinvoke.DynamicProxy\Sws.Spinvoke.DynamicProxy.csproj">
+      <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
+      <Name>Sws.Spinvoke.DynamicProxy</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
