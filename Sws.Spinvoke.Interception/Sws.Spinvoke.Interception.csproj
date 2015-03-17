@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{07B0EAEF-E365-4145-AC9A-04760D888F18}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sws.Spinvoke.DynamicProxy</RootNamespace>
+    <RootNamespace>Sws.Spinvoke.Interception</RootNamespace>
     <AssemblyName>Sws.Spinvoke.DynamicProxy</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -29,9 +29,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Castle.Core">
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,11 +46,10 @@
     <Compile Include="ArgumentPreprocessing\StructToPointerArgumentPreprocessor.cs" />
     <Compile Include="NativeReturnsStructPointerAttribute.cs" />
     <Compile Include="NativeArgumentAsStructPointerAttribute.cs" />
+    <Compile Include="IInterceptor.cs" />
+    <Compile Include="IInvocation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
       <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>

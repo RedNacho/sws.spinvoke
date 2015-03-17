@@ -9,7 +9,8 @@ using Ninject.Planning.Bindings;
 using Ninject.Syntax;
 
 using Sws.Spinvoke.Core;
-using Sws.Spinvoke.DynamicProxy;
+using Sws.Spinvoke.Interception;
+using Sws.Spinvoke.Interception.DynamicProxy;
 
 // PoC - unit test, refactor.
 namespace Sws.Spinvoke.Ninject.Extensions
@@ -82,7 +83,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 			protected override T CreateInstance (IContext context)
 			{
-				var nativeDelegateInterceptor = new NativeDelegateInterceptor (_libraryName, _callingConvention, NativeDelegateResolver);
+				var nativeDelegateInterceptor = new SpinvokeInterceptor(new NativeDelegateInterceptor (_libraryName, _callingConvention, NativeDelegateResolver));
 
 				if (_serviceType == typeof(T)) {
 					return ProxyGenerator.CreateInterfaceProxyWithoutTarget<T> (nativeDelegateInterceptor);

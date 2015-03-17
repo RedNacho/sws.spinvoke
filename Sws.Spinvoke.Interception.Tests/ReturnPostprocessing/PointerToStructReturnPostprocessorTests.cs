@@ -2,9 +2,9 @@
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
-using Sws.Spinvoke.DynamicProxy.ReturnPostprocessing;
+using Sws.Spinvoke.Interception.ReturnPostprocessing;
 
-namespace Sws.Spinvoke.DynamicProxy.Tests
+namespace Sws.Spinvoke.Interception.Tests
 {
 	[TestFixture ()]
 	public class PointerToStructReturnPostprocessorTests

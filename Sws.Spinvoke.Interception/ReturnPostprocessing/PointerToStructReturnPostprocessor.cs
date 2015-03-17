@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Sws.Spinvoke.DynamicProxy.ReturnPostprocessing
+namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
 	public class PointerToStructReturnPostprocessor : IReturnPostprocessor
 	{

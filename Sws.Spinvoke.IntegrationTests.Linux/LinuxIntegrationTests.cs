@@ -4,9 +4,8 @@ using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Linux;
-using Sws.Spinvoke.DynamicProxy;
-using Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing;
-using Sws.Spinvoke.DynamicProxy.ReturnPostprocessing;
+using Sws.Spinvoke.Interception;
+using Sws.Spinvoke.Interception.DynamicProxy;
 using Sws.Spinvoke.Ninject;
 using Sws.Spinvoke.Ninject.Extensions;
 
@@ -53,10 +52,10 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			using (var nativeDelegateResolver = kernel.Get<INativeDelegateResolver>())
 			{
-				var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IDynamicProxyTest>(new NativeDelegateInterceptor(
+				var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IDynamicProxyTest>(new SpinvokeInterceptor(new NativeDelegateInterceptor(
 					"libSws.Spinvoke.IntegrationTests.so",
 					CallingConvention.Winapi,
-					nativeDelegateResolver));
+					nativeDelegateResolver)));
 			
 				var result = proxy.Add(2, 3);
 

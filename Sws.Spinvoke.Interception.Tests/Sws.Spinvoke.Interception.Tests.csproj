@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FE0212AC-62FE-46AA-9EC8-6500020C5479}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sws.Spinvoke.DynamicProxy.Tests</RootNamespace>
+    <RootNamespace>Sws.Spinvoke.Interception.Tests</RootNamespace>
     <AssemblyName>Sws.Spinvoke.DynamicProxy.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -32,6 +32,12 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentPreprocessing\ChangeTypeArgumentPreprocessorTests.cs" />
@@ -44,13 +50,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sws.Spinvoke.DynamicProxy\Sws.Spinvoke.DynamicProxy.csproj">
-      <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
-      <Name>Sws.Spinvoke.DynamicProxy</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="ArgumentPreprocessing\" />
     <Folder Include="ReturnPostprocessing\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
+      <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
+      <Name>Sws.Spinvoke.Interception</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

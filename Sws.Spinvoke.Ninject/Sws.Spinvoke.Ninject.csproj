@@ -54,9 +54,13 @@
       <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
       <Name>Sws.Spinvoke.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.DynamicProxy\Sws.Spinvoke.DynamicProxy.csproj">
+    <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
       <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
-      <Name>Sws.Spinvoke.DynamicProxy</Name>
+      <Name>Sws.Spinvoke.Interception</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Interception.DynamicProxy\Sws.Spinvoke.Interception.DynamicProxy.csproj">
+      <Project>{279EBCDB-CE26-419D-AD43-5283E7E25648}</Project>
+      <Name>Sws.Spinvoke.Interception.DynamicProxy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

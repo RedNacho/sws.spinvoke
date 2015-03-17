@@ -1,8 +1,8 @@
 ﻿using System;
 
-using Sws.Spinvoke.DynamicProxy.ReturnPostprocessing;
+using Sws.Spinvoke.Interception.ReturnPostprocessing;
 
-namespace Sws.Spinvoke.DynamicProxy
+namespace Sws.Spinvoke.Interception
 {
 	[AttributeUsage(AttributeTargets.ReturnValue)]
 	public class NativeReturnDefinitionOverrideAttribute : Attribute

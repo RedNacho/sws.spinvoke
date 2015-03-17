@@ -2,9 +2,9 @@
 using System;
 using System.Linq;
 
-using Sws.Spinvoke.DynamicProxy.ReturnPostprocessing;
+using Sws.Spinvoke.Interception.ReturnPostprocessing;
 
-namespace Sws.Spinvoke.DynamicProxy.Tests
+namespace Sws.Spinvoke.Interception.Tests
 {
 	[TestFixture ()]
 	public class ChangeTypeReturnPostprocessorTests

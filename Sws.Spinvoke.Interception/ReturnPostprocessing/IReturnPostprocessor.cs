@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sws.Spinvoke.DynamicProxy.ReturnPostprocessing
+namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
 	public interface IReturnPostprocessor
 	{
