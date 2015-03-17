@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
 
+using Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing;
+
 using Castle.DynamicProxy;
 
 namespace Sws.Spinvoke.DynamicProxy

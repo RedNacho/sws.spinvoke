@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Linux;
 using Sws.Spinvoke.DynamicProxy;
+using Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing;
+using Sws.Spinvoke.DynamicProxy.ReturnPostprocessing;
 using Sws.Spinvoke.Ninject;
 using Sws.Spinvoke.Ninject.Extensions;
 
@@ -101,27 +103,11 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		int Add(int x, int y);
 	}
 
-	public class PointerTestReturnDefinitionOverrideAttribute : NativeReturnDefinitionOverrideAttribute
-	{
-		public PointerTestReturnDefinitionOverrideAttribute()
-			: base(new PointerToStructReturnPostprocessor(), typeof(IntPtr))
-		{
-		}
-	}
-
-	public class PointerTestArgumentDefinitionOverrideAttribute : NativeArgumentDefinitionOverrideAttribute
-	{
-		public PointerTestArgumentDefinitionOverrideAttribute()
-			: base(new StructToPointerArgumentPreprocessor(), typeof(IntPtr))
-		{
-		}
-	}
-
 	public interface IDynamicProxyPointerTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "pointerAdd")]
-		[return: PointerTestReturnDefinitionOverride()]
-		int Add([PointerTestArgumentDefinitionOverride()] int x, [PointerTestArgumentDefinitionOverride()] int y);
+		[return: NativeReturnsStructPointer()]
+		int Add([NativeArgumentAsStructPointer()] int x, [NativeArgumentAsStructPointer()] int y);
 	}
 }
 

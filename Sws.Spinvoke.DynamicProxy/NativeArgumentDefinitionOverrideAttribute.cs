@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing;
+
 namespace Sws.Spinvoke.DynamicProxy
 {
 	[AttributeUsage(AttributeTargets.Parameter)]

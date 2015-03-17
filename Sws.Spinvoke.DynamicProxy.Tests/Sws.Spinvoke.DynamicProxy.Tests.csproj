@@ -34,10 +34,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StructToPointerArgumentPreprocessorTests.cs" />
-    <Compile Include="PointerToStructReturnPostprocessorTests.cs" />
-    <Compile Include="ChangeTypeArgumentPreprocessorTests.cs" />
-    <Compile Include="ChangeTypeReturnPostprocessorTests.cs" />
+    <Compile Include="ArgumentPreprocessing\ChangeTypeArgumentPreprocessorTests.cs" />
+    <Compile Include="ReturnPostprocessing\ChangeTypeReturnPostprocessorTests.cs" />
+    <Compile Include="ReturnPostprocessing\PointerToStructReturnPostprocessorTests.cs" />
+    <Compile Include="ArgumentPreprocessing\StructToPointerArgumentPreprocessorTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -48,5 +48,9 @@
       <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
       <Name>Sws.Spinvoke.DynamicProxy</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ArgumentPreprocessing\" />
+    <Folder Include="ReturnPostprocessing\" />
   </ItemGroup>
 </Project>
