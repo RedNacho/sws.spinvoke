@@ -6,7 +6,7 @@
     <ProjectGuid>{FE0212AC-62FE-46AA-9EC8-6500020C5479}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Sws.Spinvoke.Interception.Tests</RootNamespace>
-    <AssemblyName>Sws.Spinvoke.DynamicProxy.Tests</AssemblyName>
+    <AssemblyName>Sws.Spinvoke.Interception.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
