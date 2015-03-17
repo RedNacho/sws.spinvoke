@@ -6,11 +6,9 @@ using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
 
-using Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.ArgumentPreprocessing;
 
-using Castle.DynamicProxy;
-
-namespace Sws.Spinvoke.DynamicProxy
+namespace Sws.Spinvoke.Interception
 {
 	public class NativeDelegateInterceptor : IInterceptor
 	{

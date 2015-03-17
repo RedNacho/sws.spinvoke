@@ -1,8 +1,8 @@
 ﻿using System;
 
-using Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.ArgumentPreprocessing;
 
-namespace Sws.Spinvoke.DynamicProxy
+namespace Sws.Spinvoke.Interception
 {
 	[AttributeUsage(AttributeTargets.Parameter)]
 	public class NativeArgumentDefinitionOverrideAttribute : Attribute

@@ -7,15 +7,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Core.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Linux", "Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj", "{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.DynamicProxy", "Sws.Spinvoke.DynamicProxy\Sws.Spinvoke.DynamicProxy.csproj", "{07B0EAEF-E365-4145-AC9A-04760D888F18}"
-EndProject
 Project("{2857B73E-F847-4B02-9238-064979017E93}") = "Sws.Spinvoke.IntegrationTests.C", "Sws.Spinvoke.IntegrationTests.C\Sws.Spinvoke.IntegrationTests.C.cproj", "{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTests.Linux", "Sws.Spinvoke.IntegrationTests.Linux\Sws.Spinvoke.IntegrationTests.Linux.csproj", "{FF49DD79-253B-4541-A455-B472CB36F212}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Ninject", "Sws.Spinvoke.Ninject\Sws.Spinvoke.Ninject.csproj", "{664932B5-8879-401C-B444-C3EDA8945037}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.DynamicProxy.Tests", "Sws.Spinvoke.DynamicProxy.Tests\Sws.Spinvoke.DynamicProxy.Tests.csproj", "{FE0212AC-62FE-46AA-9EC8-6500020C5479}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception", "Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj", "{07B0EAEF-E365-4145-AC9A-04760D888F18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.Tests", "Sws.Spinvoke.Interception.Tests\Sws.Spinvoke.Interception.Tests.csproj", "{FE0212AC-62FE-46AA-9EC8-6500020C5479}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.DynamicProxy", "Sws.Spinvoke.Interception.DynamicProxy\Sws.Spinvoke.Interception.DynamicProxy.csproj", "{279EBCDB-CE26-419D-AD43-5283E7E25648}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Debug|x86.Build.0 = Debug|Any CPU
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Release|x86.ActiveCfg = Release|Any CPU
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Release|x86.Build.0 = Release|Any CPU
+		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Debug|x86.Build.0 = Debug|Any CPU
+		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.ActiveCfg = Release|Any CPU
+		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.Build.0 = Release|Any CPU
 		{5D3ED5BF-AE5E-46C7-BD1D-0C5BFC8DFCDD}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{5D3ED5BF-AE5E-46C7-BD1D-0C5BFC8DFCDD}.Debug|x86.Build.0 = Debug|Any CPU
 		{5D3ED5BF-AE5E-46C7-BD1D-0C5BFC8DFCDD}.Release|x86.ActiveCfg = Release|Any CPU

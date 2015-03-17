@@ -2,9 +2,9 @@
 using System;
 using System.Linq;
 
-using Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.ArgumentPreprocessing;
 
-namespace Sws.Spinvoke.DynamicProxy.Tests
+namespace Sws.Spinvoke.Interception.Tests
 {
 	[TestFixture ()]
 	public class ChangeTypeArgumentPreprocessorTests
