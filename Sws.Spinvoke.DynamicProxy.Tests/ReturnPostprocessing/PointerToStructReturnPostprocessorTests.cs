@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
+using Sws.Spinvoke.DynamicProxy.ReturnPostprocessing;
+
 namespace Sws.Spinvoke.DynamicProxy.Tests
 {
 	[TestFixture ()]

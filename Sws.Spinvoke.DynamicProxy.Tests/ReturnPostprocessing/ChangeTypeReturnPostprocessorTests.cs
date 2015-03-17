@@ -2,6 +2,8 @@
 using System;
 using System.Linq;
 
+using Sws.Spinvoke.DynamicProxy.ReturnPostprocessing;
+
 namespace Sws.Spinvoke.DynamicProxy.Tests
 {
 	[TestFixture ()]

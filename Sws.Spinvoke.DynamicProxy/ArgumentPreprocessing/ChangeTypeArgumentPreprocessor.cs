@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sws.Spinvoke.DynamicProxy
+namespace Sws.Spinvoke.DynamicProxy.ArgumentPreprocessing
 {
 	public class ChangeTypeArgumentPreprocessor : IArgumentPreprocessor
 	{
