@@ -56,17 +56,17 @@
       <Project>{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}</Project>
       <Name>Sws.Spinvoke.Linux</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Ninject\Sws.Spinvoke.Ninject.csproj">
-      <Project>{664932B5-8879-401C-B444-C3EDA8945037}</Project>
-      <Name>Sws.Spinvoke.Ninject</Name>
+    <ProjectReference Include="..\Sws.Spinvoke.Interception.DynamicProxy\Sws.Spinvoke.Interception.DynamicProxy.csproj">
+      <Project>{279EBCDB-CE26-419D-AD43-5283E7E25648}</Project>
+      <Name>Sws.Spinvoke.Interception.DynamicProxy</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
       <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
       <Name>Sws.Spinvoke.Interception</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Interception.DynamicProxy\Sws.Spinvoke.Interception.DynamicProxy.csproj">
-      <Project>{279EBCDB-CE26-419D-AD43-5283E7E25648}</Project>
-      <Name>Sws.Spinvoke.Interception.DynamicProxy</Name>
+    <ProjectReference Include="..\Sws.Spinvoke.Ninject\Sws.Spinvoke.Ninject.csproj">
+      <Project>{664932B5-8879-401C-B444-C3EDA8945037}</Project>
+      <Name>Sws.Spinvoke.Ninject</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
