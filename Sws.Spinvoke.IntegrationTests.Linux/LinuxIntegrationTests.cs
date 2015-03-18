@@ -9,7 +9,7 @@ using Sws.Spinvoke.Interception.DynamicProxy;
 using Sws.Spinvoke.Ninject;
 using Sws.Spinvoke.Ninject.Extensions;
 
-using Castle.DynamicProxy;
+using CastleProxyGenerator = Castle.DynamicProxy.ProxyGenerator;
 
 using Ninject;
 using Ninject.Infrastructure;
@@ -48,7 +48,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			kernel.Load (new SpinvokeModule (StandardScopeCallbacks.Transient, "TestAssembly"));
 
-			var proxyGenerator = new ProxyGenerator ();
+			var proxyGenerator = new CastleProxyGenerator ();
 
 			using (var nativeDelegateResolver = kernel.Get<INativeDelegateResolver>())
 			{
@@ -68,7 +68,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		{
 			var kernel = new StandardKernel();
 
-			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader());
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
 			kernel.Bind<IDynamicProxyTest>().ToNative("libSws.Spinvoke.IntegrationTests.so");
 
@@ -84,7 +84,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		{
 			var kernel = new StandardKernel();
 
-			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader());
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
 			kernel.Bind<IDynamicProxyPointerTest>().ToNative("libSws.Spinvoke.IntegrationTests.so");
 

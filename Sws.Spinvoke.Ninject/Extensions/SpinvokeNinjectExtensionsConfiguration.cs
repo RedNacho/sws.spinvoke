@@ -4,13 +4,14 @@ using Ninject;
 using Ninject.Infrastructure;
 
 using Sws.Spinvoke.Core;
+using Sws.Spinvoke.Interception;
 
 // PoC: Unit test, refactor.
 namespace Sws.Spinvoke.Ninject.Extensions
 {
 	public static class SpinvokeNinjectExtensionsConfiguration
 	{
-		public static void Configure (INativeLibraryLoader nativeLibraryLoader)
+		public static void Configure (INativeLibraryLoader nativeLibraryLoader, IProxyGenerator proxyGenerator)
 		{
 			INativeDelegateResolver nativeDelegateResolver;
 
@@ -20,7 +21,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				nativeDelegateResolver = kernel.Get<INativeDelegateResolver> ();
 			}
 
-			BindingToSyntaxExtensions.Configure (nativeDelegateResolver);
+			BindingToSyntaxExtensions.Configure (nativeDelegateResolver, proxyGenerator);
 		}
 	}
 }

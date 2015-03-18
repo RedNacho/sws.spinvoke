@@ -48,6 +48,7 @@
     <Compile Include="NativeArgumentAsStructPointerAttribute.cs" />
     <Compile Include="IInterceptor.cs" />
     <Compile Include="IInvocation.cs" />
+    <Compile Include="IProxyGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
