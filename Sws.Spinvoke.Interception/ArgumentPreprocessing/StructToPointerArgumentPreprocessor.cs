@@ -30,6 +30,8 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		{
 			if (_releasePointerOnDestroy) {
 				Marshal.FreeHGlobal ((IntPtr)processedInput);
+			} else {
+				InterceptionAllocatedMemoryManager.ReportGarbageCollectible ((IntPtr)processedInput);
 			}
 		}
 	}
