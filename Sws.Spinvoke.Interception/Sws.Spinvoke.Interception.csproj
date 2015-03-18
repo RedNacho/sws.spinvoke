@@ -49,6 +49,10 @@
     <Compile Include="IInterceptor.cs" />
     <Compile Include="IInvocation.cs" />
     <Compile Include="IProxyGenerator.cs" />
+    <Compile Include="ArgumentPreprocessing\StringToPointerArgumentPreprocessor.cs" />
+    <Compile Include="ReturnPostprocessing\PointerToStringReturnPostprocessor.cs" />
+    <Compile Include="NativeArgumentAsStringPointerAttribute.cs" />
+    <Compile Include="NativeReturnsStringPointerAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

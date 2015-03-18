@@ -4,5 +4,9 @@
 
 int add(int x, int y);
 
+int* pointerAdd(int* x, int* y);
+
+char* reverseString(char* input);
+
 #endif
 
