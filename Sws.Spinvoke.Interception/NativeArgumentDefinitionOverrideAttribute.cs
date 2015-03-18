@@ -5,7 +5,7 @@ using Sws.Spinvoke.Interception.ArgumentPreprocessing;
 namespace Sws.Spinvoke.Interception
 {
 	[AttributeUsage(AttributeTargets.Parameter)]
-	public class NativeArgumentDefinitionOverrideAttribute : Attribute
+	public abstract class NativeArgumentDefinitionOverrideAttribute : Attribute
 	{
 		private readonly IArgumentPreprocessor _argumentPreprocessor;
 
