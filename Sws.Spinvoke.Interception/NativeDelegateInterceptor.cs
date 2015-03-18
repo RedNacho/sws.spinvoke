@@ -80,6 +80,10 @@ namespace Sws.Spinvoke.Interception
 
 			try {
 				foreach (var pair in invocation.Arguments.Zip(argumentDefinitionOverrideAttributes, (arg, attribute) => new { Arg = arg, Attribute = attribute })) {
+					if (!pair.Attribute.ArgumentPreprocessor.CanProcess(pair.Arg)) {
+						throw new InvalidOperationException("ArgumentPreprocessor cannot process input.");
+					}
+
 					processedArguments.Add(new ProcessedArgument { Arg = pair.Attribute.ArgumentPreprocessor.Process(pair.Arg), Source = pair.Attribute.ArgumentPreprocessor });
 				}
 
@@ -91,7 +95,14 @@ namespace Sws.Spinvoke.Interception
 
 				var returnPostprocessor = returnDefinitionOverrideAttribute.ReturnPostprocessor;
 
-				invocation.ReturnValue = returnPostprocessor.Process(delegateInstance.DynamicInvoke (processedArguments.Select(arg => arg.Arg).ToArray()), invocation.Method.ReturnType);
+				var returnedValue = delegateInstance.DynamicInvoke (processedArguments.Select(arg => arg.Arg).ToArray());
+
+				if (!returnPostprocessor.CanProcess(returnedValue, invocation.Method.ReturnType))
+				{
+					throw new InvalidOperationException("ReturnPostprocessor cannot convert returned value to required type.");
+				}
+
+				invocation.ReturnValue = returnPostprocessor.Process(returnedValue, invocation.Method.ReturnType);
 			}
 			catch (Exception ex) {
 				exceptionList.Add (ex);
