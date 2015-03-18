@@ -110,7 +110,7 @@ namespace Sws.Spinvoke.Interception
 			finally {
 				foreach (var typedArgument in processedArguments) {
 					try {
-						typedArgument.Source.DestroyProcessedInput (typedArgument.Arg);
+						typedArgument.Source.ReleaseProcessedInput (typedArgument.Arg);
 					}
 					catch (Exception ex) {
 						exceptionList.Add(ex);

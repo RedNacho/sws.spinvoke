@@ -154,22 +154,22 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 	public interface IDynamicProxyPointerTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "pointerAdd")]
-		[return: NativeReturnsStructPointer(releasePointerOnReturn: true)]
-		int Add([NativeArgumentAsStructPointer(releasePointerOnReturn: true)] int x, [NativeArgumentAsStructPointer(releasePointerOnReturn: true)] int y);
+		[return: NativeReturnsStructPointer(pointerManagementMode: PointerManagementMode.DestroyAfterCall)]
+		int Add([NativeArgumentAsStructPointer(pointerManagementMode: PointerManagementMode.DestroyAfterCall)] int x, [NativeArgumentAsStructPointer(pointerManagementMode: PointerManagementMode.DestroyAfterCall)] int y);
 	}
 
 	public interface IDynamicProxyStringTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "reverseString")]
-		[return: NativeReturnsStringPointer(releasePointerOnReturn: true)]
-		string ReverseString([NativeArgumentAsStringPointer(releasePointerOnReturn: true)] string input);
+		[return: NativeReturnsStringPointer(pointerManagementMode: PointerManagementMode.DestroyAfterCall)]
+		string ReverseString([NativeArgumentAsStringPointer(pointerManagementMode: PointerManagementMode.DestroyAfterCall)] string input);
 	}
 
 	public interface IDynamicProxyManualMemoryReleaseTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "reverseString")]
-		[return: NativeReturnsStringPointer(releasePointerOnReturn: true)]
-		string ReverseString([NativeArgumentAsStringPointer(releasePointerOnReturn: false)] string input);
+		[return: NativeReturnsStringPointer(pointerManagementMode: PointerManagementMode.DestroyAfterCall)]
+		string ReverseString([NativeArgumentAsStringPointer(pointerManagementMode: PointerManagementMode.DestroyOnInterceptionGarbageCollect)] string input);
 	}
 }
 

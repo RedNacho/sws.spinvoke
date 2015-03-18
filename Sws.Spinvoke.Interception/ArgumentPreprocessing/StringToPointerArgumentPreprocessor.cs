@@ -5,11 +5,11 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class StringToPointerArgumentPreprocessor : IArgumentPreprocessor
 	{
-		private readonly bool _releasePointerOnDestroy;
+		private readonly PointerManagementMode _pointerManagementMode;
 
-		public StringToPointerArgumentPreprocessor(bool releasePointerOnDestroy)
+		public StringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode)
 		{
-			_releasePointerOnDestroy = releasePointerOnDestroy;
+			_pointerManagementMode = pointerManagementMode;
 		}
 
 		public bool CanProcess (object input)
@@ -22,13 +22,9 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 			return Marshal.StringToHGlobalAuto ((string)input);
 		}
 
-		public void DestroyProcessedInput (object processedInput)
+		public void ReleaseProcessedInput (object processedInput)
 		{
-			if (_releasePointerOnDestroy) {
-				Marshal.FreeHGlobal ((IntPtr)processedInput);
-			} else {
-				InterceptionAllocatedMemoryManager.ReportGarbageCollectible ((IntPtr)processedInput);
-			}
+			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted ((IntPtr)processedInput, _pointerManagementMode);
 		}
 	}
 }

@@ -6,7 +6,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 	{
 		bool CanProcess(object input);
 		object Process(object input);
-		void DestroyProcessedInput(object processedInput);
+		void ReleaseProcessedInput(object processedInput);
 	}
 }
 

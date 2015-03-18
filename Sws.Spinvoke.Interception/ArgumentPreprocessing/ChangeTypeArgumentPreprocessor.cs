@@ -29,7 +29,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 			return Convert.ChangeType (input, _requiredType);
 		}
 
-		public void DestroyProcessedInput (object processedInput)
+		public void ReleaseProcessedInput (object processedInput)
 		{
 			var disposable = processedInput as IDisposable;
 

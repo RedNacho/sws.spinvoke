@@ -83,7 +83,7 @@ namespace Sws.Spinvoke.Interception
 			}
 		}
 
-		internal static void ReportGarbageCollectible(IntPtr ptr)
+		public static void RegisterForGarbageCollection(IntPtr ptr)
 		{
 			lock (SyncObject) {
 				var freeReferences = FreeReferences.ContainsKey(CurrentBlockName)
@@ -91,6 +91,15 @@ namespace Sws.Spinvoke.Interception
 					: (FreeReferences[CurrentBlockName] = new List<IntPtr>());
 
 				freeReferences.Add (ptr);
+			}
+		}
+
+		public static void ReportPointerCallCompleted(IntPtr ptr, PointerManagementMode pointerManagementMode)
+		{
+			if (pointerManagementMode == PointerManagementMode.DestroyAfterCall) {
+				Marshal.FreeHGlobal (ptr);
+			} else if (pointerManagementMode == PointerManagementMode.DestroyOnInterceptionGarbageCollect) {
+				RegisterForGarbageCollection (ptr);
 			}
 		}
 

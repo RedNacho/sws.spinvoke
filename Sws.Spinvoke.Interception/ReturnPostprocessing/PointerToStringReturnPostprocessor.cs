@@ -5,11 +5,11 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
 	public class PointerToStringReturnPostprocessor : IReturnPostprocessor
 	{
-		private readonly bool _releasePointerOnProcess;
+		private readonly PointerManagementMode _pointerManagementMode;
 
-		public PointerToStringReturnPostprocessor(bool releasePointerOnProcess)
+		public PointerToStringReturnPostprocessor(PointerManagementMode pointerManagementMode)
 		{
-			_releasePointerOnProcess = releasePointerOnProcess;
+			_pointerManagementMode = pointerManagementMode;
 		}
 
 		public bool CanProcess (object output, Type requiredReturnType)
@@ -25,11 +25,9 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 			var ptr = (IntPtr)output;
 
-			var result = Marshal.PtrToStringAuto ((IntPtr)output);
+			var result = Marshal.PtrToStringAuto (ptr);
 
-			if (_releasePointerOnProcess) {
-				Marshal.FreeHGlobal (ptr);
-			}
+			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode);
 
 			return result;
 		}
