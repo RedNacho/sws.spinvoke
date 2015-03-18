@@ -67,7 +67,7 @@ namespace Sws.Spinvoke.Interception
 			var returnDefinitionOverrideAttribute = invocation.Method.ReturnParameter.GetCustomAttributes()
 				.Select(attribute => attribute as NativeReturnDefinitionOverrideAttribute)
 				.Where(attribute => attribute != null)
-				.DefaultIfEmpty(new DefaultNativeReturnDefinitionOverrideAttribute())
+				.DefaultIfEmpty(new DefaultNativeReturnDefinitionOverrideAttribute(outputType))
 				.First();
 
 			inputTypes = inputTypes.Zip (argumentDefinitionOverrideAttributes, (inputType, attribute) => attribute.InputType ?? inputType).ToArray();

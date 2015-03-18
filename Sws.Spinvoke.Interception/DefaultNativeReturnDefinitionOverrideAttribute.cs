@@ -6,8 +6,8 @@ namespace Sws.Spinvoke.Interception
 {
 	public class DefaultNativeReturnDefinitionOverrideAttribute : NativeReturnDefinitionOverrideAttribute
 	{
-		public DefaultNativeReturnDefinitionOverrideAttribute ()
-			: base(new ChangeTypeReturnPostprocessor())
+		public DefaultNativeReturnDefinitionOverrideAttribute (Type outputType)
+			: base(new ChangeTypeReturnPostprocessor(), outputType)
 		{
 		}
 	}
