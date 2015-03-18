@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-using Castle.DynamicProxy;
-
 using Ninject.Activation;
 using Ninject.Infrastructure.Introspection;
 using Ninject.Planning.Bindings;
@@ -10,7 +8,6 @@ using Ninject.Syntax;
 
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Interception;
-using Sws.Spinvoke.Interception.DynamicProxy;
 
 // PoC - unit test, refactor.
 namespace Sws.Spinvoke.Ninject.Extensions
@@ -19,16 +16,17 @@ namespace Sws.Spinvoke.Ninject.Extensions
 	{
 		private static INativeDelegateResolver NativeDelegateResolver;
 
-		private static ProxyGenerator ProxyGenerator = new ProxyGenerator();
+		private static IProxyGenerator ProxyGenerator;
 
-		internal static void Configure(INativeDelegateResolver nativeDelegateResolver)
+		internal static void Configure(INativeDelegateResolver nativeDelegateResolver, IProxyGenerator proxyGenerator)
 		{
 			NativeDelegateResolver = nativeDelegateResolver;
+			ProxyGenerator = proxyGenerator;
 		}
 
 		private static void VerifyConfigured()
 		{
-			if (NativeDelegateResolver == null) {
+			if (NativeDelegateResolver == null || ProxyGenerator == null) {
 				throw new InvalidOperationException ("You must call SpinvokeNinjectExtensionsConfiguration.Configure first");
 			}
 		}
@@ -83,12 +81,12 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 			protected override T CreateInstance (IContext context)
 			{
-				var nativeDelegateInterceptor = new SpinvokeInterceptor(new NativeDelegateInterceptor (_libraryName, _callingConvention, NativeDelegateResolver));
+				var nativeDelegateInterceptor = new NativeDelegateInterceptor (_libraryName, _callingConvention, NativeDelegateResolver);
 
 				if (_serviceType == typeof(T)) {
-					return ProxyGenerator.CreateInterfaceProxyWithoutTarget<T> (nativeDelegateInterceptor);
+					return ProxyGenerator.CreateProxy<T> (nativeDelegateInterceptor);
 				} else {
-					return ProxyGenerator.CreateInterfaceProxyWithoutTarget (_serviceType, nativeDelegateInterceptor) as T;
+					return ProxyGenerator.CreateProxy (_serviceType, nativeDelegateInterceptor) as T;
 				}
 			}
 		}
