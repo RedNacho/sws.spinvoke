@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
@@ -80,7 +81,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		}
 
 		[Test ()]
-		public void NativeCodeInvokedWithPointerConversion()
+		public void NativeCodeInvokedWithStructPointerConversion()
 		{
 			var kernel = new StandardKernel();
 
@@ -93,6 +94,26 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 			var result = proxy.Add(2, 3);
 
 			Assert.AreEqual(5, result);
+		}
+
+		[Test ()]
+		public void NativeCodeInvokedWithStringPointerConversion()
+		{
+			const string TestString = "I am a test.";
+
+			var expected = new string(TestString.Reverse ().ToArray ());
+
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<IDynamicProxyStringTest>().ToNative("libSws.Spinvoke.IntegrationTests.so");
+
+			var proxy = kernel.Get<IDynamicProxyStringTest>();
+
+			var actual = proxy.ReverseString (TestString);
+
+			Assert.AreEqual (expected, actual);
 		}
 	}
 
@@ -107,6 +128,13 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		[NativeDelegateDefinitionOverride(FunctionName = "pointerAdd")]
 		[return: NativeReturnsStructPointer()]
 		int Add([NativeArgumentAsStructPointer()] int x, [NativeArgumentAsStructPointer()] int y);
+	}
+
+	public interface IDynamicProxyStringTest
+	{
+		[NativeDelegateDefinitionOverride(FunctionName = "reverseString")]
+		[return: NativeReturnsStringPointer()]
+		string ReverseString([NativeArgumentAsStringPointer()] string input);
 	}
 }
 
