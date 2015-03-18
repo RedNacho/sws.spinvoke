@@ -115,6 +115,34 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			Assert.AreEqual (expected, actual);
 		}
+
+		[Test ()]
+		public void InterceptionAllocatedMemoryManagerAllowsManualDeallocationOfGeneratedPointers()
+		{
+			const string TestString = "I am a test.";
+
+			var expected = new string(TestString.Reverse ().ToArray ());
+
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<IDynamicProxyManualMemoryReleaseTest>().ToNative("libSws.Spinvoke.IntegrationTests.so");
+
+			var proxy = kernel.Get<IDynamicProxyManualMemoryReleaseTest>();
+
+			var actual = proxy.ReverseString (TestString);
+
+			var hasGarbageCollectibleMemoryBefore = InterceptionAllocatedMemoryManager.HasGarbageCollectibleMemory ();
+
+			InterceptionAllocatedMemoryManager.GarbageCollectAll ();
+
+			var hasGarbageCollectibleMemoryAfter = InterceptionAllocatedMemoryManager.HasGarbageCollectibleMemory ();
+
+			Assert.AreEqual (expected, actual);
+			Assert.IsTrue (hasGarbageCollectibleMemoryBefore);
+			Assert.IsFalse (hasGarbageCollectibleMemoryAfter);
+		}
 	}
 
 	public interface IDynamicProxyTest
@@ -135,6 +163,13 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		[NativeDelegateDefinitionOverride(FunctionName = "reverseString")]
 		[return: NativeReturnsStringPointer(releasePointerOnReturn: true)]
 		string ReverseString([NativeArgumentAsStringPointer(releasePointerOnReturn: true)] string input);
+	}
+
+	public interface IDynamicProxyManualMemoryReleaseTest
+	{
+		[NativeDelegateDefinitionOverride(FunctionName = "reverseString")]
+		[return: NativeReturnsStringPointer(releasePointerOnReturn: true)]
+		string ReverseString([NativeArgumentAsStringPointer(releasePointerOnReturn: false)] string input);
 	}
 }
 
