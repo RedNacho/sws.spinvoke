@@ -13,7 +13,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForString ()
 		{
-			var subject = new StringToPointerArgumentPreprocessor ();
+			var subject = new StringToPointerArgumentPreprocessor (false);
 
 			var canProcess = subject.CanProcess ("Test");
 
@@ -23,7 +23,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonString()
 		{
-			var subject = new StringToPointerArgumentPreprocessor ();
+			var subject = new StringToPointerArgumentPreprocessor (false);
 
 			var canProcess = subject.CanProcess (new object ());
 
@@ -35,7 +35,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		{
 			const string TestString = "Hello!";
 
-			var subject = new StringToPointerArgumentPreprocessor ();
+			var subject = new StringToPointerArgumentPreprocessor (false);
 
 			var ptr = (IntPtr) subject.Process (TestString);
 

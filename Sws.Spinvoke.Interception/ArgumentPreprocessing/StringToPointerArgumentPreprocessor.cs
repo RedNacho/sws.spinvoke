@@ -5,6 +5,13 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class StringToPointerArgumentPreprocessor : IArgumentPreprocessor
 	{
+		private readonly bool _releasePointerOnDestroy;
+
+		public StringToPointerArgumentPreprocessor(bool releasePointerOnDestroy)
+		{
+			_releasePointerOnDestroy = releasePointerOnDestroy;
+		}
+
 		public bool CanProcess (object input)
 		{
 			return input is string;
@@ -17,7 +24,9 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public void DestroyProcessedInput (object processedInput)
 		{
-			Marshal.FreeHGlobal ((IntPtr)processedInput);
+			if (_releasePointerOnDestroy) {
+				Marshal.FreeHGlobal ((IntPtr)processedInput);
+			}
 		}
 	}
 }

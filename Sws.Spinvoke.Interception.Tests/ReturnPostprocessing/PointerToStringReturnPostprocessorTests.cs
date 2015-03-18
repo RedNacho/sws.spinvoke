@@ -12,7 +12,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForIntPtrAndRequiredStringType ()
 		{
-			var subject = new PointerToStringReturnPostprocessor ();
+			var subject = new PointerToStringReturnPostprocessor (false);
 
 			var canProcess = subject.CanProcess (new IntPtr (0), typeof(string));
 
@@ -22,7 +22,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonIntPtrOutput ()
 		{
-			var subject = new PointerToStringReturnPostprocessor ();
+			var subject = new PointerToStringReturnPostprocessor (false);
 
 			var canProcess = subject.CanProcess (new object(), typeof(string));
 
@@ -32,7 +32,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForRequiredTypeNotAssignableFromString ()
 		{
-			var subject = new PointerToStringReturnPostprocessor ();
+			var subject = new PointerToStringReturnPostprocessor (false);
 
 			var canProcess = subject.CanProcess (new IntPtr (0), typeof(int));
 
@@ -44,11 +44,13 @@ namespace Sws.Spinvoke.Interception.Tests
 		{
 			const string TestString = "I am a string.";
 
-			var subject = new PointerToStringReturnPostprocessor ();
+			var subject = new PointerToStringReturnPostprocessor (false);
 
 			var ptr = Marshal.StringToHGlobalAuto (TestString);
 
 			var result = (string) subject.Process (ptr, typeof(string));
+
+			Marshal.FreeHGlobal (ptr);
 
 			Assert.AreEqual (TestString, result);
 		}

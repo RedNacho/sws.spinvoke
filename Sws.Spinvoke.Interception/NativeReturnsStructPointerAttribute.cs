@@ -7,8 +7,8 @@ namespace Sws.Spinvoke.Interception
 	[AttributeUsage(AttributeTargets.ReturnValue)]
 	public class NativeReturnsStructPointerAttribute : NativeReturnDefinitionOverrideAttribute
 	{
-		public NativeReturnsStructPointerAttribute ()
-			: base(new PointerToStructReturnPostprocessor(), typeof(IntPtr))
+		public NativeReturnsStructPointerAttribute (bool releasePointerOnReturn = true)
+			: base(new PointerToStructReturnPostprocessor(releasePointerOnReturn), typeof(IntPtr))
 		{
 		}
 	}

@@ -126,15 +126,15 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 	public interface IDynamicProxyPointerTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "pointerAdd")]
-		[return: NativeReturnsStructPointer()]
-		int Add([NativeArgumentAsStructPointer()] int x, [NativeArgumentAsStructPointer()] int y);
+		[return: NativeReturnsStructPointer(releasePointerOnReturn: true)]
+		int Add([NativeArgumentAsStructPointer(releasePointerOnReturn: true)] int x, [NativeArgumentAsStructPointer(releasePointerOnReturn: true)] int y);
 	}
 
 	public interface IDynamicProxyStringTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "reverseString")]
-		[return: NativeReturnsStringPointer()]
-		string ReverseString([NativeArgumentAsStringPointer()] string input);
+		[return: NativeReturnsStringPointer(releasePointerOnReturn: true)]
+		string ReverseString([NativeArgumentAsStringPointer(releasePointerOnReturn: true)] string input);
 	}
 }
 
