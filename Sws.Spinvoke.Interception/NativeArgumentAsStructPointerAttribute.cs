@@ -7,8 +7,8 @@ namespace Sws.Spinvoke.Interception
 	[AttributeUsage(AttributeTargets.Parameter)]
 	public class NativeArgumentAsStructPointerAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
-		public NativeArgumentAsStructPointerAttribute ()
-			: base(new StructToPointerArgumentPreprocessor(), typeof(IntPtr))
+		public NativeArgumentAsStructPointerAttribute (bool releasePointerOnReturn = true)
+			: base(new StructToPointerArgumentPreprocessor(releasePointerOnReturn), typeof(IntPtr))
 		{
 		}
 	}

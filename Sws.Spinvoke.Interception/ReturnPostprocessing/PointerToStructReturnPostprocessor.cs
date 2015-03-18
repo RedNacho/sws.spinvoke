@@ -5,6 +5,13 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
 	public class PointerToStructReturnPostprocessor : IReturnPostprocessor
 	{
+		private readonly bool _releasePointerOnProcess;
+
+		public PointerToStructReturnPostprocessor(bool releasePointerOnProcess)
+		{
+			_releasePointerOnProcess = releasePointerOnProcess;
+		}
+
 		public bool CanProcess (object output, Type requiredReturnType)
 		{
 			return output is IntPtr && requiredReturnType.IsValueType;
@@ -17,7 +24,11 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 			var specificType = genericType.MakeGenericType (requiredReturnType);
 			var specificInstance = Activator.CreateInstance (specificType) as PtrToStructureBase;
 			var result = specificInstance.Invoke (ptr);
-			Marshal.FreeHGlobal (ptr);
+
+			if (_releasePointerOnProcess) {
+				Marshal.FreeHGlobal (ptr);
+			}
+
 			return result;
 		}
 

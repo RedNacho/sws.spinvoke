@@ -5,6 +5,13 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
 	public class PointerToStringReturnPostprocessor : IReturnPostprocessor
 	{
+		private readonly bool _releasePointerOnProcess;
+
+		public PointerToStringReturnPostprocessor(bool releasePointerOnProcess)
+		{
+			_releasePointerOnProcess = releasePointerOnProcess;
+		}
+
 		public bool CanProcess (object output, Type requiredReturnType)
 		{
 			return output is IntPtr && requiredReturnType.IsAssignableFrom(typeof(string));
@@ -20,7 +27,9 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 			var result = Marshal.PtrToStringAuto ((IntPtr)output);
 
-			Marshal.FreeHGlobal (ptr);
+			if (_releasePointerOnProcess) {
+				Marshal.FreeHGlobal (ptr);
+			}
 
 			return result;
 		}
