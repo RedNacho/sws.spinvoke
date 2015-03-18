@@ -39,7 +39,7 @@ namespace Sws.Spinvoke.Interception
 				.DefaultIfEmpty (new NativeDelegateDefinitionOverrideAttribute ())
 				.First ();
 
-			var mapNative = definitionOverrideAttribute.MapNative.GetValueOrDefault (true);
+			var mapNative = definitionOverrideAttribute.MapNativeNullable.GetValueOrDefault (true);
 
 			if (!mapNative) {
 				throw new NotSupportedException ();
@@ -55,7 +55,7 @@ namespace Sws.Spinvoke.Interception
 
 			var outputType = definitionOverrideAttribute.OutputType ?? invocation.Method.ReturnType;
 
-			var callingConvention = definitionOverrideAttribute.CallingConvention.GetValueOrDefault (_callingConvention);
+			var callingConvention = definitionOverrideAttribute.CallingConventionNullable.GetValueOrDefault (_callingConvention);
 
 			var argumentDefinitionOverrideAttributes = parameters.Zip(inputTypes, (parameter, inputType) =>
 				parameter.GetCustomAttributes()
