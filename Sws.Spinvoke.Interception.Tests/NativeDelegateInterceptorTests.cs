@@ -351,7 +351,7 @@ namespace Sws.Spinvoke.Interception.Tests
 			argumentPreprocessorMock.Setup (ap => ap.Process(It.IsAny<object>()))
 				.Returns((object input) => (int)input - 1);
 
-			argumentPreprocessorMock.Setup (ap => ap.DestroyProcessedInput(It.IsAny<object>()))
+			argumentPreprocessorMock.Setup (ap => ap.ReleaseProcessedInput(It.IsAny<object>()))
 				.Callback(() => { });
 
 			return argumentPreprocessorMock.Object;

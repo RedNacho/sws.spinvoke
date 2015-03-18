@@ -22,7 +22,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForIntPtrAndRequiredValueType()
 		{
-			var subject = new PointerToStructReturnPostprocessor (false);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
 
 			var output = new IntPtr (0);
 
@@ -34,7 +34,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonIntPtr()
 		{
-			var subject = new PointerToStructReturnPostprocessor (false);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
 
 			const int Output = 75;
 
@@ -46,7 +46,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForRequiredReferenceType()
 		{
-			var subject = new PointerToStructReturnPostprocessor (false);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
 
 			var output = new IntPtr (0);
 
@@ -58,7 +58,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void PreallocatedPointerIsMarshaledBackToStruct()
 		{
-			var subject = new PointerToStructReturnPostprocessor (false);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
 
 			var ptr = Marshal.AllocHGlobal (Marshal.SizeOf<TestStruct>());
 

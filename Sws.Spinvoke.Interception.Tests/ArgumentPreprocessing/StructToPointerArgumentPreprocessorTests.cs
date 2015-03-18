@@ -22,7 +22,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForValueType()
 		{
-			var subject = new StructToPointerArgumentPreprocessor (false);
+			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
 
 			var canProcessStruct = subject.CanProcess (new TestStruct ());
 
@@ -32,7 +32,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForReferenceType()
 		{
-			var subject = new StructToPointerArgumentPreprocessor (false);
+			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
 
 			var canProcessObj = subject.CanProcess (new object ());
 
@@ -42,7 +42,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void StructureCanBeMarshaledBackFromPointer()
 		{
-			var subject = new StructToPointerArgumentPreprocessor (false);
+			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
 
 			var testData = new TestStruct () {
 				x = 3, y = 4, z = 5

@@ -54,6 +54,7 @@
     <Compile Include="NativeArgumentAsStringPointerAttribute.cs" />
     <Compile Include="NativeReturnsStringPointerAttribute.cs" />
     <Compile Include="InterceptionAllocatedMemoryManager.cs" />
+    <Compile Include="PointerManagementMode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
