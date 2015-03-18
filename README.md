@@ -30,7 +30,7 @@ I've been trying to write that gizmo.  At the moment it's very much at the PoC s
 
 2. Use Sws.Spinvoke.Ninject.Extensions.
 
-3. Call SpinvokeNinjectExtensionsConfiguration.Configure with a native library loader for your OS (I've only included a Linux implementation but a Windows one is extremely easy - Google LoadLibrary Kernel32).  I'm leaving this up to the client for now, as I can't think of every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.
+3. Call SpinvokeNinjectExtensionsConfiguration.Configure with a native library loader for your OS (I've only included a Linux implementation but a Windows one is extremely easy - Google LoadLibrary Kernel32) and a proxy generator.  I'm leaving the native library loader up to the client for now, as I can't think of every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.  You can also use your own proxy generator, although I'd recommend using the supplied Castle DynamicProxy implementation unless you have a good reason not to: Sws.Spinvoke.Interception.DynamicProxy.ProxyGenerator.
 
 4. Call Bind<T>().ToNative(libraryName) to bind interface T to a native library which implements the required functions.
 
@@ -73,7 +73,9 @@ Wiring:
 ```
 #!c#
 
-SpinvokeNinjectExtensionsConfiguration.Configure(new LinuxNativeLibraryLoader());
+SpinvokeNinjectExtensionsConfiguration.Configure(
+    new LinuxNativeLibraryLoader(),
+    new ProxyGenerator(new Castle.DynamicProxy.ProxyGenerator()));
 
 var kernel = new StandardKernel();
 kernel.Bind<INativeCalculator>().ToNative("libNativeCalculator.so");
