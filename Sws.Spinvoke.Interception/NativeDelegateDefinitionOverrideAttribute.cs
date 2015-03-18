@@ -6,7 +6,15 @@ namespace Sws.Spinvoke.Interception
 	[AttributeUsage(AttributeTargets.Method)]
 	public class NativeDelegateDefinitionOverrideAttribute : Attribute
 	{
-		public bool? MapNative { get; set; }
+		private bool? _mapNative;
+
+		private CallingConvention? _callingConvention;
+
+		public bool MapNative
+		{
+			get { return _mapNative.Value; }
+			set { _mapNative = value; }
+		}
 
 		public string LibraryName { get; set; }
 
@@ -16,7 +24,19 @@ namespace Sws.Spinvoke.Interception
 
 		public Type OutputType { get; set; }
 
-		public CallingConvention? CallingConvention { get; set; }
+		public CallingConvention CallingConvention
+		{
+			get { return _callingConvention.Value; }
+			set { _callingConvention = value; }
+		}
+
+		internal bool? MapNativeNullable {
+			get { return _mapNative; }
+		}
+
+		internal CallingConvention? CallingConventionNullable {
+			get { return _callingConvention; }
+		}
 	}
 }
 
