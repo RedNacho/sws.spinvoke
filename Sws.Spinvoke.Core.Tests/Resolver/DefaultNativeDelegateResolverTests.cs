@@ -193,6 +193,53 @@ namespace Sws.Spinvoke.Core.Tests
 		}
 
 		[Test ()]
+		public void ReturnsDelegateWithExplicitTypeIfSpecifiedInNativeDelegateDefinition()
+		{
+			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
+
+			var libPtr = new IntPtr (12345);
+			var funcPtr = new IntPtr (67890);
+
+			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
+				.Returns (libPtr);
+
+			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (libPtr, "Function1"))
+				.Returns (funcPtr);
+
+			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
+
+			delegateTypeProviderMock.Setup (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature> ()));
+
+			var delegateSignature = new DelegateSignature (new Type[] { typeof(int) }, typeof(void), CallingConvention.Cdecl);
+
+			var nativeDelegateProviderMock = new Mock<INativeDelegateProvider> ();
+
+			nativeDelegateProviderMock.Setup (ndp => ndp.GetDelegate (typeof(TestDelegate), funcPtr))
+				.Returns (new TestDelegate(() => { }));
+
+			var resolver = new DefaultNativeDelegateResolver (nativeLibraryLoaderMock.Object, delegateTypeProviderMock.Object, nativeDelegateProviderMock.Object);
+
+			var function1 = resolver.Resolve(new NativeDelegateDefinition("Test.so", "Function1", delegateSignature, typeof(TestDelegate)));
+
+			Assert.IsNotNull (function1);
+
+			Assert.IsInstanceOf<TestDelegate> (function1);
+
+			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
+
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (libPtr, "Function1"), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<IntPtr>(), It.IsAny<string>()), Times.Once);
+
+			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature>()), Times.Never);
+
+			nativeDelegateProviderMock.Verify (ndp => ndp.GetDelegate (typeof(TestDelegate), funcPtr), Times.Once);
+			nativeDelegateProviderMock.Verify (ndp => ndp.GetDelegate (It.IsAny<Type>(), It.IsAny<IntPtr>()), Times.Once);
+
+			resolver.Dispose ();
+		}
+
+		[Test ()]
 		public void ReturnsSameDelegateWithoutCallingAnythingIfAlreadyCreated()
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();

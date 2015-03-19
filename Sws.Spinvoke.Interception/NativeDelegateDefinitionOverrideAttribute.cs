@@ -24,6 +24,8 @@ namespace Sws.Spinvoke.Interception
 
 		public Type OutputType { get; set; }
 
+		public Type ExplicitDelegateType { get; set; }
+
 		public CallingConvention CallingConvention
 		{
 			get { return _callingConvention.Value; }

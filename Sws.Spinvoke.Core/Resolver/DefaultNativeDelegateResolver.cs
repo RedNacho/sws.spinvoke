@@ -56,7 +56,11 @@ namespace Sws.Spinvoke.Core.Resolver
 
 				var functionPointer = _nativeLibraryLoader.GetFunctionPointer (libHandle, nativeDelegateDefinition.FunctionName);
 
-				var delegateType = _delegateTypeProvider.GetDelegateType (nativeDelegateDefinition.DelegateSignature);
+				var delegateType = nativeDelegateDefinition.ExplicitDelegateType;
+
+				if (delegateType == null) {
+					delegateType = _delegateTypeProvider.GetDelegateType (nativeDelegateDefinition.DelegateSignature);
+				}
 
 				var delegateInstance = _nativeDelegateProvider.GetDelegate (delegateType, functionPointer);
 
@@ -142,6 +146,7 @@ namespace Sws.Spinvoke.Core.Resolver
 				.AddComponent (libHandle)
 				.AddComponent (nativeDelegateDefinition.FunctionName)
 				.AddComponent (nativeDelegateDefinition.DelegateSignature.GetCacheKey ())
+				.AddComponent (nativeDelegateDefinition.ExplicitDelegateType)
 				.Build();
 		}
 

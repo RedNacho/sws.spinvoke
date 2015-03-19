@@ -57,6 +57,8 @@ namespace Sws.Spinvoke.Interception
 
 			var callingConvention = definitionOverrideAttribute.CallingConventionNullable.GetValueOrDefault (_callingConvention);
 
+			var explicitDelegateType = definitionOverrideAttribute.ExplicitDelegateType;
+
 			var argumentDefinitionOverrideAttributes = parameters.Zip(inputTypes, (parameter, inputType) =>
 				parameter.GetCustomAttributes()
 					.Select(attribute => attribute as NativeArgumentDefinitionOverrideAttribute)
@@ -91,7 +93,7 @@ namespace Sws.Spinvoke.Interception
 			
 				var delegateSignature = new DelegateSignature (inputTypes, outputType, callingConvention);
 
-				var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature));
+				var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature, explicitDelegateType));
 
 				var returnPostprocessor = returnDefinitionOverrideAttribute.ReturnPostprocessor;
 

@@ -7,8 +7,9 @@ namespace Sws.Spinvoke.Core
 		private readonly string _fileName;
 		private readonly string _functionName;
 		private readonly DelegateSignature _delegateSignature;
+		private readonly Type _explicitDelegateType;
 
-		public NativeDelegateDefinition(string fileName, string functionName, DelegateSignature delegateSignature)
+		public NativeDelegateDefinition(string fileName, string functionName, DelegateSignature delegateSignature, Type explicitDelegateType = null)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
@@ -22,6 +23,7 @@ namespace Sws.Spinvoke.Core
 			_fileName = fileName;
 			_functionName = functionName;
 			_delegateSignature = delegateSignature;
+			_explicitDelegateType = explicitDelegateType;
 		}
 
 		public string FunctionName { get { return _functionName; } }
@@ -29,6 +31,8 @@ namespace Sws.Spinvoke.Core
 		public DelegateSignature DelegateSignature { get { return _delegateSignature; } }
 
 		public string FileName { get { return _fileName; } }
+
+		public Type ExplicitDelegateType { get { return _explicitDelegateType; } }
 	}
 }
 

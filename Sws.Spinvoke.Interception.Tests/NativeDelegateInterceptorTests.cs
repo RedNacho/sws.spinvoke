@@ -83,6 +83,58 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
+		public void InterceptorCreatesModifiedDelegateAndInvokesItIfExplicitDelegateTypeSet ()
+		{
+			const int X = 2;
+			const int Y = 3;
+			const int XPlusY = 5;
+
+			List<Tuple<int, int>> addCalls = new List<Tuple<int, int>> ();
+
+			_nativeDelegateResolverMock.ResetCalls ();
+
+			_nativeDelegateResolverMock.Setup (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()))
+				.Returns (() => new AddDelegate((x, y) => {
+					addCalls.Add (Tuple.Create (x, y));
+					return x + y;
+				}));
+
+			var invocationMock = new Mock<IInvocation> ();
+
+			invocationMock.SetupGet (i => i.Arguments).Returns (new object[] { X, Y });
+			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithExplicitDelegateType).GetMethod ("Add"));
+			invocationMock.SetupProperty (i => i.ReturnValue);
+
+			_subject.Intercept (invocationMock.Object);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.FileName == LibraryName)), Times.Once);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.FunctionName == "Add")), Times.Once);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention)), Times.Once);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(int), typeof(int) }))), Times.Once);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.DelegateSignature.OutputType == typeof(int))), Times.Once);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.ExplicitDelegateType == typeof(AddDelegate))), Times.Once);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Once);
+
+			Assert.AreEqual (1, addCalls.Count);
+
+			Assert.AreEqual (Tuple.Create (X, Y), addCalls.Single ());
+
+			Assert.AreEqual (XPlusY, invocationMock.Object.ReturnValue);
+		}
+
+		[Test ()]
 		public void InterceptorCreatesModifiedDelegateAndInvokesItIfTypesAndCallingConventionOverridden ()
 		{
 			const int X = 2;
@@ -308,6 +360,12 @@ namespace Sws.Spinvoke.Interception.Tests
 	public interface IInterceptorTestWithDifferentLibraryAndFunctionNames
 	{
 		[NativeDelegateDefinitionOverride(LibraryName = "ExplicitTestLibrary", FunctionName = "ExplicitTestFunction")]
+		int Add(int x, int y);
+	}
+
+	public interface IInterceptorTestWithExplicitDelegateType
+	{
+		[NativeDelegateDefinitionOverride(ExplicitDelegateType = typeof(AddDelegate))]
 		int Add(int x, int y);
 	}
 

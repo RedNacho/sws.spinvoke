@@ -117,6 +117,27 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		}
 
 		[Test ()]
+		public void NativeCodeInvokedThroughExplicitDelegateTypeIfSpecified()
+		{
+			const int X = 2;
+			const int Y = 3;
+
+			const int Expected = 5;
+
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<IDynamicProxyExplicitDelegateTypeTest>().ToNative("libSws.Spinvoke.IntegrationTests.so", CallingConvention.ThisCall);
+
+			var proxy = kernel.Get<IDynamicProxyExplicitDelegateTypeTest>();
+
+			var actual = proxy.Add (X, Y);
+
+			Assert.AreEqual (Expected, actual);
+		}
+
+		[Test ()]
 		public void InterceptionAllocatedMemoryManagerAllowsManualDeallocationOfGeneratedPointers()
 		{
 			const string TestString = "I am a test.";
@@ -170,6 +191,14 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		[NativeDelegateDefinitionOverride(FunctionName = "reverseString")]
 		[return: NativeReturnsStringPointer(pointerManagementMode: PointerManagementMode.DestroyAfterCall)]
 		string ReverseString([NativeArgumentAsStringPointer(pointerManagementMode: PointerManagementMode.DestroyOnInterceptionGarbageCollect)] string input);
+	}
+
+	public delegate int ExplicitAddDelegate(int x, int y);
+
+	public interface IDynamicProxyExplicitDelegateTypeTest
+	{
+		[NativeDelegateDefinitionOverride(FunctionName = "add", ExplicitDelegateType = typeof(ExplicitAddDelegate))]
+		decimal Add(int x, int y);
 	}
 }
 
