@@ -120,6 +120,8 @@ I have added a number of attributes which allow the native delegate signature ge
 
 After experimenting with various techniques, I have come to the conclusion that it's impossible for me to fulfill all of your automatically generated delegate needs all of the time.  I have therefore added an attribute option which allows you to explicitly specify the delegate you want to use, in scenarios where the generated one won't cut it, or you just think it's easier.
 
+I don't really like it, but it's still a damn sight quicker than doing all the boilerplate stuff I talked about at the beginning of the readme.
+
 Usage:
 
 ```
