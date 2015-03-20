@@ -58,22 +58,12 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			_subject.Intercept (invocationMock.Object);
 
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FileName == LibraryName)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FunctionName == "Add")), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(int), typeof(int) }))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.OutputType == typeof(int))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Once);
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				LibraryName,
+				"Add",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention),
+				null
+			), Times.Once());
 
 			Assert.AreEqual (1, addCalls.Count);
 
@@ -121,22 +111,12 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			_subject.Intercept (invocationMock2.Object);
 
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FileName == LibraryName)), Times.Exactly(2));
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FunctionName == "Add")), Times.Exactly(2));
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention)), Times.Exactly(2));
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(int), typeof(int) }))), Times.Exactly(2));
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.OutputType == typeof(int))), Times.Exactly(2));
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Exactly(2));
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				LibraryName,
+				"Add",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention),
+				null
+			), Times.Exactly(2));
 
 			Assert.AreEqual (2, addCalls.Count);
 
@@ -172,25 +152,12 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			_subject.Intercept (invocationMock.Object);
 
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FileName == LibraryName)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FunctionName == "Add")), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(int), typeof(int) }))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.OutputType == typeof(int))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.ExplicitDelegateType == typeof(AddDelegate))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Once);
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				LibraryName,
+				"Add",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention),
+				typeof(AddDelegate)
+			), Times.Once());
 
 			Assert.AreEqual (1, addCalls.Count);
 
@@ -224,22 +191,12 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			_subject.Intercept (invocationMock.Object);
 
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FileName == LibraryName)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FunctionName == "Add")), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention.FastCall)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(decimal), typeof(decimal) }))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.OutputType == typeof(decimal))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Once);
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				LibraryName,
+				"Add",
+				new DelegateSignature(new [] { typeof(decimal), typeof(decimal) }, typeof(decimal), CallingConvention.FastCall),
+				null
+			), Times.Once());
 
 			Assert.AreEqual (1, addCalls.Count);
 
@@ -273,22 +230,12 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			_subject.Intercept (invocationMock.Object);
 
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FileName == "ExplicitTestLibrary")), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FunctionName == "ExplicitTestFunction")), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(int), typeof(int) }))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.OutputType == typeof(int))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Once);
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				"ExplicitTestLibrary",
+				"ExplicitTestFunction",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention),
+				null
+			), Times.Once());
 
 			Assert.AreEqual (1, addCalls.Count);
 
@@ -322,22 +269,12 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			_subject.Intercept (invocationMock.Object);
 
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FileName == LibraryName)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FunctionName == "Add")), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(int), typeof(int) }))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.OutputType == typeof(int))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Once);
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				LibraryName,
+				"Add",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention),
+				null
+			), Times.Once());
 
 			Assert.AreEqual (1, addCalls.Count);
 
@@ -371,28 +308,41 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			_subject.Intercept (invocationMock.Object);
 
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FileName == LibraryName)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.FunctionName == "Add")), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.CallingConvention == CallingConvention)), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(new [] { typeof(int), typeof(int) }))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
-				ndd => ndd.DelegateSignature.OutputType == typeof(int))), Times.Once);
-
-			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), Times.Once);
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				LibraryName,
+				"Add",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention),
+				null
+			), Times.Once());
 
 			Assert.AreEqual (1, addCalls.Count);
 
 			Assert.AreEqual (Tuple.Create (X - 1, Y - 1), addCalls.Single ());
 
 			Assert.AreEqual (XPlusY, invocationMock.Object.ReturnValue);
+		}
+
+		private void VerifyNativeDelegateResolverResolveCall(NativeDelegateDefinition nativeDelegateDefinition, Times times)
+		{
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.FileName == nativeDelegateDefinition.FileName)), times);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.FunctionName == nativeDelegateDefinition.FunctionName)), times);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.DelegateSignature.CallingConvention == nativeDelegateDefinition.DelegateSignature.CallingConvention)), times);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.DelegateSignature.InputTypes.SequenceEqual(nativeDelegateDefinition.DelegateSignature.InputTypes))), times);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.DelegateSignature.OutputType == nativeDelegateDefinition.DelegateSignature.OutputType)), times);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
+				ndd => ndd.ExplicitDelegateType == nativeDelegateDefinition.ExplicitDelegateType)), times);
+
+			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()), times);
 		}
 	}
 
