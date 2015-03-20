@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using Sws.Spinvoke.Core;
 
 using Sws.Spinvoke.Interception.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.ReturnPostprocessing;
 
 namespace Sws.Spinvoke.Interception
 {
@@ -17,6 +18,10 @@ namespace Sws.Spinvoke.Interception
 		private readonly CallingConvention _callingConvention;
 
 		private readonly INativeDelegateResolver _nativeDelegateResolver;
+
+		private readonly object _nativeDelegateMappingsSyncObject = new object ();
+
+		private readonly IDictionary<MethodInfo, NativeDelegateMapping> _nativeDelegateMappings = new Dictionary<MethodInfo, NativeDelegateMapping>();
 
 		public NativeDelegateInterceptor(string libraryName, CallingConvention callingConvention, INativeDelegateResolver nativeDelegateResolver)
 		{
@@ -33,60 +38,28 @@ namespace Sws.Spinvoke.Interception
 
 		public void Intercept (IInvocation invocation)
 		{
-			var definitionOverrideAttribute = invocation.Method.GetCustomAttributes (false)
-				.Select (attribute => attribute as NativeDelegateDefinitionOverrideAttribute)
-				.Where (attribute => attribute != null)
-				.DefaultIfEmpty (new NativeDelegateDefinitionOverrideAttribute ())
-				.First ();
+			var nativeDelegateMapping = GetNativeDelegateMapping (invocation.Method);
 
-			var mapNative = definitionOverrideAttribute.MapNativeNullable.GetValueOrDefault (true);
-
-			if (!mapNative) {
-				throw new NotSupportedException ();
-			}
-
-			var libraryName = definitionOverrideAttribute.LibraryName ?? _libraryName;
-
-			var functionName = definitionOverrideAttribute.FunctionName ?? invocation.Method.Name;
-
-			var parameters = invocation.Method.GetParameters ();
-
-			var inputTypes = definitionOverrideAttribute.InputTypes ?? parameters.Select (parameter => parameter.ParameterType).ToArray ();
-
-			var outputType = definitionOverrideAttribute.OutputType ?? invocation.Method.ReturnType;
-
-			var callingConvention = definitionOverrideAttribute.CallingConventionNullable.GetValueOrDefault (_callingConvention);
-
-			var explicitDelegateType = definitionOverrideAttribute.ExplicitDelegateType;
-
-			var argumentDefinitionOverrideAttributes = parameters.Zip(inputTypes, (parameter, inputType) =>
-				parameter.GetCustomAttributes()
-					.Select(attribute => attribute as NativeArgumentDefinitionOverrideAttribute)
-					.Where(attribute => attribute != null)
-					.DefaultIfEmpty(new DefaultNativeArgumentDefinitionOverrideAttribute(inputType))
-					.First());
-
-			var returnDefinitionOverrideAttribute = invocation.Method.ReturnParameter.GetCustomAttributes()
-				.Select(attribute => attribute as NativeReturnDefinitionOverrideAttribute)
-				.Where(attribute => attribute != null)
-				.DefaultIfEmpty(new DefaultNativeReturnDefinitionOverrideAttribute(outputType))
-				.First();
-
-			inputTypes = inputTypes.Zip (argumentDefinitionOverrideAttributes, (inputType, attribute) => attribute.InputType ?? inputType).ToArray();
-
-			outputType = returnDefinitionOverrideAttribute.OutputType ?? outputType;
+			var libraryName = nativeDelegateMapping.LibraryName;
+			var functionName = nativeDelegateMapping.FunctionName;
+			var callingConvention = nativeDelegateMapping.CallingConvention;
+			var argumentPreprocessors = nativeDelegateMapping.ArgumentPreprocessors;
+			var inputTypes = nativeDelegateMapping.InputTypes;
+			var outputType = nativeDelegateMapping.OutputType;
+			var explicitDelegateType = nativeDelegateMapping.ExplicitDelegateType;
+			var returnPostprocessor = nativeDelegateMapping.ReturnPostprocessor;
 
 			var processedArguments = new List<ProcessedArgument> ();
 
 			List<Exception> exceptionList = new List<Exception> ();
 
 			try {
-				foreach (var pair in invocation.Arguments.Zip(argumentDefinitionOverrideAttributes, (arg, attribute) => new { Arg = arg, Attribute = attribute })) {
-					if (!pair.Attribute.ArgumentPreprocessor.CanProcess(pair.Arg)) {
+				foreach (var pair in invocation.Arguments.Zip(argumentPreprocessors, (arg, preprocessor) => new { Arg = arg, Preprocessor = preprocessor })) {
+					if (!pair.Preprocessor.CanProcess(pair.Arg)) {
 						throw new InvalidOperationException("ArgumentPreprocessor cannot process input.");
 					}
 
-					processedArguments.Add(new ProcessedArgument { Arg = pair.Attribute.ArgumentPreprocessor.Process(pair.Arg), Source = pair.Attribute.ArgumentPreprocessor });
+					processedArguments.Add(new ProcessedArgument { Arg = pair.Preprocessor.Process(pair.Arg), Source = pair.Preprocessor });
 				}
 
 				inputTypes = inputTypes.Zip (processedArguments, (inputType, arg) => inputType.IsInstanceOfType (arg.Arg) ? inputType : arg.Arg.GetType ()).ToArray();
@@ -94,8 +67,6 @@ namespace Sws.Spinvoke.Interception
 				var delegateSignature = new DelegateSignature (inputTypes, outputType, callingConvention);
 
 				var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature, explicitDelegateType));
-
-				var returnPostprocessor = returnDefinitionOverrideAttribute.ReturnPostprocessor;
 
 				var returnedValue = delegateInstance.DynamicInvoke (processedArguments.Select(arg => arg.Arg).ToArray());
 
@@ -129,6 +100,94 @@ namespace Sws.Spinvoke.Interception
 			} else {
 				throw new AggregateException (exceptionList);
 			}
+		}
+
+		private NativeDelegateMapping GetNativeDelegateMapping(MethodInfo methodInfo)
+		{
+			lock (_nativeDelegateMappingsSyncObject) {
+				NativeDelegateMapping nativeDelegateMapping;
+
+				if (_nativeDelegateMappings.TryGetValue (methodInfo, out nativeDelegateMapping)) {
+					return nativeDelegateMapping;
+				}
+
+				var definitionOverrideAttribute = methodInfo.GetCustomAttributes (false)
+					.Select (attribute => attribute as NativeDelegateDefinitionOverrideAttribute)
+					.Where (attribute => attribute != null)
+					.DefaultIfEmpty (new NativeDelegateDefinitionOverrideAttribute ())
+					.First ();
+
+				var mapNative = definitionOverrideAttribute.MapNativeNullable.GetValueOrDefault (true);
+
+				if (!mapNative) {
+					throw new NotSupportedException ();
+				}
+
+				var libraryName = definitionOverrideAttribute.LibraryName ?? _libraryName;
+
+				var functionName = definitionOverrideAttribute.FunctionName ?? methodInfo.Name;
+
+				var parameters = methodInfo.GetParameters ();
+
+				var inputTypes = definitionOverrideAttribute.InputTypes ?? parameters.Select (parameter => parameter.ParameterType).ToArray ();
+
+				var outputType = definitionOverrideAttribute.OutputType ?? methodInfo.ReturnType;
+
+				var callingConvention = definitionOverrideAttribute.CallingConventionNullable.GetValueOrDefault (_callingConvention);
+
+				var explicitDelegateType = definitionOverrideAttribute.ExplicitDelegateType;
+
+				var argumentDefinitionOverrideAttributes = parameters.Zip(inputTypes, (parameter, inputType) =>
+					parameter.GetCustomAttributes()
+					.Select(attribute => attribute as NativeArgumentDefinitionOverrideAttribute)
+					.Where(attribute => attribute != null)
+					.DefaultIfEmpty(new DefaultNativeArgumentDefinitionOverrideAttribute(inputType))
+					.First()).ToArray();
+
+				var returnDefinitionOverrideAttribute = methodInfo.ReturnParameter.GetCustomAttributes()
+					.Select(attribute => attribute as NativeReturnDefinitionOverrideAttribute)
+					.Where(attribute => attribute != null)
+					.DefaultIfEmpty(new DefaultNativeReturnDefinitionOverrideAttribute(outputType))
+					.First();
+
+				inputTypes = inputTypes.Zip (argumentDefinitionOverrideAttributes, (inputType, attribute) => attribute.InputType ?? inputType).ToArray();
+
+				outputType = returnDefinitionOverrideAttribute.OutputType ?? outputType;
+
+				nativeDelegateMapping = new NativeDelegateMapping {
+					LibraryName = libraryName,
+					FunctionName = functionName,
+					CallingConvention = callingConvention,
+					ArgumentPreprocessors = argumentDefinitionOverrideAttributes.Select(adoa => adoa.ArgumentPreprocessor).ToArray(),
+					ExplicitDelegateType = explicitDelegateType,
+					InputTypes = inputTypes,
+					OutputType = outputType,
+					ReturnPostprocessor = returnDefinitionOverrideAttribute.ReturnPostprocessor
+				};
+
+				_nativeDelegateMappings [methodInfo] = nativeDelegateMapping;
+
+				return nativeDelegateMapping;
+			}
+		}
+
+		private class NativeDelegateMapping
+		{
+			public string LibraryName { get; set; }
+
+			public string FunctionName { get; set;}
+
+			public CallingConvention CallingConvention { get; set; }
+
+			public IArgumentPreprocessor[] ArgumentPreprocessors { get; set; }
+
+			public Type ExplicitDelegateType { get; set; }
+
+			public Type[] InputTypes { get; set; }
+
+			public Type OutputType { get; set; }
+
+			public IReturnPostprocessor ReturnPostprocessor { get; set;}
 		}
 
 		private class ProcessedArgument
