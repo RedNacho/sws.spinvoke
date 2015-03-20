@@ -139,3 +139,58 @@ public interface INativeCalculator
     int multiply(int x, int y);
 }
 ```
+
+**HOW IT WORKS!**
+
+In case you're incredibly nerdy, or you've tried to use my code and found some irritating problem, I will now attempt a coherent explanation of how Sws.Spinvoke works.
+
+Firstly, the projects:
+
+* **Sws.Spinvoke.Core**: This is the core library.  In a nutshell, it includes everything you need to generate a delegate for native code, given a NativeDelegateDefinition.  The standard entry point to this functionality is INativeDelegateResolver, which has Resolve and Release methods.  (Release can be used to allow a library to be unloaded when you're done with it.)
+
+* **Sws.Spinvoke.Interception**: This is the interception library.  Everything here revolves around NativeDelegateInterceptor, which has the job of intercepting method calls, getting together a NativeDelegateDefinition, calling INativeDelegateResolver.Resolve, and then invoking the delegate.
+
+* **Sws.Spinvoke.Interception.DynamicProxy**: This library ties the interception library up to Castle DynamicProxy (you can provide your own implementation if you wish).  There are two modes of operation: use SpinvokeInterceptor to adapt a Spinvoke interceptor to a Castle DynamicProxy interceptor (which you can then use in conjunction with DynamicProxy to create native code proxies), or use ProxyGenerator to adapt a Castle DynamicProxy proxy generator to the Spinvoke interception library's IProxyGenerator interface (which you can use to configure the Ninject library).
+
+* **Sws.Spinvoke.Linux**: The Core code is dependent upon an INativeLibraryLoader interface, the implementation of which is platform-specific.  This is a Linux implementation of the interface.
+
+* **Sws.Spinvoke.Ninject**: This is Ninject-specific code.  The primary entry point is the ToNative extension method, which binds an interface to a native code wrapper using the other libraries.  It uses SpinvokeModule, which you can also use directly if you want to use Sws.Spinvoke.Core without interception.
+
+Secondly, here's a complete guide to what happens when you use the Ninject ToNative extension method:
+
+Configuration:
+
+1. When you call SpinvokeNinjectExtensionsConfiguration.Configure, the INativeLibraryLoader and IProxyGenerator implementations you supply (e.g. from Sws.Spinvoke.Linux and Sws.Spinvoke.Interception.DynamicProxy) are used to set up the ToNative method.  The native library loader is used in conjunction with the SpinvokeModule to wire up an INativeDelegateResolver.
+2. SpinvokeModule specifies that the INativeDelegateResolver is an instance of Sws.Spinvoke.Core.DefaultNativeDelegateResolver.
+3. DefaultNativeDelegateResolver has three arguments: An INativeLibraryLoader (which you supplied), an IDelegateTypeProvider, and an INativeDelegateProvider.  These objects can be used together to get a function pointer for a native function, create a delegate type, and combine the two to instantiate a delegate.
+4. IDelegateTypeProvider has the job of getting a delegate type given a delegate signature.  It is bound to a DynamicAssemblyDelegateTypeProvider instance, through a wrapper which handles caching.  DynamicAssemblyDelegateTypeProvider uses Reflection.Emit to generate a type based on the delegate signature, which is stored in a dynamically generated assembly.
+5. INativeDelegateProvider has the job of instantiating a native delegate given a delegate type and a function pointer.  It is bound to FrameworkNativeDelegateTypeProvider, which just uses Marshal.GetDelegateForFunctionPointer.
+
+Binding to a native proxy:
+
+1. When you call the ToNative method with a library name (and optionally a calling convention), a custom Ninject Provider is created which will handle the proxy resolution.
+
+Resolving the native proxy:
+
+1. When you call Get and the provider's CreateInstance method is called, an Sws.Spinvoke.Interception.NativeDelegateInterceptor is instantiated.
+2. The NativeDelegateInterceptor has three arguments: The library name (passed through from the ToNative call), the calling convention (Winapi by default, or as specific in the ToNative call), and the INativeDelegateResolver which was resolved earlier.
+3. The CreateInstance method then passes the interceptor to the proxy generator, which gives you a proxy into the native code.
+
+Using the native proxy:
+
+1. When you call one of the methods of the generated proxy, the invocation is intercepted by NativeDelegateInterceptor.
+2. NativeDelegateInterceptor uses the MethodInfo to create a native delegate mapping.  This factors in the attributes discussed above, and ultimately provides all of the information required to pass through to native code.
+3. Each argument in the invocation is processed through its associated IArgumentPreprocessor (which may have come from an attribute, or it might just be the default, which uses System.Convert to change the type of the argument to the required input type, if it is different).  If the IArgumentPreprocessor cannot handle the argument (for example, if you're using StringToPointer and the argument is not a string), an InvalidOperationException is thrown.
+4. The input types from the native delegate mapping are then checked against the processed arguments.  If the processed arguments do not match the input types, the input type is changed to match the argument (in the hope that .NET can deal with it lower down).
+5. The information is then put together into a NativeDelegateDefinition, as expected by the Core library.
+6. The native delegate resolver (i.e. DefaultNativeDelegateResolver) is then called to resolve a delegate based on the NativeDelegateDefinition.
+7. DefaultNativeDelegateResolver loads the library (if it is not already loaded) using its INativeLibraryLoader.
+8. It then checks to see if it already has a delegate cached for this definition.  If so, this delegate is returned.
+9. If there is no delegate cached, it gets a function pointer for the function using INativeLibraryLoader.
+10. If no ExplicitDelegateType has been specified, it then goes to the delegate type provider (DynamicAssemblyDelegateTypeProvider, via a cache to improve performance) to build a type for the delegate.
+11. As discussed earlier, DynamicAssemblyDelegateTypeProvider assembles a type for the delegate using Reflection.Emit.
+12. The delegate type and the function pointer are then passed to the native delegate provider (FrameworkNativeDelegateProvider) to create a delegate instance for the native code.  As discussed earlier, this just uses Marshal.GetDelegateForFunctionPointer.
+13. The delegate instance is cached and returned to the interceptor.
+14. The interceptor then invokes the delegate with the processed arguments.  If all goes well, this calls into the native code, which does its stuff and returns a value of the expected output type.
+15. The return value is then put through an IReturnPostprocessor (which may have come from an attribute, or it might just be the default, which uses ChangeType) to convert the value to the return value required by the method.  This is then set as the return value for the intercepted call.
+16. Once the process is complete, each IArgumentPreprocessor has its ReleaseProcessedInput method called with the processed argument, in case it wants to do any tidying up.
