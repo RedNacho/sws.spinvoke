@@ -128,6 +128,54 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
+		public void InterceptorProceedsWithInvocationOnTargetIfMapNativeFalse()
+		{
+			const int X = 2;
+			const int Y = 3;
+			const int XPlusY = 5;
+
+			List<Tuple<int, int>> addCalls = new List<Tuple<int, int>> ();
+
+			List<Tuple<int, int>> fallbackAddCalls = new List<Tuple<int, int>> ();
+
+			_nativeDelegateResolverMock.ResetCalls ();
+
+			_nativeDelegateResolverMock.Setup (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()))
+				.Returns (() => new AddDelegate((x, y) => {
+					addCalls.Add (Tuple.Create (x, y));
+					return x + y;
+				}));
+
+			var invocationMock = new Mock<IInvocation> ();
+
+			invocationMock.SetupGet (i => i.Arguments).Returns (new object[] { X, Y });
+			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithUnmappedMethod).GetMethod ("Add"));
+			invocationMock.SetupProperty (i => i.ReturnValue);
+			invocationMock.Setup (i => i.Proceed())
+				.Callback(() => { 
+					fallbackAddCalls.Add(Tuple.Create(X, Y));
+					invocationMock.Object.ReturnValue = XPlusY;
+				});
+
+			_subject.Intercept (invocationMock.Object);
+
+			VerifyNativeDelegateResolverResolveCall (new NativeDelegateDefinition (
+				LibraryName,
+				"Add",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention),
+				null
+			), Times.Never());
+
+			Assert.AreEqual (0, addCalls.Count);
+
+			Assert.AreEqual (1, fallbackAddCalls.Count);
+
+			Assert.AreEqual (Tuple.Create (X, Y), fallbackAddCalls.Single ());
+
+			Assert.AreEqual (XPlusY, invocationMock.Object.ReturnValue);
+		}
+
+		[Test ()]
 		public void InterceptorCreatesModifiedDelegateAndInvokesItIfExplicitDelegateTypeSet ()
 		{
 			const int X = 2;
@@ -381,6 +429,12 @@ namespace Sws.Spinvoke.Interception.Tests
 	public interface IInterceptorTestWithExplicitDelegateType
 	{
 		[NativeDelegateDefinitionOverride(ExplicitDelegateType = typeof(AddDelegate))]
+		int Add(int x, int y);
+	}
+
+	public interface IInterceptorTestWithUnmappedMethod
+	{
+		[NativeDelegateDefinitionOverride(MapNative = false)]
 		int Add(int x, int y);
 	}
 

@@ -8,6 +8,7 @@ namespace Sws.Spinvoke.Interception
 		object[] Arguments { get; }
 		MethodInfo Method { get; }
 		object ReturnValue { get; set; }
+		void Proceed();
 	}
 }
 

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -14,6 +15,8 @@ using CastleProxyGenerator = Castle.DynamicProxy.ProxyGenerator;
 
 using Ninject;
 using Ninject.Infrastructure;
+
+using Moq;
 
 namespace Sws.Spinvoke.IntegrationTests.Linux
 {
@@ -128,7 +131,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
-			kernel.Bind<IDynamicProxyExplicitDelegateTypeTest>().ToNative("libSws.Spinvoke.IntegrationTests.so", CallingConvention.ThisCall);
+			kernel.Bind<IDynamicProxyExplicitDelegateTypeTest>().ToNative("libSws.Spinvoke.IntegrationTests.so").WithCallingConvention(CallingConvention.FastCall);
 
 			var proxy = kernel.Get<IDynamicProxyExplicitDelegateTypeTest>();
 
@@ -163,6 +166,87 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 			Assert.AreEqual (expected, actual);
 			Assert.IsTrue (hasGarbageCollectibleMemoryBefore);
 			Assert.IsFalse (hasGarbageCollectibleMemoryAfter);
+		}
+
+		[Test ()]
+		[ExpectedException (typeof(NotImplementedException))]
+		public void ProxyThrowsNotImplementedIfNoFallbackAndUnmapped()
+		{
+			const int TestInput = -5;
+
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<IDynamicProxyUnmappedTest> ().ToNative ("libSws.Spinvoke.IntegrationTests.so");
+
+			var proxy = kernel.Get<IDynamicProxyUnmappedTest>();
+
+			proxy.Abs (TestInput);
+		}
+
+		[Test ()]
+		[ExpectedException (typeof(InvalidOperationException))]
+		public void WithNonNativeFallbackThrowsInvalidOperationExceptionIfProxyGeneratorDoesNotSupportTargets()
+		{
+			const int TestInput = -5;
+
+			var kernel = new StandardKernel();
+
+			var noTargetProxyGeneratorMock = new Mock<IProxyGenerator> ();
+
+			var nonNativeFallbackMock = new Mock<IDynamicProxyUnmappedTest> ();
+
+			noTargetProxyGeneratorMock.Setup (pg => pg.AllowsTarget).Returns (false);
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), noTargetProxyGeneratorMock.Object);
+
+			kernel.Bind<IDynamicProxyUnmappedTest> ().ToNative ("libSws.Spinvoke.IntegrationTests.so")
+				.WithNonNativeFallback (context => nonNativeFallbackMock.Object);
+		}
+
+		[Test ()]
+		public void ProxyPassesThroughToFallbackIfUnmapped()
+		{
+			const int TestInput = -5;
+
+			const int Expected = 5;
+
+			var kernel = new StandardKernel();
+
+			var nonNativeFallbackContexts = new List<INonNativeFallbackContext> ();
+
+			var nonNativeFallbackMock = new Mock<IDynamicProxyUnmappedTest> ();
+
+			nonNativeFallbackMock.Setup (nnf => nnf.Abs (It.IsAny<int> ()))
+				.Returns ((int value) => Math.Abs (value));
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<IDynamicProxyUnmappedTest>().ToNative("libSws.Spinvoke.IntegrationTests.so")
+				.WithCallingConvention(CallingConvention.FastCall)
+				.WithNonNativeFallback(nnfc => {
+					nonNativeFallbackContexts.Add(nnfc);
+					return nonNativeFallbackMock.Object;
+				});
+
+			var proxy = kernel.Get<IDynamicProxyUnmappedTest>();
+
+			var actual = proxy.Abs (TestInput);
+
+			nonNativeFallbackMock.Verify (nnf => nnf.Abs (TestInput), Times.Once);
+			nonNativeFallbackMock.Verify (nnf => nnf.Abs (It.IsAny<int> ()), Times.Once);
+
+			Assert.AreEqual (1, nonNativeFallbackContexts.Count ());
+
+			var nonNativeFallbackContext = nonNativeFallbackContexts.Single();
+
+			Assert.AreEqual("libSws.Spinvoke.IntegrationTests.so", nonNativeFallbackContext.LibraryName);
+			Assert.AreEqual(CallingConvention.FastCall, nonNativeFallbackContext.CallingConvention);
+			Assert.IsNotNull(nonNativeFallbackContext.NativeDelegateResolver);
+			Assert.IsNotNull(nonNativeFallbackContext.NinjectContext);
+
+			Assert.AreEqual (Expected, actual);
 		}
 	}
 
@@ -199,6 +283,12 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "add", ExplicitDelegateType = typeof(ExplicitAddDelegate))]
 		decimal Add(int x, int y);
+	}
+
+	public interface IDynamicProxyUnmappedTest
+	{
+		[NativeDelegateDefinitionOverride(MapNative = false)]
+		int Abs(int value);
 	}
 }
 
