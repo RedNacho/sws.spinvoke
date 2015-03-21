@@ -40,6 +40,12 @@ namespace Sws.Spinvoke.Interception
 		{
 			var nativeDelegateMapping = GetNativeDelegateMapping (invocation.Method);
 
+			var mapNative = nativeDelegateMapping.MapNative;
+
+			if (!mapNative) {
+				throw new NotSupportedException ();
+			}
+
 			var libraryName = nativeDelegateMapping.LibraryName;
 			var functionName = nativeDelegateMapping.FunctionName;
 			var callingConvention = nativeDelegateMapping.CallingConvention;
@@ -119,10 +125,6 @@ namespace Sws.Spinvoke.Interception
 
 				var mapNative = definitionOverrideAttribute.MapNativeNullable.GetValueOrDefault (true);
 
-				if (!mapNative) {
-					throw new NotSupportedException ();
-				}
-
 				var libraryName = definitionOverrideAttribute.LibraryName ?? _libraryName;
 
 				var functionName = definitionOverrideAttribute.FunctionName ?? methodInfo.Name;
@@ -155,6 +157,7 @@ namespace Sws.Spinvoke.Interception
 				outputType = returnDefinitionOverrideAttribute.OutputType ?? outputType;
 
 				nativeDelegateMapping = new NativeDelegateMapping {
+					MapNative = mapNative,
 					LibraryName = libraryName,
 					FunctionName = functionName,
 					CallingConvention = callingConvention,
@@ -173,6 +176,8 @@ namespace Sws.Spinvoke.Interception
 
 		private class NativeDelegateMapping
 		{
+			public bool MapNative { get; set;}
+
 			public string LibraryName { get; set; }
 
 			public string FunctionName { get; set;}
