@@ -140,6 +140,34 @@ public interface INativeCalculator
 }
 ```
 
+**EXTENSION POINTS**
+
+Most of the usage and examples I've given assume a certain default usage, which you don't have to follow.  I'll now explain what you have to change if this doesn't fit your requirements.
+
+1. You don't have to use Linux.  I've only provided the LinuxNativeLibraryLoader because I can't test anything else at the moment.  However, my day job is .NET development, and would you believe I use Windows.  A Windows implementation of INativeLibraryLoader is extremely simple - the interface methods map fairly directly onto Kernel32 functions.
+
+2. You don't have to use Ninject.  You'll have to assemble an Sws.Spinvoke.Core.INativeDelegateResolver implementation yourself, using the SpinvokeModule as a guide, but it should be fairly easy to follow.  Here's a poor man's DI example based on the current code:
+
+```
+#!c#
+
+var resolver = new DefaultNativeDelegateResolver (
+	               new LinuxNativeLibraryLoader (),
+	               new CachedDelegateTypeProvider (
+		               new DynamicAssemblyDelegateTypeProvider ("MyTempAssembly"),
+		               new SimpleCompositeKeyedCache<Type> ()),
+	               new FrameworkNativeDelegateProvider ());
+
+```
+
+You can then assemble an NativeDelegateInterceptor, wrap it in an Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor (which adapts it to Castle DynamicProxy), and then use this with Castle DynamicProxy as you would any other interceptor.
+
+3. You don't have to use Castle DynamicProxy.  Instead of using Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor, you can write an interceptor adapter for whatever proxy generator you want to use instead, and use that directly.  If you still want to use the Ninject extension methods, you can provide your own implementation of Sws.Spinvoke.Interception.IProxyGenerator, and pass this to the SpinvokeNinjectExtensionsConfiguration.Configure method.
+
+4. You don't have to use interception at all.  I have deliberately left the interception code out of the Core.  The Core itself is primarily a native delegate generation and management library.  Provided you can create your own NativeDelegateDefinitions, you can use INativeDelegateResolver directly.
+
+5. As you can see from the poor man's DI code sample above, you can swap out INativeDelegateResolver or any component of it.  As an example, you might be able to think of a better way of generating the delegate types than me.  In that case, substitute whatever you want in place of the DynamicAssemblyDelegateTypeProvider.  This won't presently work with the Ninject extension methods (which assume that you want all of the wiring done for you), but you can still instantiate your own proxies directly, as described above.
+
 **HOW IT WORKS!**
 
 In case you're incredibly nerdy, or you've tried to use my code and found some irritating problem, I will now attempt a coherent explanation of how Sws.Spinvoke works.
