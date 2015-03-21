@@ -43,7 +43,8 @@ namespace Sws.Spinvoke.Interception
 			var mapNative = nativeDelegateMapping.MapNative;
 
 			if (!mapNative) {
-				throw new NotSupportedException ();
+				invocation.Proceed ();
+				return;
 			}
 
 			var libraryName = nativeDelegateMapping.LibraryName;

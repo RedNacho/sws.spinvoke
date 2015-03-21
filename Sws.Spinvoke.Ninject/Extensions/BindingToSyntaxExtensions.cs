@@ -31,7 +31,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 			}
 		}
 
-		public static IBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, string libraryName, CallingConvention? callingConvention = null)
+		public static ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, string libraryName)
 			where T : class
 		{
 			Type serviceType;
@@ -44,17 +44,32 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				serviceType = bindingBuilder.Binding.Service;
 			}
 
-			return ToNative (bindingToSyntax, serviceType, libraryName, callingConvention);
+			return ToNative (bindingToSyntax, serviceType, libraryName);
 		}
 
-		public static IBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, Type serviceType, string libraryName, CallingConvention? callingConvention = null)
+		public static ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> ToNative<T>(this IBindingToSyntax<T> bindingToSyntax, Type serviceType, string libraryName)
 			where T : class
 		{
 			VerifyConfigured ();
 
-			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (serviceType, libraryName, callingConvention.GetValueOrDefault(CallingConvention.Winapi));
+			CallingConvention? callingConvention = null;
 
-			return new BindingConfigurationBuilder<T> (bindingToSyntax.BindingConfiguration, serviceType.Format(), bindingToSyntax.Kernel);
+			Func<INonNativeFallbackContext, T> nonNativeFallbackSource = context => null;
+
+			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (serviceType, libraryName, () => callingConvention.GetValueOrDefault(CallingConvention.Winapi), nonNativeFallbackSource);
+
+			return new SpinvokeBindingConfigurationBuilder<T> (
+				bindingToSyntax.BindingConfiguration,
+				serviceType.Format(),
+				bindingToSyntax.Kernel,
+				cc => callingConvention = cc,
+				nnfs => {
+					if (!ProxyGenerator.AllowsTarget) {
+						throw new InvalidOperationException("In order to allow a non native fallback to be supplied, the proxy generator must support a target.");
+					}
+
+					nonNativeFallbackSource = nnfs;
+				});
 		}
 
 		private class NativeProxyProvider<T> : Provider<T>
@@ -64,9 +79,11 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 			private readonly string _libraryName;
 
-			private readonly CallingConvention _callingConvention;
+			private readonly Func<CallingConvention> _callingConventionSource;
 
-			public NativeProxyProvider(Type serviceType, string libraryName, CallingConvention callingConvention)
+			private readonly Func<INonNativeFallbackContext, T> _nonNativeFallbackSource;
+
+			public NativeProxyProvider(Type serviceType, string libraryName, Func<CallingConvention> callingConventionSource, Func<INonNativeFallbackContext, T> nonNativeFallbackSource)
 			{
 				if (serviceType == null)
 					throw new ArgumentNullException("serviceType");
@@ -74,19 +91,66 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				if (libraryName == null)
 					throw new ArgumentNullException("libraryName");
 
+				if (callingConventionSource == null)
+					throw new ArgumentNullException("callingConventionSource");
+
+				if (nonNativeFallbackSource == null)
+					throw new ArgumentNullException("nonNativeFallbackSource");
+
 				_serviceType = serviceType;
 				_libraryName = libraryName;
-				_callingConvention = callingConvention;
+				_callingConventionSource = callingConventionSource;
+				_nonNativeFallbackSource = nonNativeFallbackSource;
 			}
 
 			protected override T CreateInstance (IContext context)
 			{
-				var nativeDelegateInterceptor = new NativeDelegateInterceptor (_libraryName, _callingConvention, NativeDelegateResolver);
+				var callingConvention = _callingConventionSource ();
 
-				if (_serviceType == typeof(T)) {
-					return ProxyGenerator.CreateProxy<T> (nativeDelegateInterceptor);
+				var nativeDelegateInterceptor = new NativeDelegateInterceptor (_libraryName, callingConvention, NativeDelegateResolver);
+
+				var nonNativeFallback = _nonNativeFallbackSource (new NonNativeFallbackContext () {
+					NinjectContext = context,
+					LibraryName = _libraryName,
+					CallingConvention = callingConvention,
+					NativeDelegateResolver = NativeDelegateResolver
+				});
+
+				if (nonNativeFallback == null) {
+					if (_serviceType == typeof(T)) {
+						return ProxyGenerator.CreateProxy<T> (nativeDelegateInterceptor);
+					} else {
+						return ProxyGenerator.CreateProxy (_serviceType, nativeDelegateInterceptor) as T;
+					}
 				} else {
-					return ProxyGenerator.CreateProxy (_serviceType, nativeDelegateInterceptor) as T;
+					if (_serviceType == typeof(T)) {
+						return ProxyGenerator.CreateProxyWithTarget<T> (nativeDelegateInterceptor, nonNativeFallback);
+					} else {
+						return ProxyGenerator.CreateProxyWithTarget (_serviceType, nativeDelegateInterceptor, nonNativeFallback) as T;
+					}
+				}
+			}
+
+			private class NonNativeFallbackContext : INonNativeFallbackContext
+			{
+				public IContext NinjectContext {
+					get;
+					set;
+				}
+
+				public string LibraryName {
+					get;
+					set;
+				}
+
+				public CallingConvention CallingConvention {
+					get;
+					set;
+				}
+
+				public INativeDelegateResolver NativeDelegateResolver {
+					get;
+					set;
 				}
 			}
 		}

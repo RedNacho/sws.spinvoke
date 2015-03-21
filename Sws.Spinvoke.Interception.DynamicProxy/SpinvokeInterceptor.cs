@@ -60,6 +60,10 @@ namespace Sws.Spinvoke.Interception.DynamicProxy
 					_invocation.ReturnValue = value;
 				}
 			}
+
+			public void Proceed() {
+				_invocation.Proceed ();
+			}
 		}
 	}
 }
