@@ -21,6 +21,11 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				nativeDelegateResolver = kernel.Get<INativeDelegateResolver> ();
 			}
 
+			Configure (nativeDelegateResolver, proxyGenerator);
+		}
+
+		public static void Configure (INativeDelegateResolver nativeDelegateResolver, IProxyGenerator proxyGenerator)
+		{
 			BindingToSyntaxExtensions.Configure (nativeDelegateResolver, proxyGenerator);
 		}
 	}
