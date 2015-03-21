@@ -166,7 +166,7 @@ You can then assemble an NativeDelegateInterceptor, wrap it in an Sws.Spinvoke.I
 
 * **You don't have to use interception at all.**  I have deliberately left the interception code out of the Core.  The Core itself is purely a native delegate generation and management library.  Provided you can create your own NativeDelegateDefinitions, you can use INativeDelegateResolver directly.
 
-* As you can see from the poor man's DI code sample above, you can swap out INativeDelegateResolver or any component of it.  As an example, you might be able to think of a better way of generating the delegate types than me.  In that case, substitute whatever you want in place of the DynamicAssemblyDelegateTypeProvider.  This won't presently work with the Ninject extension methods (which assume that you want all of the wiring done for you), but you can still instantiate your own proxies directly, as described above.
+* **You don't have to use the default implementation for Sws.Spinvoke.Core.INativeDelegateResolver**.  As you can see from the poor man's DI code sample above, you can swap out INativeDelegateResolver or any component of it.  As an example, you might be able to think of a better way of generating the delegate types than me.  In that case, substitute whatever you want in place of the DynamicAssemblyDelegateTypeProvider.  You can then use this directly, or in conjunction with the Interception library, or with the Ninject extensions (I have added a Configure overload which lets you specify the INativeDelegateResolver implementation directly).
 
 **HOW IT WORKS!**
 
