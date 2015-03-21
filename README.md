@@ -196,12 +196,13 @@ Configuration:
 
 Binding to a native proxy:
 
-1. When you call the ToNative method with a library name (and optionally a calling convention), a custom Ninject Provider is created which will handle the proxy resolution.
+1. When you call the ToNative method with a library name, a custom Ninject Provider is created which will handle the proxy resolution.
+2. When you call WithCallingConvention, the calling convention you supply is registered with the Provider.  Otherwise, the default is Winapi.
 
 Resolving the native proxy:
 
 1. When you call Get and the provider's CreateInstance method is called, an Sws.Spinvoke.Interception.NativeDelegateInterceptor is instantiated.
-2. The NativeDelegateInterceptor has three arguments: The library name (passed through from the ToNative call), the calling convention (Winapi by default, or as specific in the ToNative call), and the INativeDelegateResolver which was resolved earlier.
+2. The NativeDelegateInterceptor has three arguments: The library name (passed through from the ToNative call), the calling convention, and the INativeDelegateResolver which was resolved earlier.
 3. The CreateInstance method then passes the interceptor to the proxy generator, which gives you a proxy into the native code.
 
 Using the native proxy:
