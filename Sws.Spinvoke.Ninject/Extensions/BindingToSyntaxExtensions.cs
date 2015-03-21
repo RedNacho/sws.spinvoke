@@ -56,7 +56,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 			Func<INonNativeFallbackContext, T> nonNativeFallbackSource = context => null;
 
-			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (serviceType, libraryName, () => callingConvention.GetValueOrDefault(CallingConvention.Winapi), nonNativeFallbackSource);
+			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (serviceType, libraryName, () => callingConvention.GetValueOrDefault(CallingConvention.Winapi), nonNativeFallbackContext => nonNativeFallbackSource(nonNativeFallbackContext));
 
 			return new SpinvokeBindingConfigurationBuilder<T> (
 				bindingToSyntax.BindingConfiguration,

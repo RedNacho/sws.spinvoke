@@ -189,8 +189,6 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		[ExpectedException (typeof(InvalidOperationException))]
 		public void WithNonNativeFallbackThrowsInvalidOperationExceptionIfProxyGeneratorDoesNotSupportTargets()
 		{
-			const int TestInput = -5;
-
 			var kernel = new StandardKernel();
 
 			var noTargetProxyGeneratorMock = new Mock<IProxyGenerator> ();
