@@ -14,6 +14,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithNonNativeFallback(Func<NonNativeFallbackContext, T> nonNativeFallbackSource);
 		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithNativeDelegateResolver(INativeDelegateResolver nativeDelegateResolver);
 		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithNativeDelegateInterceptorFactory(INativeDelegateInterceptorFactory nativeDelegateInterceptorFactory);
+		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithProxyGenerator(IProxyGenerator proxyGenerator);
 	}
 }
 
