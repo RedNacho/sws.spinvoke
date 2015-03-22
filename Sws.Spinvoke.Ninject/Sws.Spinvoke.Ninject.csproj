@@ -43,7 +43,8 @@
     <Compile Include="Extensions\SpinvokeNinjectExtensionsConfiguration.cs" />
     <Compile Include="Extensions\SpinvokeBindingConfigurationBuilder.cs" />
     <Compile Include="Extensions\ISpinvokeBindingWhenInNamedWithOrOnSyntax.cs" />
-    <Compile Include="Extensions\INonNativeFallbackContext.cs" />
+    <Compile Include="Extensions\NonNativeFallbackContext.cs" />
+    <Compile Include="SpinvokeInterceptionModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

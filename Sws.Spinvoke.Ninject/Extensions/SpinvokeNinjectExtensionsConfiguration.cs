@@ -11,7 +11,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 {
 	public static class SpinvokeNinjectExtensionsConfiguration
 	{
-		public static void Configure (INativeLibraryLoader nativeLibraryLoader, IProxyGenerator proxyGenerator)
+		public static void Configure (INativeLibraryLoader nativeLibraryLoader, IProxyGenerator proxyGenerator, INativeDelegateInterceptorFactory nativeDelegateInterceptorFactory = null)
 		{
 			INativeDelegateResolver nativeDelegateResolver;
 
@@ -21,12 +21,19 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				nativeDelegateResolver = kernel.Get<INativeDelegateResolver> ();
 			}
 
-			Configure (nativeDelegateResolver, proxyGenerator);
+			Configure (nativeDelegateResolver, proxyGenerator, nativeDelegateInterceptorFactory);
 		}
 
-		public static void Configure (INativeDelegateResolver nativeDelegateResolver, IProxyGenerator proxyGenerator)
+		public static void Configure (INativeDelegateResolver nativeDelegateResolver, IProxyGenerator proxyGenerator, INativeDelegateInterceptorFactory nativeDelegateInterceptorFactory = null)
 		{
-			BindingToSyntaxExtensions.Configure (nativeDelegateResolver, proxyGenerator);
+			if (nativeDelegateInterceptorFactory == null) {
+				using (var kernel = new StandardKernel ()) {
+					kernel.Load (new SpinvokeInterceptionModule (StandardScopeCallbacks.Transient));
+					nativeDelegateInterceptorFactory = kernel.Get<INativeDelegateInterceptorFactory> ();
+				}
+			}
+
+			BindingToSyntaxExtensions.Configure (nativeDelegateResolver, proxyGenerator, nativeDelegateInterceptorFactory);
 		}
 	}
 }

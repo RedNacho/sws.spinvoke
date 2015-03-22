@@ -74,7 +74,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			SpinvokeNinjectExtensionsConfiguration.Configure (new LinuxNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
-			kernel.Bind<IDynamicProxyTest>().ToNative("libSws.Spinvoke.IntegrationTests.so");
+			kernel.Bind<IDynamicProxyTest> ().ToNative ("libSws.Spinvoke.IntegrationTests.so");
 
 			var proxy = kernel.Get<IDynamicProxyTest>();
 
@@ -212,7 +212,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			var kernel = new StandardKernel();
 
-			var nonNativeFallbackContexts = new List<INonNativeFallbackContext> ();
+			var nonNativeFallbackContexts = new List<NonNativeFallbackContext> ();
 
 			var nonNativeFallbackMock = new Mock<IDynamicProxyUnmappedTest> ();
 
@@ -239,9 +239,9 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			var nonNativeFallbackContext = nonNativeFallbackContexts.Single();
 
-			Assert.AreEqual("libSws.Spinvoke.IntegrationTests.so", nonNativeFallbackContext.LibraryName);
-			Assert.AreEqual(CallingConvention.FastCall, nonNativeFallbackContext.CallingConvention);
-			Assert.IsNotNull(nonNativeFallbackContext.NativeDelegateResolver);
+			Assert.AreEqual("libSws.Spinvoke.IntegrationTests.so", nonNativeFallbackContext.NativeDelegateInterceptorContext.LibraryName);
+			Assert.AreEqual(CallingConvention.FastCall, nonNativeFallbackContext.NativeDelegateInterceptorContext.CallingConvention);
+			Assert.IsNotNull(nonNativeFallbackContext.NativeDelegateInterceptorContext.NativeDelegateResolver);
 			Assert.IsNotNull(nonNativeFallbackContext.NinjectContext);
 
 			Assert.AreEqual (Expected, actual);
