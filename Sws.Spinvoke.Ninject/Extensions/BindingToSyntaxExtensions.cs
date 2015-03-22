@@ -14,22 +14,22 @@ namespace Sws.Spinvoke.Ninject.Extensions
 {
 	public static class BindingToSyntaxExtensions
 	{
-		private static INativeDelegateResolver NativeDelegateResolver;
+		private static INativeDelegateResolver DefaultNativeDelegateResolver;
 
-		private static IProxyGenerator ProxyGenerator;
+		private static IProxyGenerator DefaultProxyGenerator;
 
-		private static INativeDelegateInterceptorFactory NativeDelegateInterceptorFactory;
+		private static INativeDelegateInterceptorFactory DefaultNativeDelegateInterceptorFactory;
 
 		internal static void Configure(INativeDelegateResolver nativeDelegateResolver, IProxyGenerator proxyGenerator, INativeDelegateInterceptorFactory nativeDelegateInterceptorFactory)
 		{
-			NativeDelegateResolver = nativeDelegateResolver;
-			ProxyGenerator = proxyGenerator;
-			NativeDelegateInterceptorFactory = nativeDelegateInterceptorFactory;
+			DefaultNativeDelegateResolver = nativeDelegateResolver;
+			DefaultProxyGenerator = proxyGenerator;
+			DefaultNativeDelegateInterceptorFactory = nativeDelegateInterceptorFactory;
 		}
 
 		private static void VerifyConfigured()
 		{
-			if (NativeDelegateResolver == null || ProxyGenerator == null) {
+			if (DefaultNativeDelegateResolver == null || DefaultProxyGenerator == null) {
 				throw new InvalidOperationException ("You must call SpinvokeNinjectExtensionsConfiguration.Configure first");
 			}
 		}
@@ -59,9 +59,11 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 			Func<NonNativeFallbackContext, T> nonNativeFallbackSource = context => null;
 
-			var nativeDelegateResolver = NativeDelegateResolver;
+			var nativeDelegateResolver = DefaultNativeDelegateResolver;
 
-			var nativeDelegateInterceptorFactory = NativeDelegateInterceptorFactory;
+			var nativeDelegateInterceptorFactory = DefaultNativeDelegateInterceptorFactory;
+
+			var proxyGenerator = DefaultProxyGenerator;
 
 			Func<NativeProxyProviderConfiguration<T>> nativeProxyProviderConfigurationSource = () =>
 				new NativeProxyProviderConfiguration<T> () {
@@ -70,6 +72,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 					NativeDelegateInterceptorFactory = nativeDelegateInterceptorFactory,
 					NativeDelegateResolver = nativeDelegateResolver,
 					NonNativeFallbackSource = nonNativeFallbackSource,
+					ProxyGenerator = proxyGenerator,
 					ServiceType = serviceType
 				};
 
@@ -81,14 +84,15 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				bindingToSyntax.Kernel,
 				cc => callingConvention = cc,
 				nnfs => {
-					if (!ProxyGenerator.AllowsTarget) {
+					if (!DefaultProxyGenerator.AllowsTarget) {
 						throw new InvalidOperationException("In order to allow a non native fallback to be supplied, the proxy generator must support a target.");
 					}
 
 					nonNativeFallbackSource = nnfs;
 				},
 				ndr => nativeDelegateResolver = ndr,
-				ndif => nativeDelegateInterceptorFactory = ndif
+				ndif => nativeDelegateInterceptorFactory = ndif,
+				pg => proxyGenerator = pg
 			);
 		}
 
@@ -117,15 +121,15 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 				if (nonNativeFallback == null) {
 					if (configuration.ServiceType == typeof(T)) {
-						return ProxyGenerator.CreateProxy<T> (nativeDelegateInterceptor);
+						return configuration.ProxyGenerator.CreateProxy<T> (nativeDelegateInterceptor);
 					} else {
-						return ProxyGenerator.CreateProxy (configuration.ServiceType, nativeDelegateInterceptor) as T;
+						return configuration.ProxyGenerator.CreateProxy (configuration.ServiceType, nativeDelegateInterceptor) as T;
 					}
 				} else {
 					if (configuration.ServiceType == typeof(T)) {
-						return ProxyGenerator.CreateProxyWithTarget<T> (nativeDelegateInterceptor, nonNativeFallback);
+						return configuration.ProxyGenerator.CreateProxyWithTarget<T> (nativeDelegateInterceptor, nonNativeFallback);
 					} else {
-						return ProxyGenerator.CreateProxyWithTarget (configuration.ServiceType, nativeDelegateInterceptor, nonNativeFallback) as T;
+						return configuration.ProxyGenerator.CreateProxyWithTarget (configuration.ServiceType, nativeDelegateInterceptor, nonNativeFallback) as T;
 					}
 				}
 			}
@@ -144,6 +148,8 @@ namespace Sws.Spinvoke.Ninject.Extensions
 			public INativeDelegateResolver NativeDelegateResolver { get; set; }
 
 			public INativeDelegateInterceptorFactory NativeDelegateInterceptorFactory { get; set; }
+
+			public IProxyGenerator ProxyGenerator { get; set; }
 		}
 	}
 }

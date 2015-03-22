@@ -19,7 +19,9 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 		private readonly Action<INativeDelegateInterceptorFactory> _nativeDelegateInterceptorFactoryCallback;
 
-		public SpinvokeBindingConfigurationBuilder (IBindingConfiguration bindingConfiguration, string serviceNames, IKernel kernel, Action<CallingConvention> callingConventionCallback, Action<Func<NonNativeFallbackContext, T>> nonNativeFallbackSourceCallback, Action<INativeDelegateResolver> nativeDelegateResolverCallback, Action<INativeDelegateInterceptorFactory> nativeDelegateInterceptorFactoryCallback)
+		private readonly Action<IProxyGenerator> _proxyGeneratorCallback;
+
+		public SpinvokeBindingConfigurationBuilder (IBindingConfiguration bindingConfiguration, string serviceNames, IKernel kernel, Action<CallingConvention> callingConventionCallback, Action<Func<NonNativeFallbackContext, T>> nonNativeFallbackSourceCallback, Action<INativeDelegateResolver> nativeDelegateResolverCallback, Action<INativeDelegateInterceptorFactory> nativeDelegateInterceptorFactoryCallback, Action<IProxyGenerator> proxyGeneratorCallback)
 			: base(bindingConfiguration, serviceNames, kernel)
 		{
 			if (callingConventionCallback == null) {
@@ -38,10 +40,15 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				throw new ArgumentNullException ("nativeDelegateInterceptorFactoryCallback");
 			}
 
+			if (proxyGeneratorCallback == null) {
+				throw new ArgumentNullException ("proxyGeneratorCallback");
+			}
+
 			_callingConventionCallback = callingConventionCallback;
 			_nonNativeFallbackSourceCallback = nonNativeFallbackSourceCallback;
 			_nativeDelegateResolverCallback = nativeDelegateResolverCallback;
 			_nativeDelegateInterceptorFactoryCallback = nativeDelegateInterceptorFactoryCallback;
+			_proxyGeneratorCallback = proxyGeneratorCallback;
 		}
 
 		public ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithCallingConvention(CallingConvention callingConvention)
@@ -77,6 +84,16 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				throw new ArgumentNullException ("nativeDelegateInterceptorFactory");
 
 			_nativeDelegateInterceptorFactoryCallback (nativeDelegateInterceptorFactory);
+
+			return this;
+		}
+
+		public ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithProxyGenerator (IProxyGenerator proxyGenerator)
+		{
+			if (proxyGenerator == null)
+				throw new ArgumentNullException ("proxyGenerator");
+
+			_proxyGeneratorCallback (proxyGenerator);
 
 			return this;
 		}
