@@ -18,10 +18,13 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 		private static IProxyGenerator ProxyGenerator;
 
-		internal static void Configure(INativeDelegateResolver nativeDelegateResolver, IProxyGenerator proxyGenerator)
+		private static INativeDelegateInterceptorFactory NativeDelegateInterceptorFactory;
+
+		internal static void Configure(INativeDelegateResolver nativeDelegateResolver, IProxyGenerator proxyGenerator, INativeDelegateInterceptorFactory nativeDelegateInterceptorFactory)
 		{
 			NativeDelegateResolver = nativeDelegateResolver;
 			ProxyGenerator = proxyGenerator;
+			NativeDelegateInterceptorFactory = nativeDelegateInterceptorFactory;
 		}
 
 		private static void VerifyConfigured()
@@ -54,9 +57,23 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 			CallingConvention? callingConvention = null;
 
-			Func<INonNativeFallbackContext, T> nonNativeFallbackSource = context => null;
+			Func<NonNativeFallbackContext, T> nonNativeFallbackSource = context => null;
 
-			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (serviceType, libraryName, () => callingConvention.GetValueOrDefault(CallingConvention.Winapi), nonNativeFallbackContext => nonNativeFallbackSource(nonNativeFallbackContext));
+			var nativeDelegateResolver = NativeDelegateResolver;
+
+			var nativeDelegateInterceptorFactory = NativeDelegateInterceptorFactory;
+
+			Func<NativeProxyProviderConfiguration<T>> nativeProxyProviderConfigurationSource = () =>
+				new NativeProxyProviderConfiguration<T> () {
+					CallingConvention = callingConvention.GetValueOrDefault(CallingConvention.Winapi),
+					LibraryName = libraryName,
+					NativeDelegateInterceptorFactory = nativeDelegateInterceptorFactory,
+					NativeDelegateResolver = nativeDelegateResolver,
+					NonNativeFallbackSource = nonNativeFallbackSource,
+					ServiceType = serviceType
+				};
+
+			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (nativeProxyProviderConfigurationSource);
 
 			return new SpinvokeBindingConfigurationBuilder<T> (
 				bindingToSyntax.BindingConfiguration,
@@ -69,90 +86,64 @@ namespace Sws.Spinvoke.Ninject.Extensions
 					}
 
 					nonNativeFallbackSource = nnfs;
-				});
+				},
+				ndr => nativeDelegateResolver = ndr,
+				ndif => nativeDelegateInterceptorFactory = ndif
+			);
 		}
 
 		private class NativeProxyProvider<T> : Provider<T>
 			where T : class
 		{
-			private readonly Type _serviceType;
+			private readonly Func<NativeProxyProviderConfiguration<T>> _configurationSource;
 
-			private readonly string _libraryName;
-
-			private readonly Func<CallingConvention> _callingConventionSource;
-
-			private readonly Func<INonNativeFallbackContext, T> _nonNativeFallbackSource;
-
-			public NativeProxyProvider(Type serviceType, string libraryName, Func<CallingConvention> callingConventionSource, Func<INonNativeFallbackContext, T> nonNativeFallbackSource)
+			public NativeProxyProvider(Func<NativeProxyProviderConfiguration<T>> configurationSource)
 			{
-				if (serviceType == null)
-					throw new ArgumentNullException("serviceType");
+				if (configurationSource == null)
+					throw new ArgumentNullException("configurationSource");
 
-				if (libraryName == null)
-					throw new ArgumentNullException("libraryName");
-
-				if (callingConventionSource == null)
-					throw new ArgumentNullException("callingConventionSource");
-
-				if (nonNativeFallbackSource == null)
-					throw new ArgumentNullException("nonNativeFallbackSource");
-
-				_serviceType = serviceType;
-				_libraryName = libraryName;
-				_callingConventionSource = callingConventionSource;
-				_nonNativeFallbackSource = nonNativeFallbackSource;
+				_configurationSource = configurationSource;
 			}
 
 			protected override T CreateInstance (IContext context)
 			{
-				var callingConvention = _callingConventionSource ();
+				var configuration = _configurationSource ();
 
-				var nativeDelegateInterceptor = new NativeDelegateInterceptor (_libraryName, callingConvention, NativeDelegateResolver);
+				var nativeDelegateInterceptorContext = new NativeDelegateInterceptorContext (configuration.LibraryName, configuration.CallingConvention, configuration.NativeDelegateResolver);
 
-				var nonNativeFallback = _nonNativeFallbackSource (new NonNativeFallbackContext () {
-					NinjectContext = context,
-					LibraryName = _libraryName,
-					CallingConvention = callingConvention,
-					NativeDelegateResolver = NativeDelegateResolver
-				});
+				var nativeDelegateInterceptor = configuration.NativeDelegateInterceptorFactory.CreateInterceptor(nativeDelegateInterceptorContext);
+
+				var nonNativeFallback = configuration.NonNativeFallbackSource (new NonNativeFallbackContext(nativeDelegateInterceptorContext, context));
 
 				if (nonNativeFallback == null) {
-					if (_serviceType == typeof(T)) {
+					if (configuration.ServiceType == typeof(T)) {
 						return ProxyGenerator.CreateProxy<T> (nativeDelegateInterceptor);
 					} else {
-						return ProxyGenerator.CreateProxy (_serviceType, nativeDelegateInterceptor) as T;
+						return ProxyGenerator.CreateProxy (configuration.ServiceType, nativeDelegateInterceptor) as T;
 					}
 				} else {
-					if (_serviceType == typeof(T)) {
+					if (configuration.ServiceType == typeof(T)) {
 						return ProxyGenerator.CreateProxyWithTarget<T> (nativeDelegateInterceptor, nonNativeFallback);
 					} else {
-						return ProxyGenerator.CreateProxyWithTarget (_serviceType, nativeDelegateInterceptor, nonNativeFallback) as T;
+						return ProxyGenerator.CreateProxyWithTarget (configuration.ServiceType, nativeDelegateInterceptor, nonNativeFallback) as T;
 					}
 				}
 			}
+		}
 
-			private class NonNativeFallbackContext : INonNativeFallbackContext
-			{
-				public IContext NinjectContext {
-					get;
-					set;
-				}
+		private class NativeProxyProviderConfiguration<T>
+		{
+			public Type ServiceType { get; set; }
 
-				public string LibraryName {
-					get;
-					set;
-				}
+			public string LibraryName { get; set; }
 
-				public CallingConvention CallingConvention {
-					get;
-					set;
-				}
+			public Func<NonNativeFallbackContext, T> NonNativeFallbackSource { get; set; }
 
-				public INativeDelegateResolver NativeDelegateResolver {
-					get;
-					set;
-				}
-			}
+			public CallingConvention CallingConvention { get; set; }
+
+			public INativeDelegateResolver NativeDelegateResolver { get; set; }
+
+			public INativeDelegateInterceptorFactory NativeDelegateInterceptorFactory { get; set; }
 		}
 	}
 }
