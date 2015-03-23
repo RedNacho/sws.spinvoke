@@ -45,6 +45,8 @@
     <Compile Include="INativeDelegateResolver.cs" />
     <Compile Include="Resolver\DefaultNativeDelegateResolver.cs" />
     <Compile Include="CacheKey.cs" />
+    <Compile Include="Delegates\Generics\IGenericDelegateTypeConverter.cs" />
+    <Compile Include="Delegates\Generics\DefaultGenericDelegateTypeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Delegates\" />
@@ -52,12 +54,13 @@
     <Folder Include="Caching\" />
     <Folder Include="Native\" />
     <Folder Include="Resolver\" />
+    <Folder Include="Delegates\Generics\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>

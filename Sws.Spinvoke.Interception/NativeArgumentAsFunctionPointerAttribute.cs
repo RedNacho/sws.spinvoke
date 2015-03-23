@@ -6,8 +6,8 @@ namespace Sws.Spinvoke.Interception
 {
 	public class NativeArgumentAsFunctionPointerAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
-		public NativeArgumentAsFunctionPointerAttribute (PointerManagementMode pointerManagementMode)
-			: base(new DelegateToPointerArgumentPreprocessor(pointerManagementMode), typeof(Delegate))
+		public NativeArgumentAsFunctionPointerAttribute ()
+			: base(new DelegateToPointerArgumentPreprocessor(), typeof(Delegate))
 		{
 		}
 	}

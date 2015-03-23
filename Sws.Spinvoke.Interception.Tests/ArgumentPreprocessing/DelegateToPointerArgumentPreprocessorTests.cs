@@ -13,7 +13,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForDelegate()
 		{
-			var subject = new DelegateToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new DelegateToPointerArgumentPreprocessor ();
 
 			Func<int, int> addOne = i => i + 1;
 
@@ -25,7 +25,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonDelegate()
 		{
-			var subject = new DelegateToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new DelegateToPointerArgumentPreprocessor ();
 
 			var canProcess = subject.CanProcess (new object ());
 
@@ -35,7 +35,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void DelegateCanBeMarshaledBackFromPointer()
 		{
-			var subject = new DelegateToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new DelegateToPointerArgumentPreprocessor ();
 
 			Func<int, int> addOne = i => i + 1;
 

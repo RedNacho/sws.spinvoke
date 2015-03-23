@@ -4,6 +4,7 @@ using Sws.Nindapter.Extensions;
 
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Core.Delegates;
+using Sws.Spinvoke.Core.Delegates.Generics;
 using Sws.Spinvoke.Core.Resolver;
 using Sws.Spinvoke.Core.Caching;
 using Sws.Spinvoke.Core.Native;
@@ -42,11 +43,15 @@ namespace Sws.Spinvoke.Ninject
 
 			Bind<IDelegateTypeProvider> ()
 				.ThroughDecorator (dtp => Kernel.Get<CachedDelegateTypeProvider>(new ConstructorArgument("innerProvider", dtp)))
-				.To<DynamicAssemblyDelegateTypeProvider> ().WithConstructorArgument (_dynamicAssemblyName);
+				.To<DynamicAssemblyDelegateTypeProvider> ()
+				.InSingletonScope()
+				.WithConstructorArgument (_dynamicAssemblyName);
 
 			Bind<ICompositeKeyedCache<Type>>().To<SimpleCompositeKeyedCache<Type>>().WhenInjectedInto<CachedDelegateTypeProvider>();
 
 			Bind<INativeDelegateProvider>().To<FrameworkNativeDelegateProvider>();
+
+			Bind<IGenericDelegateTypeConverter> ().To<DefaultGenericDelegateTypeConverter> ();
 		}
 	}
 }

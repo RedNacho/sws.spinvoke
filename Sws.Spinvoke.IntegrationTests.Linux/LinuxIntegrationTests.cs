@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
+using Sws.Spinvoke.Core.Delegates.Generics;
 using Sws.Spinvoke.Linux;
 using Sws.Spinvoke.Interception;
 using Sws.Spinvoke.Interception.DynamicProxy;
@@ -246,6 +247,34 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 			Assert.IsNotNull(nonNativeFallbackContext.NinjectContext);
 
 			Assert.AreEqual (Expected, actual);
+		}
+
+		[Test ()]
+		public void GenericDelegateTypeConverterCreatesInteropSupportedType()
+		{
+			var kernel = new StandardKernel ();
+		
+			kernel.Bind<INativeLibraryLoader> ().To<LinuxNativeLibraryLoader> ().InSingletonScope ();
+
+			kernel.Load (new SpinvokeModule (StandardScopeCallbacks.Transient, "GenericDelegateTypeConverterTest"));
+
+			var genericDelegateTypeConverter = kernel.Get<IGenericDelegateTypeConverter> ();
+
+			var nativeDelegateProvider = kernel.Get<INativeDelegateProvider> ();
+
+			var nativeLibraryLoader = kernel.Get<INativeLibraryLoader> ();
+
+			var convertedDelegateType = genericDelegateTypeConverter.ConvertToInteropSupportedDelegateType (typeof(Func<int, int, int>), CallingConvention.Winapi);
+
+			var libPtr = nativeLibraryLoader.LoadLibrary ("libSws.Spinvoke.IntegrationTests.so");
+
+			var fnPtr = nativeLibraryLoader.GetFunctionPointer (libPtr, "add");
+
+			var nativeDelegate = nativeDelegateProvider.GetDelegate (convertedDelegateType, fnPtr);
+
+			var result = nativeDelegate.DynamicInvoke (new object[] { 3, 4 });
+
+			Assert.AreEqual (7, result);
 		}
 	}
 
