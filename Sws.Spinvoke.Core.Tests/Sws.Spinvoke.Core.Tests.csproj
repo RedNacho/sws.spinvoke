@@ -53,6 +53,7 @@
     <Compile Include="Caching\SimpleCompositeKeyedCacheTests.cs" />
     <Compile Include="Resolver\DefaultNativeDelegateResolverTests.cs" />
     <Compile Include="Delegates\Generics\DefaultGenericDelegateTypeConverterTests.cs" />
+    <Compile Include="Delegates\DefaultDelegateTypeToDelegateSignatureConverterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">

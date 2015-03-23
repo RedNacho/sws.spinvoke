@@ -6,23 +6,27 @@ namespace Sws.Spinvoke.Core.Delegates.Generics
 {
 	public class DefaultGenericDelegateTypeConverter : IGenericDelegateTypeConverter
 	{
+		private readonly IDelegateTypeToDelegateSignatureConverter _delegateTypeToDelegateSignatureConverter;
+
 		private readonly IDelegateTypeProvider _delegateTypeProvider;
 
-		public DefaultGenericDelegateTypeConverter (IDelegateTypeProvider delegateTypeProvider)
+		public DefaultGenericDelegateTypeConverter (IDelegateTypeToDelegateSignatureConverter delegateTypeToDelegateSignatureConverter, IDelegateTypeProvider delegateTypeProvider)
 		{
-			if (delegateTypeProvider == null)
-			{
+			if (delegateTypeToDelegateSignatureConverter == null) {
+				throw new ArgumentNullException ("delegateTypeToDelegateSignatureConverter");
+			}
+
+			if (delegateTypeProvider == null) {
 				throw new ArgumentNullException ("delegateTypeProvider");
 			}
 
+			_delegateTypeToDelegateSignatureConverter = delegateTypeToDelegateSignatureConverter;
 			_delegateTypeProvider = delegateTypeProvider;
 		}
 
 		public Type ConvertToInteropSupportedDelegateType (Type genericDelegateType, CallingConvention callingConvention)
 		{
-			var method = genericDelegateType.GetMethod ("Invoke");
-
-			var delegateSignature = new DelegateSignature (method.GetParameters ().Select (parameterInfo => parameterInfo.ParameterType).ToArray (), method.ReturnType, callingConvention);
+			var delegateSignature = _delegateTypeToDelegateSignatureConverter.CreateDelegateSignature(genericDelegateType, callingConvention);
 
 			return _delegateTypeProvider.GetDelegateType (delegateSignature);
 		}

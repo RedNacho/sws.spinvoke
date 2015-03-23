@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 using Moq;
 
+using Sws.Spinvoke.Core.Delegates;
 using Sws.Spinvoke.Core.Delegates.Generics;
 
 namespace Sws.Spinvoke.Core.Tests
@@ -16,43 +16,31 @@ namespace Sws.Spinvoke.Core.Tests
 		public delegate void TestDelegate();
 
 		[Test ()]
-		public void ConvertsActionToDelegate ()
+		public void ConvertsDelegateTypeToInteropSupportedDelegate ()
 		{
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider>();
+
+			var delegateTypeToDelegateSignatureConverterMock = new Mock<IDelegateTypeToDelegateSignatureConverter> ();
+
+			var delegateSignature = new DelegateSignature (new Type[0], typeof(object), CallingConvention.Cdecl);
+
+			delegateTypeToDelegateSignatureConverterMock.Setup (dt => dt.CreateDelegateSignature (It.IsAny<Type> (), It.IsAny<CallingConvention> ()))
+				.Returns (delegateSignature);
 
 			delegateTypeProviderMock.Setup(dtp => dtp.GetDelegateType(It.IsAny<DelegateSignature>()))
 				.Returns(typeof(TestDelegate));
 
-			var subject = new DefaultGenericDelegateTypeConverter(delegateTypeProviderMock.Object);
+			var subject = new DefaultGenericDelegateTypeConverter(delegateTypeToDelegateSignatureConverterMock.Object, delegateTypeProviderMock.Object);
 
 			var convertedDelegateType = subject.ConvertToInteropSupportedDelegateType (typeof(Action<int, string>), CallingConvention.Cdecl);
 
 			Assert.AreEqual (typeof(TestDelegate), convertedDelegateType);
 
-			delegateTypeProviderMock.Verify(dtp => dtp.GetDelegateType(It.Is<DelegateSignature>(ds => ds.CallingConvention == CallingConvention.Cdecl)), Times.Once);
-			delegateTypeProviderMock.Verify(dtp => dtp.GetDelegateType(It.Is<DelegateSignature>(ds => ds.InputTypes.SequenceEqual(new [] { typeof(int), typeof(string) }))), Times.Once);
-			delegateTypeProviderMock.Verify(dtp => dtp.GetDelegateType(It.Is<DelegateSignature>(ds => ds.OutputType == typeof(void))), Times.Once);
+			delegateTypeToDelegateSignatureConverterMock.Verify(dttds => dttds.CreateDelegateSignature(typeof(Action<int, string>), CallingConvention.Cdecl), Times.Once);
 
-			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature> ()), Times.Once);
-		}
+			delegateTypeToDelegateSignatureConverterMock.Verify(dttds => dttds.CreateDelegateSignature(It.IsAny<Type>(), It.IsAny<CallingConvention>()), Times.Once);
 
-		[Test ()]
-		public void ConvertsFuncToDelegate ()
-		{
-			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider>();
-
-			delegateTypeProviderMock.Setup(dtp => dtp.GetDelegateType(It.IsAny<DelegateSignature>()))
-				.Returns(typeof(TestDelegate));
-
-			var subject = new DefaultGenericDelegateTypeConverter(delegateTypeProviderMock.Object);
-
-			var convertedDelegateType = subject.ConvertToInteropSupportedDelegateType (typeof(Func<int, string, double>), CallingConvention.Cdecl);
-
-			Assert.AreEqual (typeof(TestDelegate), convertedDelegateType);
-
-			delegateTypeProviderMock.Verify(dtp => dtp.GetDelegateType(It.Is<DelegateSignature>(ds => ds.CallingConvention == CallingConvention.Cdecl)), Times.Once);
-			delegateTypeProviderMock.Verify(dtp => dtp.GetDelegateType(It.Is<DelegateSignature>(ds => ds.InputTypes.SequenceEqual(new [] { typeof(int), typeof(string) }))), Times.Once);
-			delegateTypeProviderMock.Verify(dtp => dtp.GetDelegateType(It.Is<DelegateSignature>(ds => ds.OutputType == typeof(double))), Times.Once);
+			delegateTypeProviderMock.Verify(dtp => dtp.GetDelegateType(delegateSignature), Times.Once);
 
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature> ()), Times.Once);
 		}

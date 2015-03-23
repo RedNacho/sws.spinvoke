@@ -51,6 +51,8 @@ namespace Sws.Spinvoke.Ninject
 
 			Bind<INativeDelegateProvider>().To<FrameworkNativeDelegateProvider>();
 
+			Bind<IDelegateTypeToDelegateSignatureConverter> ().To<DefaultDelegateTypeToDelegateSignatureConverter> ();
+
 			Bind<IGenericDelegateTypeConverter> ().To<DefaultGenericDelegateTypeConverter> ();
 		}
 	}
