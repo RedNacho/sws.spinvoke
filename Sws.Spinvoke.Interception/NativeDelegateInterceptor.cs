@@ -119,8 +119,7 @@ namespace Sws.Spinvoke.Interception
 				}
 
 				var definitionOverrideAttribute = methodInfo.GetCustomAttributes (false)
-					.Select (attribute => attribute as NativeDelegateDefinitionOverrideAttribute)
-					.Where (attribute => attribute != null)
+					.OfType<NativeDelegateDefinitionOverrideAttribute>()
 					.DefaultIfEmpty (new NativeDelegateDefinitionOverrideAttribute ())
 					.First ();
 
@@ -142,14 +141,12 @@ namespace Sws.Spinvoke.Interception
 
 				var argumentDefinitionOverrideAttributes = parameters.Zip(inputTypes, (parameter, inputType) =>
 					parameter.GetCustomAttributes()
-					.Select(attribute => attribute as NativeArgumentDefinitionOverrideAttribute)
-					.Where(attribute => attribute != null)
+					.OfType<NativeArgumentDefinitionOverrideAttribute>()
 					.DefaultIfEmpty(new DefaultNativeArgumentDefinitionOverrideAttribute(inputType))
 					.First()).ToArray();
 
 				var returnDefinitionOverrideAttribute = methodInfo.ReturnParameter.GetCustomAttributes()
-					.Select(attribute => attribute as NativeReturnDefinitionOverrideAttribute)
-					.Where(attribute => attribute != null)
+					.OfType<NativeReturnDefinitionOverrideAttribute>()
 					.DefaultIfEmpty(new DefaultNativeReturnDefinitionOverrideAttribute(outputType))
 					.First();
 

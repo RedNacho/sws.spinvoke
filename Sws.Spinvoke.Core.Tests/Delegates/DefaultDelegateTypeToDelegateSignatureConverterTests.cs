@@ -10,8 +10,11 @@ namespace Sws.Spinvoke.Core.Tests
 	[TestFixture ()]
 	public class DefaultDelegateTypeToDelegateSignatureConverterTests
 	{
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		public delegate void UnmanagedFunction();
+
 		[Test ()]
-		public void ReturnsCorrectSignatureForAction()
+		public void ReturnsCorrectSignatureForActionWithCallingConventionSupplied()
 		{
 			var subject = new DefaultDelegateTypeToDelegateSignatureConverter();
 
@@ -20,6 +23,27 @@ namespace Sws.Spinvoke.Core.Tests
 			Assert.IsTrue (delegateSignature.InputTypes.SequenceEqual (new [] { typeof(int), typeof(string) }));
 			Assert.AreEqual (typeof(void), delegateSignature.OutputType);
 			Assert.AreEqual (CallingConvention.Cdecl, delegateSignature.CallingConvention);
+		}
+
+		[Test ()]
+		public void ReturnsCorrectSignatureForUnmanagedFunctionWithoutRequiringCallingConvention()
+		{
+			var subject = new DefaultDelegateTypeToDelegateSignatureConverter();
+
+			var delegateSignature = subject.CreateDelegateSignature (typeof(UnmanagedFunction));
+
+			Assert.IsTrue (delegateSignature.InputTypes.SequenceEqual (new Type[0]));
+			Assert.AreEqual (typeof(void), delegateSignature.OutputType);
+			Assert.AreEqual (CallingConvention.Cdecl, delegateSignature.CallingConvention);
+		}
+
+		[Test ()]
+		[ExpectedException (typeof(InvalidOperationException))]
+		public void ThrowsInvalidOperationExceptionIfCallingConventionNotSupplied()
+		{
+			var subject = new DefaultDelegateTypeToDelegateSignatureConverter();
+
+			subject.CreateDelegateSignature (typeof(Action<int, string>));
 		}
 
 		[Test ()]
@@ -32,6 +56,26 @@ namespace Sws.Spinvoke.Core.Tests
 			Assert.IsTrue (delegateSignature.InputTypes.SequenceEqual (new [] { typeof(int), typeof(string) }));
 			Assert.AreEqual (typeof(double), delegateSignature.OutputType);
 			Assert.AreEqual (CallingConvention.Cdecl, delegateSignature.CallingConvention);
+		}
+
+		[Test ()]
+		public void HasCallingConventionReturnsFalseForFunc()
+		{
+			var subject = new DefaultDelegateTypeToDelegateSignatureConverter();
+
+			var hasCallingConvention = subject.HasCallingConvention(typeof(Func<int, bool>));
+
+			Assert.IsFalse(hasCallingConvention);
+		}
+
+		[Test ()]
+		public void HasCallingConventionReturnsTrueForDelegateWithCallingConvention()
+		{
+			var subject = new DefaultDelegateTypeToDelegateSignatureConverter ();
+
+			var hasCallingConvention = subject.HasCallingConvention (typeof(UnmanagedFunction));
+
+			Assert.IsTrue (hasCallingConvention);
 		}
 	}
 }
