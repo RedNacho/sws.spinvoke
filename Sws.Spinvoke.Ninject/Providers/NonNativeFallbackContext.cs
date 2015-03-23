@@ -4,7 +4,7 @@ using Ninject.Activation;
 
 using Sws.Spinvoke.Interception;
 
-namespace Sws.Spinvoke.Ninject.Extensions
+namespace Sws.Spinvoke.Ninject.Providers
 {
 	public class NonNativeFallbackContext
 	{

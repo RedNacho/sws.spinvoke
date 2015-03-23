@@ -43,8 +43,10 @@
     <Compile Include="Extensions\SpinvokeNinjectExtensionsConfiguration.cs" />
     <Compile Include="Extensions\SpinvokeBindingConfigurationBuilder.cs" />
     <Compile Include="Extensions\ISpinvokeBindingWhenInNamedWithOrOnSyntax.cs" />
-    <Compile Include="Extensions\NonNativeFallbackContext.cs" />
     <Compile Include="SpinvokeInterceptionModule.cs" />
+    <Compile Include="Providers\NativeProxyProviderConfiguration.cs" />
+    <Compile Include="Providers\NonNativeFallbackContext.cs" />
+    <Compile Include="Providers\NativeProxyProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -62,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Providers\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

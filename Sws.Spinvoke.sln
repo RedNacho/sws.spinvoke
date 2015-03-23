@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.DynamicProxy", "Sws.Spinvoke.Interception.DynamicProxy\Sws.Spinvoke.Interception.DynamicProxy.csproj", "{279EBCDB-CE26-419D-AD43-5283E7E25648}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Demo", "Sws.Spinvoke.Demo\Sws.Spinvoke.Demo.csproj", "{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -49,6 +51,10 @@ Global
 		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Debug|x86.Build.0 = Debug|x86
 		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Release|x86.ActiveCfg = Release|x86
 		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Release|x86.Build.0 = Release|x86
+		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Debug|x86.ActiveCfg = Debug|x86
+		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Debug|x86.Build.0 = Debug|x86
+		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Release|x86.ActiveCfg = Release|x86
+		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Release|x86.Build.0 = Release|x86
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Debug|x86.Build.0 = Debug|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Release|x86.ActiveCfg = Release|Any CPU

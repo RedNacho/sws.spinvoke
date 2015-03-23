@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Sws.Spinvoke.Demo</RootNamespace>
+    <AssemblyName>Sws.Spinvoke.Demo</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Sws.Spinvoke.Ninject\Sws.Spinvoke.Ninject.csproj">
+      <Project>{664932B5-8879-401C-B444-C3EDA8945037}</Project>
+      <Name>Sws.Spinvoke.Ninject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj">
+      <Project>{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}</Project>
+      <Name>Sws.Spinvoke.Linux</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Interception.DynamicProxy\Sws.Spinvoke.Interception.DynamicProxy.csproj">
+      <Project>{279EBCDB-CE26-419D-AD43-5283E7E25648}</Project>
+      <Name>Sws.Spinvoke.Interception.DynamicProxy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
+      <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
+      <Name>Sws.Spinvoke.Interception</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
+      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
+      <Name>Sws.Spinvoke.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
