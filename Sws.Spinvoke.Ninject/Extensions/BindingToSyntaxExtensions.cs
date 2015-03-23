@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-using Ninject.Activation;
 using Ninject.Infrastructure.Introspection;
 using Ninject.Planning.Bindings;
-using Ninject.Syntax;
+using 	Ninject.Syntax;
 
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Interception;
+using Sws.Spinvoke.Ninject.Providers;
 
 // PoC - unit test, refactor.
 namespace Sws.Spinvoke.Ninject.Extensions
@@ -29,7 +29,7 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 		private static void VerifyConfigured()
 		{
-			if (DefaultNativeDelegateResolver == null || DefaultProxyGenerator == null) {
+			if (DefaultNativeDelegateResolver == null || DefaultProxyGenerator == null || DefaultNativeDelegateInterceptorFactory == null) {
 				throw new InvalidOperationException ("You must call SpinvokeNinjectExtensionsConfiguration.Configure first");
 			}
 		}
@@ -94,62 +94,6 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				ndif => nativeDelegateInterceptorFactory = ndif,
 				pg => proxyGenerator = pg
 			);
-		}
-
-		private class NativeProxyProvider<T> : Provider<T>
-			where T : class
-		{
-			private readonly Func<NativeProxyProviderConfiguration<T>> _configurationSource;
-
-			public NativeProxyProvider(Func<NativeProxyProviderConfiguration<T>> configurationSource)
-			{
-				if (configurationSource == null)
-					throw new ArgumentNullException("configurationSource");
-
-				_configurationSource = configurationSource;
-			}
-
-			protected override T CreateInstance (IContext context)
-			{
-				var configuration = _configurationSource ();
-
-				var nativeDelegateInterceptorContext = new NativeDelegateInterceptorContext (configuration.LibraryName, configuration.CallingConvention, configuration.NativeDelegateResolver);
-
-				var nativeDelegateInterceptor = configuration.NativeDelegateInterceptorFactory.CreateInterceptor(nativeDelegateInterceptorContext);
-
-				var nonNativeFallback = configuration.NonNativeFallbackSource (new NonNativeFallbackContext(nativeDelegateInterceptorContext, context));
-
-				if (nonNativeFallback == null) {
-					if (configuration.ServiceType == typeof(T)) {
-						return configuration.ProxyGenerator.CreateProxy<T> (nativeDelegateInterceptor);
-					} else {
-						return configuration.ProxyGenerator.CreateProxy (configuration.ServiceType, nativeDelegateInterceptor) as T;
-					}
-				} else {
-					if (configuration.ServiceType == typeof(T)) {
-						return configuration.ProxyGenerator.CreateProxyWithTarget<T> (nativeDelegateInterceptor, nonNativeFallback);
-					} else {
-						return configuration.ProxyGenerator.CreateProxyWithTarget (configuration.ServiceType, nativeDelegateInterceptor, nonNativeFallback) as T;
-					}
-				}
-			}
-		}
-
-		private class NativeProxyProviderConfiguration<T>
-		{
-			public Type ServiceType { get; set; }
-
-			public string LibraryName { get; set; }
-
-			public Func<NonNativeFallbackContext, T> NonNativeFallbackSource { get; set; }
-
-			public CallingConvention CallingConvention { get; set; }
-
-			public INativeDelegateResolver NativeDelegateResolver { get; set; }
-
-			public INativeDelegateInterceptorFactory NativeDelegateInterceptorFactory { get; set; }
-
-			public IProxyGenerator ProxyGenerator { get; set; }
 		}
 	}
 }

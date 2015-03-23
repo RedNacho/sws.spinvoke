@@ -6,6 +6,7 @@ using Ninject.Planning.Bindings;
 
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Interception;
+using Sws.Spinvoke.Ninject.Providers;
 
 namespace Sws.Spinvoke.Ninject.Extensions
 {

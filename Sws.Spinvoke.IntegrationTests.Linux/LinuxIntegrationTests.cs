@@ -10,6 +10,7 @@ using Sws.Spinvoke.Interception;
 using Sws.Spinvoke.Interception.DynamicProxy;
 using Sws.Spinvoke.Ninject;
 using Sws.Spinvoke.Ninject.Extensions;
+using Sws.Spinvoke.Ninject.Providers;
 
 using CastleProxyGenerator = Castle.DynamicProxy.ProxyGenerator;
 

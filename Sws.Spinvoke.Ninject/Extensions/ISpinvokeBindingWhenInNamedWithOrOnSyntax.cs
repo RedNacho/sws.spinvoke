@@ -6,6 +6,8 @@ using Ninject.Syntax;
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Interception;
 
+using Sws.Spinvoke.Ninject.Providers;
+
 namespace Sws.Spinvoke.Ninject.Extensions
 {
 	public interface ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> : IBindingWhenInNamedWithOrOnSyntax<T>
