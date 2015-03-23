@@ -44,6 +44,7 @@
     <Compile Include="NativeDelegateInterceptorTests.cs" />
     <Compile Include="ArgumentPreprocessing\StringToPointerArgumentPreprocessorTests.cs" />
     <Compile Include="ReturnPostprocessing\PointerToStringReturnPostprocessorTests.cs" />
+    <Compile Include="ArgumentPreprocessing\DelegateToPointerArgumentPreprocessorTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
