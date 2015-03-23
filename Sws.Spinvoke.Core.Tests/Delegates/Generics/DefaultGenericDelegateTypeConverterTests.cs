@@ -1,11 +1,9 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 using Moq;
 
-using Sws.Spinvoke.Core.Delegates;
 using Sws.Spinvoke.Core.Delegates.Generics;
 
 namespace Sws.Spinvoke.Core.Tests
