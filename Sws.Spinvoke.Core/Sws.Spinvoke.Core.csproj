@@ -45,8 +45,10 @@
     <Compile Include="INativeDelegateResolver.cs" />
     <Compile Include="Resolver\DefaultNativeDelegateResolver.cs" />
     <Compile Include="CacheKey.cs" />
-    <Compile Include="Delegates\Generics\IGenericDelegateTypeConverter.cs" />
     <Compile Include="Delegates\Generics\DefaultGenericDelegateTypeConverter.cs" />
+    <Compile Include="Delegates\DefaultDelegateTypeToDelegateSignatureConverter.cs" />
+    <Compile Include="IDelegateTypeToDelegateSignatureConverter.cs" />
+    <Compile Include="Delegates\Generics\IGenericDelegateTypeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Delegates\" />
