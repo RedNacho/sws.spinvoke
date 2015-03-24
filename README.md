@@ -160,7 +160,7 @@ var resolver = new DefaultNativeDelegateResolver (
 
 ```
 
-You can then assemble an NativeDelegateInterceptor, wrap it in an Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor (which adapts it to Castle DynamicProxy), and then use this with Castle DynamicProxy as you would any other interceptor.
+You can then assemble an NativeDelegateInterceptor, wrap it in an Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor (which adapts it to Castle DynamicProxy), and then use this with Castle DynamicProxy as you would any other interceptor.  UPDATE: I have added facade libraries which aim to improve your DI experience if you're not using Ninject.  Documentation to follow.
 
 * **You don't have to use Castle DynamicProxy.**  Instead of using Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor, you can write an interceptor adapter for whatever proxy generator you want to use instead, and use that directly.  If you still want to use the Ninject extension methods, you can provide your own implementation of Sws.Spinvoke.Interception.IProxyGenerator, and pass this to the SpinvokeNinjectExtensionsConfiguration.Configure method.
 
