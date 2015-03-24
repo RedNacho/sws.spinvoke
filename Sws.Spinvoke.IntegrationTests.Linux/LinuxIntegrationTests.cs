@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
-using Sws.Spinvoke.Core.Delegates.Generics;
 using Sws.Spinvoke.Linux;
 using Sws.Spinvoke.Interception;
 using Sws.Spinvoke.Interception.DynamicProxy;
@@ -250,31 +250,23 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		}
 
 		[Test ()]
-		public void GenericDelegateTypeConverterCreatesInteropSupportedType()
+		public void NativeExpressionBuilderMapsIntoNativeCode ()
 		{
 			var kernel = new StandardKernel ();
-		
-			kernel.Bind<INativeLibraryLoader> ().To<LinuxNativeLibraryLoader> ().InSingletonScope ();
 
-			kernel.Load (new SpinvokeModule (StandardScopeCallbacks.Transient, "GenericDelegateTypeConverterTest"));
+			kernel.Bind<INativeLibraryLoader> ().To<LinuxNativeLibraryLoader> ();
 
-			var genericDelegateTypeConverter = kernel.Get<IGenericDelegateTypeConverter> ();
+			kernel.Load (new SpinvokeModule (StandardScopeCallbacks.Transient, "NativeExpressionBuilderTest"));
 
-			var nativeDelegateProvider = kernel.Get<INativeDelegateProvider> ();
+			var nativeExpressionBuilder = kernel.Get<INativeExpressionBuilder> ();
 
-			var nativeLibraryLoader = kernel.Get<INativeLibraryLoader> ();
+			var addExpression = nativeExpressionBuilder.BuildNativeExpression<Func<int, int, int>> ("libSws.Spinvoke.IntegrationTests.so", "add", CallingConvention.Cdecl);
 
-			var convertedDelegateType = genericDelegateTypeConverter.ConvertToInteropSupportedDelegateType (typeof(Func<int, int, int>), CallingConvention.Winapi);
+			var addFunc = addExpression.Compile ();
 
-			var libPtr = nativeLibraryLoader.LoadLibrary ("libSws.Spinvoke.IntegrationTests.so");
+			var result = addFunc (5, 7);
 
-			var fnPtr = nativeLibraryLoader.GetFunctionPointer (libPtr, "add");
-
-			var nativeDelegate = nativeDelegateProvider.GetDelegate (convertedDelegateType, fnPtr);
-
-			var result = nativeDelegate.DynamicInvoke (new object[] { 3, 4 });
-
-			Assert.AreEqual (7, result);
+			Assert.AreEqual (12, result);
 		}
 	}
 

@@ -4,7 +4,7 @@ using Sws.Nindapter.Extensions;
 
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Core.Delegates;
-using Sws.Spinvoke.Core.Delegates.Generics;
+using Sws.Spinvoke.Core.Expressions;
 using Sws.Spinvoke.Core.Resolver;
 using Sws.Spinvoke.Core.Caching;
 using Sws.Spinvoke.Core.Native;
@@ -53,7 +53,9 @@ namespace Sws.Spinvoke.Ninject
 
 			Bind<IDelegateTypeToDelegateSignatureConverter> ().To<DefaultDelegateTypeToDelegateSignatureConverter> ();
 
-			Bind<IGenericDelegateTypeConverter> ().To<DefaultGenericDelegateTypeConverter> ();
+			Bind<IDelegateExpressionBuilder> ().To<DefaultDelegateExpressionBuilder> ();
+
+			Bind<INativeExpressionBuilder> ().To<DefaultNativeExpressionBuilder> ();
 		}
 	}
 }

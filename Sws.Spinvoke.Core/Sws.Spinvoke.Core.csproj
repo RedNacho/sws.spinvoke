@@ -45,10 +45,12 @@
     <Compile Include="INativeDelegateResolver.cs" />
     <Compile Include="Resolver\DefaultNativeDelegateResolver.cs" />
     <Compile Include="CacheKey.cs" />
-    <Compile Include="Delegates\Generics\DefaultGenericDelegateTypeConverter.cs" />
     <Compile Include="Delegates\DefaultDelegateTypeToDelegateSignatureConverter.cs" />
     <Compile Include="IDelegateTypeToDelegateSignatureConverter.cs" />
-    <Compile Include="Delegates\Generics\IGenericDelegateTypeConverter.cs" />
+    <Compile Include="INativeExpressionBuilder.cs" />
+    <Compile Include="Expressions\DefaultNativeExpressionBuilder.cs" />
+    <Compile Include="Expressions\DefaultDelegateExpressionBuilder.cs" />
+    <Compile Include="Expressions\IDelegateExpressionBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Delegates\" />
@@ -56,7 +58,7 @@
     <Folder Include="Caching\" />
     <Folder Include="Native\" />
     <Folder Include="Resolver\" />
-    <Folder Include="Delegates\Generics\" />
+    <Folder Include="Expressions\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
