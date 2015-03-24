@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Demo", "Sws.Spinvoke.Demo\Sws.Spinvoke.Demo.csproj", "{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Core.Facade", "Sws.Spinvoke.Core.Facade\Sws.Spinvoke.Core.Facade.csproj", "{81DE20AF-6A08-438D-9B72-3A685960DBD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.Facade", "Sws.Spinvoke.Interception.Facade\Sws.Spinvoke.Interception.Facade.csproj", "{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -47,6 +51,10 @@ Global
 		{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}.Debug|x86.Build.0 = Debug|x86
 		{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}.Release|x86.ActiveCfg = Release|x86
 		{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}.Release|x86.Build.0 = Release|x86
+		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Debug|x86.Build.0 = Debug|Any CPU
+		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Release|x86.ActiveCfg = Release|Any CPU
+		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Release|x86.Build.0 = Release|Any CPU
 		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Debug|x86.ActiveCfg = Debug|x86
 		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Debug|x86.Build.0 = Debug|x86
 		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Release|x86.ActiveCfg = Release|x86
@@ -59,6 +67,10 @@ Global
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Debug|x86.Build.0 = Debug|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Release|x86.ActiveCfg = Release|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Release|x86.Build.0 = Release|Any CPU
+		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Release|x86.Build.0 = Release|Any CPU
 		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Debug|x86.Build.0 = Debug|Any CPU
 		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Release|x86.ActiveCfg = Release|Any CPU

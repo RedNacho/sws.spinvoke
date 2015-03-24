@@ -6,9 +6,11 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
+using Sws.Spinvoke.Core.Facade;
 using Sws.Spinvoke.Linux;
 using Sws.Spinvoke.Interception;
 using Sws.Spinvoke.Interception.DynamicProxy;
+using Sws.Spinvoke.Interception.Facade;
 using Sws.Spinvoke.Ninject;
 using Sws.Spinvoke.Ninject.Extensions;
 using Sws.Spinvoke.Ninject.Providers;
@@ -267,6 +269,64 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 			var result = addFunc (5, 7);
 
 			Assert.AreEqual (12, result);
+		}
+
+		[Test ()]
+		public void CoreFacadeProducesWorkingNativeDelegateResolver ()
+		{
+			var facade = new SpinvokeCoreFacade.Builder (
+				             new LinuxNativeLibraryLoader (),
+				             "TestAssembly").Build ();
+
+			var nativeDelegateResolver = facade.NativeDelegateResolver;
+
+			var nativeDelegate = nativeDelegateResolver.Resolve (new NativeDelegateDefinition (
+				"libSws.Spinvoke.IntegrationTests.so",
+				"add",
+				new DelegateSignature(new [] { typeof(int), typeof(int) }, typeof(int), CallingConvention.Cdecl)
+			));
+
+			var result = nativeDelegate.DynamicInvoke (3, 4);
+
+			Assert.AreEqual (7, result);
+		}
+
+		[Test ()]
+		public void CoreFacadeProducesWorkingNativeExpressionBuilder ()
+		{
+			var facade = new SpinvokeCoreFacade.Builder (
+				new LinuxNativeLibraryLoader(),
+				"TestAssembly").Build();
+
+			var nativeExpressionBuilder = facade.NativeExpressionBuilder;
+
+			var result = nativeExpressionBuilder.BuildNativeExpression<Func<int, int, int>> (
+				             "libSws.Spinvoke.IntegrationTests.so",
+				             "add",
+				             CallingConvention.Cdecl).Compile () (4, 5);
+
+			Assert.AreEqual (9, result);
+		}
+
+		[Test ()]
+		public void InterceptionFacadeProducesWorkingNativeDelegateInterceptorFactory()
+		{
+			var facade = new SpinvokeInterceptionFacade.Builder().Build();
+
+			var nativeDelegateResolver = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build().NativeDelegateResolver;
+
+			var interceptor = facade.NativeDelegateInterceptorFactory.CreateInterceptor(new NativeDelegateInterceptorContext(
+				"libSws.Spinvoke.IntegrationTests.so",
+				CallingConvention.Cdecl,
+				nativeDelegateResolver));
+
+			var proxyGenerator = new CastleProxyGenerator ();
+
+			var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IDynamicProxyTest> (new SpinvokeInterceptor (interceptor));
+
+			var result = proxy.Add(7, 9);
+
+			Assert.AreEqual(16, result);
 		}
 	}
 
