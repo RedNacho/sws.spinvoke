@@ -71,5 +71,13 @@
       <Project>{664932B5-8879-401C-B444-C3EDA8945037}</Project>
       <Name>Sws.Spinvoke.Ninject</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Core.Facade\Sws.Spinvoke.Core.Facade.csproj">
+      <Project>{81DE20AF-6A08-438D-9B72-3A685960DBD1}</Project>
+      <Name>Sws.Spinvoke.Core.Facade</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Interception.Facade\Sws.Spinvoke.Interception.Facade.csproj">
+      <Project>{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}</Project>
+      <Name>Sws.Spinvoke.Interception.Facade</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
