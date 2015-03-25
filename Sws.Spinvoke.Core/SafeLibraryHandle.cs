@@ -10,7 +10,7 @@ namespace Sws.Spinvoke.Core
 		{
 		}
 
-		public override bool IsInvalid {
+		public sealed override bool IsInvalid {
 			get {
 				return handle == IntPtr.Zero || handle == new IntPtr (-1);
 			}

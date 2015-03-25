@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Core.Facade", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.Facade", "Sws.Spinvoke.Interception.Facade\Sws.Spinvoke.Interception.Facade.csproj", "{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Windows", "Sws.Spinvoke.Windows\Sws.Spinvoke.Windows.csproj", "{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -63,6 +65,10 @@ Global
 		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Debug|x86.Build.0 = Debug|x86
 		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Release|x86.ActiveCfg = Release|x86
 		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Release|x86.Build.0 = Release|x86
+		{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}.Debug|x86.Build.0 = Debug|Any CPU
+		{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}.Release|x86.ActiveCfg = Release|Any CPU
+		{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}.Release|x86.Build.0 = Release|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Debug|x86.Build.0 = Debug|Any CPU
 		{C43BBF3E-5912-41DE-8C97-78F0AE61A3BC}.Release|x86.ActiveCfg = Release|Any CPU
