@@ -51,6 +51,7 @@
     <Compile Include="Expressions\DefaultNativeExpressionBuilder.cs" />
     <Compile Include="Expressions\DefaultDelegateExpressionBuilder.cs" />
     <Compile Include="Expressions\IDelegateExpressionBuilder.cs" />
+    <Compile Include="SafeLibraryHandle.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Delegates\" />

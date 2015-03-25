@@ -11,13 +11,13 @@ namespace Sws.Spinvoke.Core.Resolver
 	{
 		private readonly object _syncObject = new object();
 
-		private readonly IDictionary<string, IntPtr> _loadedLibraries = new Dictionary<string, IntPtr>(StringComparer.InvariantCultureIgnoreCase);
+		private readonly IDictionary<string, SafeLibraryHandle> _loadedLibraries = new Dictionary<string, SafeLibraryHandle>(StringComparer.InvariantCultureIgnoreCase);
 
 		private readonly IDictionary<CacheKey, Delegate> _delegateCache = new Dictionary<CacheKey, Delegate>();
 
 		private readonly IDictionary<Delegate, IList<NativeDelegateDefinition>> _definitionLookup = new Dictionary<Delegate, IList<NativeDelegateDefinition>>();
 
-		private readonly IDictionary<IntPtr, IList<CacheKey>> _libraryCacheKeys = new Dictionary<IntPtr, IList<CacheKey>>();
+		private readonly IDictionary<SafeLibraryHandle, IList<CacheKey>> _libraryCacheKeys = new Dictionary<SafeLibraryHandle, IList<CacheKey>>();
 
 		private readonly INativeLibraryLoader _nativeLibraryLoader;
 
@@ -121,7 +121,7 @@ namespace Sws.Spinvoke.Core.Resolver
 			}
 		}
 
-		private IntPtr ResolveLibrary(string fileName)
+		private SafeLibraryHandle ResolveLibrary(string fileName)
 		{
 			if (_loadedLibraries.ContainsKey (fileName)) {
 				return _loadedLibraries [fileName];
@@ -132,7 +132,7 @@ namespace Sws.Spinvoke.Core.Resolver
 			return libHandle;
 		}
 
-		private void ReleaseLibrary(string fileName, IntPtr libHandle)
+		private void ReleaseLibrary(string fileName, SafeLibraryHandle libHandle)
 		{
 			if (_loadedLibraries.ContainsKey (fileName)) {
 				_nativeLibraryLoader.UnloadLibrary (libHandle);
@@ -140,10 +140,10 @@ namespace Sws.Spinvoke.Core.Resolver
 			}
 		}
 
-		private CacheKey GenerateCacheKey(IntPtr libHandle, NativeDelegateDefinition nativeDelegateDefinition)
+		private CacheKey GenerateCacheKey(SafeLibraryHandle libHandle, NativeDelegateDefinition nativeDelegateDefinition)
 		{
 			return new CacheKey.Builder ()
-				.AddComponent (libHandle)
+				.AddComponent (libHandle.GetCacheKey())
 				.AddComponent (nativeDelegateDefinition.FunctionName)
 				.AddComponent (nativeDelegateDefinition.DelegateSignature.GetCacheKey ())
 				.AddComponent (nativeDelegateDefinition.ExplicitDelegateType)
@@ -156,21 +156,15 @@ namespace Sws.Spinvoke.Core.Resolver
 			GC.SuppressFinalize (this);
 		}
 
-		~DefaultNativeDelegateResolver()
-		{
-			Dispose (false);
-		}
-
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing) {
-			}
+				lock (_syncObject) {
+					var loadedLibraries = _loadedLibraries.ToList();
 
-			lock (_syncObject) {
-				var loadedLibraries = _loadedLibraries.ToList();
-
-				foreach (var loadedLibrary in loadedLibraries) {
-					ReleaseLibrary (loadedLibrary.Key, loadedLibrary.Value);
+					foreach (var loadedLibrary in loadedLibraries) {
+						ReleaseLibrary (loadedLibrary.Key, loadedLibrary.Value);
+					}
 				}
 			}
 		}
