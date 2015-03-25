@@ -10,7 +10,7 @@ using Sws.Spinvoke.Core.Resolver;
 namespace Sws.Spinvoke.Core.Facade
 {
 	// TODO More tests!
-	public class SpinvokeCoreFacade
+	public class SpinvokeCoreFacade : IDisposable
 	{
 		private readonly INativeDelegateResolver _nativeDelegateResolver;
 
@@ -38,6 +38,19 @@ namespace Sws.Spinvoke.Core.Facade
 		public INativeExpressionBuilder NativeExpressionBuilder
 		{
 			get { return _nativeExpressionBuilder; }
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing) {
+				this.NativeDelegateResolver.Dispose ();
+			}
 		}
 
 		public class Builder
