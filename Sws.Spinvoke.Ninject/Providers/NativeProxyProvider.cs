@@ -9,19 +9,19 @@ namespace Sws.Spinvoke.Ninject.Providers
 	public class NativeProxyProvider<T> : Provider<T>
 		where T : class
 	{
-		private readonly Func<NativeProxyProviderConfiguration<T>> _configurationSource;
+		private readonly NativeProxyProviderConfiguration<T> _configuration;
 
-		public NativeProxyProvider(Func<NativeProxyProviderConfiguration<T>> configurationSource)
+		public NativeProxyProvider(NativeProxyProviderConfiguration<T> configuration)
 		{
-			if (configurationSource == null)
-				throw new ArgumentNullException("configurationSource");
+			if (configuration == null)
+				throw new ArgumentNullException("configuration");
 
-			_configurationSource = configurationSource;
+			_configuration = configuration;
 		}
 
 		protected override T CreateInstance (IContext context)
 		{
-			var configuration = _configurationSource ();
+			var configuration = _configuration;
 
 			var nativeDelegateInterceptorContext = new NativeDelegateInterceptorContext (configuration.LibraryName, configuration.CallingConvention, configuration.NativeDelegateResolver);
 
