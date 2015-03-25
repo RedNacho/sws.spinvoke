@@ -55,44 +55,32 @@ namespace Sws.Spinvoke.Ninject.Extensions
 		{
 			VerifyConfigured ();
 
-			CallingConvention? callingConvention = null;
-
-			Func<NonNativeFallbackContext, T> nonNativeFallbackSource = context => null;
-
-			var nativeDelegateResolver = DefaultNativeDelegateResolver;
-
-			var nativeDelegateInterceptorFactory = DefaultNativeDelegateInterceptorFactory;
-
-			var proxyGenerator = DefaultProxyGenerator;
-
-			Func<NativeProxyProviderConfiguration<T>> nativeProxyProviderConfigurationSource = () =>
-				new NativeProxyProviderConfiguration<T> () {
-					CallingConvention = callingConvention.GetValueOrDefault(CallingConvention.Winapi),
+			var nativeProxyProviderConfiguration = new NativeProxyProviderConfiguration<T> () {
+					CallingConvention = CallingConvention.Winapi,
 					LibraryName = libraryName,
-					NativeDelegateInterceptorFactory = nativeDelegateInterceptorFactory,
-					NativeDelegateResolver = nativeDelegateResolver,
-					NonNativeFallbackSource = nonNativeFallbackSource,
-					ProxyGenerator = proxyGenerator,
-					ServiceType = serviceType
-				};
+					NativeDelegateInterceptorFactory = DefaultNativeDelegateInterceptorFactory,
+					NativeDelegateResolver = DefaultNativeDelegateResolver,
+					NonNativeFallbackSource = context => null,
+					ProxyGenerator = DefaultProxyGenerator,
+					ServiceType = serviceType };
 
-			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (nativeProxyProviderConfigurationSource);
+			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (nativeProxyProviderConfiguration);
 
 			return new SpinvokeBindingConfigurationBuilder<T> (
 				bindingToSyntax.BindingConfiguration,
 				serviceType.Format(),
 				bindingToSyntax.Kernel,
-				cc => callingConvention = cc,
+				cc => nativeProxyProviderConfiguration.CallingConvention = cc,
 				nnfs => {
 					if (!DefaultProxyGenerator.AllowsTarget) {
 						throw new InvalidOperationException("In order to allow a non native fallback to be supplied, the proxy generator must support a target.");
 					}
 
-					nonNativeFallbackSource = nnfs;
+					nativeProxyProviderConfiguration.NonNativeFallbackSource = nnfs;
 				},
-				ndr => nativeDelegateResolver = ndr,
-				ndif => nativeDelegateInterceptorFactory = ndif,
-				pg => proxyGenerator = pg
+				ndr => nativeProxyProviderConfiguration.NativeDelegateResolver = ndr,
+				ndif => nativeProxyProviderConfiguration.NativeDelegateInterceptorFactory = ndif,
+				pg => nativeProxyProviderConfiguration.ProxyGenerator = pg
 			);
 		}
 	}
