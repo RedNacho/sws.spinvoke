@@ -142,31 +142,68 @@ public interface INativeCalculator
 
 **EXTENSION POINTS**
 
-Most of the usage and examples I've given assume a certain default usage, which you don't have to follow.  I'll now explain what you have to change if this doesn't fit your requirements.
+Most of the usage and examples I've given assume a certain default usage, which you don't have to follow.  I'll now explain some other options.
 
-* **You don't have to use Linux.**  I've only provided the LinuxNativeLibraryLoader because I can't test anything else at the moment.  However, my day job is .NET development, and would you believe I use Windows.  A Windows implementation of INativeLibraryLoader is extremely simple - the interface methods map fairly directly onto Kernel32 functions.
+* **You don't have to use Linux**.  Of course, it's hard to believe that there are Microsoft .NET developers in the world who use Microsoft Windows, but I've heard that there are one or two out there.  I'm currently unable to adequately test my code on an OS other than Linux, so I deliberately didn't try to build in support.  However, the only change you have to make is to implement your own INativeLibraryLoader instead of using the LinuxNativeLibraryLoader.  This should be fairly straightforward: In Windows, the interface methods map more or less directly onto Kernel32's LoadLibrary, FreeLibrary and GetProcAddress functions.
 
-* **You don't have to use Ninject.**  You'll have to assemble an Sws.Spinvoke.Core.INativeDelegateResolver implementation yourself, using the SpinvokeModule as a guide, but it should be fairly easy to follow.  Here's a poor man's DI example based on the current code:
+* **You don't have to use Ninject**.  Ninject is my DI container of choice, and the Sws.Spinvoke.Ninject library is the easiest way to wire everything up.  However, in case you don't want to use this, you have a couple of options.  Firstly, if you can track through the Ninject modules, you can infer some poor man's DI, and wire everything up yourself.  Secondly, I've added facades for the core (Sws.Spinvoke.Core.Facade) and the interception (Sws.Spinvoke.Interception.Facade) libraries, which should make life a bit easier.  Complete Ninject-free proxy generation can be done as follows:
 
 ```
 #!c#
 
-var resolver = new DefaultNativeDelegateResolver (
-	               new LinuxNativeLibraryLoader (),
-	               new CachedDelegateTypeProvider (
-		               new DynamicAssemblyDelegateTypeProvider ("MyTempAssembly"),
-		               new SimpleCompositeKeyedCache<Type> ()),
-	               new FrameworkNativeDelegateProvider ());
+// Build the core facade.
+var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build();
+
+// Build the interception facade.
+var interceptionFacade = new SpinvokeInterceptionFacade.Builder().Build();
+
+// Create an interceptor for the library.
+var interceptor = interceptionFacade.NativeDelegateInterceptorFactory.CreateInterceptor(
+				new NativeDelegateInterceptorContext(
+					"libMyLibrary.so",
+					CallingConvention.Cdecl,
+					coreFacade.NativeDelegateResolver));
+
+// Build a dynamic proxy (here using Castle DynamicProxy).
+
+var proxyGenerator = new Castle.DynamicProxy.ProxyGenerator ();
+
+var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IMyLibraryInterface> (
+	new Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor (interceptor));
+
+// Invoke it.
+
+var result = proxy.nativeFunction();
 
 ```
 
-You can then assemble an NativeDelegateInterceptor, wrap it in an Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor (which adapts it to Castle DynamicProxy), and then use this with Castle DynamicProxy as you would any other interceptor.  UPDATE: I have added facade libraries which aim to improve your DI experience if you're not using Ninject.  Documentation to follow.
-
 * **You don't have to use Castle DynamicProxy.**  Instead of using Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor, you can write an interceptor adapter for whatever proxy generator you want to use instead, and use that directly.  If you still want to use the Ninject extension methods, you can provide your own implementation of Sws.Spinvoke.Interception.IProxyGenerator, and pass this to the SpinvokeNinjectExtensionsConfiguration.Configure method.
 
-* **You don't have to use interception at all.**  I have deliberately left the interception code out of the Core.  The Core itself is purely a native delegate generation and management library.  Provided you can create your own NativeDelegateDefinitions, you can use INativeDelegateResolver directly.
+* **You don't have to use interception at all.**  I have deliberately left the interception code out of the code.  If you want to use the core directly, the main entry point is INativeDelegateResolver (which you can get an instance of through the facade as shown above, or through the Ninject module).  This lets you resolve native delegates provided that you can supply NativeDelegateDefinitions which describe them.  I have also added an alternative wrapper for this, which lets you generate ad-hoc lambda expressions for calling native code.  You get to this through INativeExpressionBuilder (also available through the core facade):
 
-* **You don't have to use the default implementation for Sws.Spinvoke.Core.INativeDelegateResolver**.  As you can see from the poor man's DI code sample above, you can swap out INativeDelegateResolver or any component of it.  As an example, you might be able to think of a better way of generating the delegate types than me.  In that case, substitute whatever you want in place of the DynamicAssemblyDelegateTypeProvider.  You can then use this directly, or in conjunction with the Interception library, or with the Ninject extensions (I have added a Configure overload which lets you specify the INativeDelegateResolver implementation directly).
+```
+#!c#
+
+// Facade build.
+var facade = new SpinvokeCoreFacade.Builder (
+	new LinuxNativeLibraryLoader(),
+	"TestAssembly").Build();
+
+// Get the expression, compile it, and invoke it.
+var nativeExpressionBuilder = facade.NativeExpressionBuilder;
+
+var nativeExpression = nativeExpressionBuilder.BuildNativeExpression<Func<int, int, int>> (
+	             "libMyLibrary.so",
+	             "nativefunction",
+	             CallingConvention.Cdecl);
+
+var nativeFunc = nativeExpression.Compile ();
+
+var result = nativeFunc (4, 5);
+
+```
+
+* **You don't have to use the default implementations of anything**.  If you really want to, you can use poor man's DI to wire everything up yourself, using the Ninject modules as a guide.  Alternatively, the facades have builders to allow configuration of dependencies.  You should be able to swap out any component by chaining the With... builder methods prior to calling the Build() method.  This will not expose the full dependency tree structure to you; however, most of the interfaces are fairly self-explanatory.
 
 **HOW IT WORKS!**
 
