@@ -11,17 +11,17 @@ namespace Sws.Spinvoke.Linux
 	{
 		private const int RTLD_NOW = 2;
 
-		public IntPtr LoadLibrary (string fileName)
+		public SafeLibraryHandle LoadLibrary (string fileName)
 		{
 			return dlopen (fileName, RTLD_NOW);
 		}
 
-		public void UnloadLibrary (IntPtr libHandle)
+		public void UnloadLibrary (SafeLibraryHandle libHandle)
 		{
-			dlclose (libHandle);
+			libHandle.Close ();
 		}
 
-		public IntPtr GetFunctionPointer (IntPtr libHandle, string functionName)
+		public IntPtr GetFunctionPointer (SafeLibraryHandle libHandle, string functionName)
 		{
 			dlerror ();
 
@@ -37,7 +37,7 @@ namespace Sws.Spinvoke.Linux
 		}
 
 		[DllImport("libdl.so")]
-		private static extern IntPtr dlopen(string fileName, int flags);
+		private static extern LinuxSafeLibraryHandle dlopen(string fileName, int flags);
 
 		[DllImport("libdl.so")]
 		private static extern int dlclose(IntPtr handle);
@@ -46,7 +46,17 @@ namespace Sws.Spinvoke.Linux
 		private static extern IntPtr dlerror();
 
 		[DllImport("libdl.so")]
-		private static extern IntPtr dlsym(IntPtr handle, string symbol);
+		private static extern IntPtr dlsym(SafeHandle handle, string symbol);
+
+		private sealed class LinuxSafeLibraryHandle : SafeLibraryHandle
+		{
+			protected override bool ReleaseHandle ()
+			{
+				var result = dlclose (handle);
+
+				return (result == 0);
+			}
+		}
 	}
 }
 

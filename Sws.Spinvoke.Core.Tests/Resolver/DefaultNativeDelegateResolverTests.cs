@@ -19,6 +19,11 @@ namespace Sws.Spinvoke.Core.Tests
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
 
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
+
+			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary (It.IsAny<string> ()))
+				.Returns (safeLibraryHandle);
+
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
 
 			delegateTypeProviderMock.Setup (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature> ()))
@@ -35,7 +40,7 @@ namespace Sws.Spinvoke.Core.Tests
 
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<IntPtr>()), Times.Never);
+			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<SafeLibraryHandle>()), Times.Never);
 
 			resolver.Dispose ();
 		}
@@ -44,6 +49,11 @@ namespace Sws.Spinvoke.Core.Tests
 		public void RetainsLibraryThroughMultipleRequests ()
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
+
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
+
+			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary (It.IsAny<string> ()))
+				.Returns (safeLibraryHandle);
 
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
 
@@ -62,7 +72,7 @@ namespace Sws.Spinvoke.Core.Tests
 
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<IntPtr>()), Times.Never);
+			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<SafeLibraryHandle>()), Times.Never);
 
 			resolver.Dispose ();
 		}
@@ -72,8 +82,10 @@ namespace Sws.Spinvoke.Core.Tests
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
 
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
+
 			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
-				.Returns (new IntPtr (12345));
+				.Returns (safeLibraryHandle);
 		
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
 
@@ -94,8 +106,8 @@ namespace Sws.Spinvoke.Core.Tests
 
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<IntPtr>()), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (new IntPtr(12345)), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<SafeLibraryHandle>()), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (safeLibraryHandle), Times.Once);
 
 		}
 
@@ -104,8 +116,10 @@ namespace Sws.Spinvoke.Core.Tests
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
 
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
+
 			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
-				.Returns (new IntPtr (12345));
+				.Returns (safeLibraryHandle);
 
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
 
@@ -137,8 +151,8 @@ namespace Sws.Spinvoke.Core.Tests
 
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<IntPtr>()), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (new IntPtr(12345)), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (It.IsAny<SafeLibraryHandle>()), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.UnloadLibrary (safeLibraryHandle), Times.Once);
 
 			resolver.Dispose ();
 		}
@@ -148,13 +162,14 @@ namespace Sws.Spinvoke.Core.Tests
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
 
-			var libPtr = new IntPtr (12345);
 			var funcPtr = new IntPtr (67890);
 
-			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
-				.Returns (libPtr);
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
 
-			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (libPtr, "Function1"))
+			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
+				.Returns (safeLibraryHandle);
+
+			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (safeLibraryHandle, "Function1"))
 				.Returns (funcPtr);
 
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
@@ -180,8 +195,8 @@ namespace Sws.Spinvoke.Core.Tests
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
 
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (libPtr, "Function1"), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<IntPtr>(), It.IsAny<string>()), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (safeLibraryHandle, "Function1"), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<SafeLibraryHandle>(), It.IsAny<string>()), Times.Once);
 
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (delegateSignature), Times.Once);
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature>()), Times.Once);
@@ -197,13 +212,13 @@ namespace Sws.Spinvoke.Core.Tests
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
 
-			var libPtr = new IntPtr (12345);
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
 			var funcPtr = new IntPtr (67890);
 
 			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
-				.Returns (libPtr);
+				.Returns (safeLibraryHandle);
 
-			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (libPtr, "Function1"))
+			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (safeLibraryHandle, "Function1"))
 				.Returns (funcPtr);
 
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
@@ -228,8 +243,8 @@ namespace Sws.Spinvoke.Core.Tests
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
 
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (libPtr, "Function1"), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<IntPtr>(), It.IsAny<string>()), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (safeLibraryHandle, "Function1"), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<SafeLibraryHandle>(), It.IsAny<string>()), Times.Once);
 
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature>()), Times.Never);
 
@@ -238,19 +253,18 @@ namespace Sws.Spinvoke.Core.Tests
 
 			resolver.Dispose ();
 		}
-
 		[Test ()]
 		public void ReturnsSameDelegateWithoutCallingAnythingIfAlreadyCreated()
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
 
-			var libPtr = new IntPtr (12345);
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
 			var funcPtr = new IntPtr (67890);
 
 			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
-				.Returns (libPtr);
+				.Returns (safeLibraryHandle);
 
-			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (libPtr, "Function1"))
+			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (safeLibraryHandle, "Function1"))
 				.Returns (funcPtr);
 
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
@@ -293,8 +307,8 @@ namespace Sws.Spinvoke.Core.Tests
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
 
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (libPtr, "Function1"), Times.Once);
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<IntPtr>(), It.IsAny<string>()), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (safeLibraryHandle, "Function1"), Times.Once);
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<SafeLibraryHandle>(), It.IsAny<string>()), Times.Once);
 
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (delegateSignature), Times.Once);
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (It.IsAny<DelegateSignature>()), Times.Once);
@@ -310,13 +324,13 @@ namespace Sws.Spinvoke.Core.Tests
 		{
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader>();
 
-			var libPtr = new IntPtr (12345);
+			var safeLibraryHandle = Mock.Of<SafeLibraryHandle> ();
 			var funcPtr = new IntPtr (67890);
 
 			nativeLibraryLoaderMock.Setup (nll => nll.LoadLibrary ("Test.so"))
-				.Returns (libPtr);
+				.Returns (safeLibraryHandle);
 
-			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (libPtr, "Function1"))
+			nativeLibraryLoaderMock.Setup (nll => nll.GetFunctionPointer (safeLibraryHandle, "Function1"))
 				.Returns (funcPtr);
 
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
@@ -362,8 +376,8 @@ namespace Sws.Spinvoke.Core.Tests
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary ("Test.so"), Times.Once);
 			nativeLibraryLoaderMock.Verify (l => l.LoadLibrary (It.IsAny<string>()), Times.Once);
 
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (libPtr, "Function1"), Times.Exactly(2));
-			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<IntPtr>(), It.IsAny<string>()), Times.Exactly(2));
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (safeLibraryHandle, "Function1"), Times.Exactly(2));
+			nativeLibraryLoaderMock.Verify (l => l.GetFunctionPointer (It.IsAny<SafeLibraryHandle>(), It.IsAny<string>()), Times.Exactly(2));
 
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (delegateSignature), Times.Once);
 			delegateTypeProviderMock.Verify (dtp => dtp.GetDelegateType (delegateSignature2), Times.Once);
