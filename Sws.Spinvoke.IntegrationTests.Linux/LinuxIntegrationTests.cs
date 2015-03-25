@@ -288,6 +288,8 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 
 			var result = nativeDelegate.DynamicInvoke (3, 4);
 
+			facade.Dispose ();
+
 			Assert.AreEqual (7, result);
 		}
 
@@ -305,6 +307,8 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 				             "add",
 				             CallingConvention.Cdecl).Compile () (4, 5);
 
+			facade.Dispose ();
+
 			Assert.AreEqual (9, result);
 		}
 
@@ -313,7 +317,9 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		{
 			var facade = new SpinvokeInterceptionFacade.Builder().Build();
 
-			var nativeDelegateResolver = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build().NativeDelegateResolver;
+			var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build();
+
+			var nativeDelegateResolver = coreFacade.NativeDelegateResolver;
 
 			var interceptor = facade.NativeDelegateInterceptorFactory.CreateInterceptor(new NativeDelegateInterceptorContext(
 				"libSws.Spinvoke.IntegrationTests.so",
@@ -325,6 +331,8 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 			var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IDynamicProxyTest> (new SpinvokeInterceptor (interceptor));
 
 			var result = proxy.Add(7, 9);
+
+			coreFacade.Dispose ();
 
 			Assert.AreEqual(16, result);
 		}
