@@ -152,28 +152,29 @@ Most of the usage and examples I've given assume a certain default usage, which 
 #!c#
 
 // Build the core facade.
-var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build();
+using (var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build())
+{
+	// Build the interception facade.
+	var interceptionFacade = new SpinvokeInterceptionFacade.Builder().Build();
 
-// Build the interception facade.
-var interceptionFacade = new SpinvokeInterceptionFacade.Builder().Build();
+	// Create an interceptor for the library.
+	var interceptor = interceptionFacade.NativeDelegateInterceptorFactory.CreateInterceptor(
+					new NativeDelegateInterceptorContext(
+						"libMyLibrary.so",
+						CallingConvention.Cdecl,
+						coreFacade.NativeDelegateResolver));
 
-// Create an interceptor for the library.
-var interceptor = interceptionFacade.NativeDelegateInterceptorFactory.CreateInterceptor(
-				new NativeDelegateInterceptorContext(
-					"libMyLibrary.so",
-					CallingConvention.Cdecl,
-					coreFacade.NativeDelegateResolver));
+	// Build a dynamic proxy (here using Castle DynamicProxy).
 
-// Build a dynamic proxy (here using Castle DynamicProxy).
+	var proxyGenerator = new Castle.DynamicProxy.ProxyGenerator ();
 
-var proxyGenerator = new Castle.DynamicProxy.ProxyGenerator ();
+	var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IMyLibraryInterface> (
+		new Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor (interceptor));
 
-var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget<IMyLibraryInterface> (
-	new Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor (interceptor));
+	// Invoke it.
 
-// Invoke it.
-
-var result = proxy.nativeFunction();
+	var result = proxy.nativeFunction();
+}
 
 ```
 
