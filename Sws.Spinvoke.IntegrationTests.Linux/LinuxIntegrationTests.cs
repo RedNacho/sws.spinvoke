@@ -275,8 +275,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		public void CoreFacadeProducesWorkingNativeDelegateResolver ()
 		{
 			var facade = new SpinvokeCoreFacade.Builder (
-				             new LinuxNativeLibraryLoader (),
-				             "TestAssembly").Build ();
+				             new LinuxNativeLibraryLoader ()).Build ();
 
 			var nativeDelegateResolver = facade.NativeDelegateResolver;
 
@@ -297,8 +296,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		public void CoreFacadeProducesWorkingNativeExpressionBuilder ()
 		{
 			var facade = new SpinvokeCoreFacade.Builder (
-				new LinuxNativeLibraryLoader(),
-				"TestAssembly").Build();
+				new LinuxNativeLibraryLoader()).Build();
 
 			var nativeExpressionBuilder = facade.NativeExpressionBuilder;
 
@@ -317,7 +315,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		{
 			var facade = new SpinvokeInterceptionFacade.Builder().Build();
 
-			var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build();
+			var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader()).Build();
 
 			var nativeDelegateResolver = coreFacade.NativeDelegateResolver;
 
