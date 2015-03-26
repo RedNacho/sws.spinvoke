@@ -47,11 +47,11 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
-		public void WhenRequiredTypeIsVoidReturnsNullForNullInput()
+		public void WhenRequiredTypeIsVoidReturnsNull()
 		{
 			var subject = new ChangeTypeReturnPostprocessor ();
 
-			var result = subject.Process (null, typeof(void));
+			var result = subject.Process (new object(), typeof(void));
 
 			Assert.IsNull (result);
 		}
