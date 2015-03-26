@@ -152,7 +152,7 @@ Most of the usage and examples I've given assume a certain default usage, which 
 #!c#
 
 // Build the core facade.
-using (var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader(), "TestAssembly").Build())
+using (var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoader()).Build())
 {
 	// Build the interception facade.
 	var interceptionFacade = new SpinvokeInterceptionFacade.Builder().Build();
@@ -187,8 +187,7 @@ using (var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoa
 
 // Facade build.
 var facade = new SpinvokeCoreFacade.Builder (
-	new LinuxNativeLibraryLoader(),
-	"TestAssembly").Build();
+	new LinuxNativeLibraryLoader()).Build();
 
 // Get the expression, compile it, and invoke it.
 var nativeExpressionBuilder = facade.NativeExpressionBuilder;
