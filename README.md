@@ -30,7 +30,7 @@ I've been trying to write that gizmo.  At the moment it's very much at the PoC s
 
 2. Use Sws.Spinvoke.Ninject.Extensions.
 
-3. Call SpinvokeNinjectExtensionsConfiguration.Configure with a native library loader for your OS (I've only included a Linux implementation but a Windows one is extremely easy - Google LoadLibrary Kernel32) and a proxy generator.  I'm leaving the native library loader up to the client for now, as I can't think of every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.  You can also use your own proxy generator, although I'd recommend using the supplied Castle DynamicProxy implementation unless you have a good reason not to: Sws.Spinvoke.Interception.DynamicProxy.ProxyGenerator.
+3. Call SpinvokeNinjectExtensionsConfiguration.Configure with a native library loader for your OS (I've included a Linux implementation and a very poorly tested Windows one) and a proxy generator.  I'm leaving the native library loader up to the client for now, as I can't think of every OS in the universe, and even if I could I wouldn't be able to test my code on all of them.  You can also use your own proxy generator, although I'd recommend using the supplied Castle DynamicProxy implementation unless you have a good reason not to: Sws.Spinvoke.Interception.DynamicProxy.ProxyGenerator.
 
 4. Call Bind<T>().ToNative(libraryName) to bind interface T to a native library which implements the required functions.  Optionally, call WithCallingConvention to set the calling convention, and WithNonNativeFallback to specify an implementation which will be called for methods which are not to be mapped to native code (see attributes below).
 
@@ -144,7 +144,7 @@ public interface INativeCalculator
 
 Most of the usage and examples I've given assume a certain default usage, which you don't have to follow.  I'll now explain some other options.
 
-* **You don't have to use Linux**.  Of course, it's hard to believe that there are Microsoft .NET developers in the world who use Microsoft Windows, but I've heard that there are one or two out there.  I'm currently unable to adequately test my code on an OS other than Linux, so I deliberately didn't try to build in support.  However, the only change you have to make is to implement your own INativeLibraryLoader instead of using the LinuxNativeLibraryLoader.  This should be fairly straightforward: In Windows, the interface methods map more or less directly onto Kernel32's LoadLibrary, FreeLibrary and GetProcAddress functions.
+* **You don't have to use Linux**.  Of course, it's hard to believe that there are Microsoft .NET developers in the world who use Microsoft Windows, but I've heard that there are one or two out there.  I'm currently unable to adequately test my code on an OS other than Linux.  However, to use this code on a different OS, you just need to supply your own INativeLibraryLoader.  I've included an implementation for Windows, but it is extremely poorly tested.  If you need to roll your own, hopefully the existing implementations provide enough of a guide.
 
 * **You don't have to use Ninject**.  Ninject is my DI container of choice, and the Sws.Spinvoke.Ninject library is the easiest way to wire everything up.  However, in case you don't want to use this, you have a couple of options.  Firstly, if you can track through the Ninject modules, you can infer some poor man's DI, and wire everything up yourself.  Secondly, I've added facades for the core (Sws.Spinvoke.Core.Facade) and the interception (Sws.Spinvoke.Interception.Facade) libraries, which should make life a bit easier.  Complete Ninject-free proxy generation can be done as follows:
 
@@ -220,7 +220,13 @@ Firstly, the projects:
 
 * **Sws.Spinvoke.Linux**: The Core code is dependent upon an INativeLibraryLoader interface, the implementation of which is platform-specific.  This is a Linux implementation of the interface.
 
+* **Sws.Spinvoke.Windows**: As above, except it's a Windows implementation.
+
 * **Sws.Spinvoke.Ninject**: This is Ninject-specific code.  The primary entry point is the ToNative extension method, which binds an interface to a native code wrapper using the other libraries.  It uses SpinvokeModule, which you can also use directly if you want to use Sws.Spinvoke.Core without interception.
+
+* **Sws.Spinvoke.Core.Facade**: A facade into Sws.Spinvoke.Core, which saves you having to wire up your own dependencies if you're not using Sws.Spinvoke.Ninject.
+
+* **Sws.Spinvoke.Interception.Facade**: A facade into Sws.Spinvoke.Interception, which saves you having to wire up your own dependencies if you're not using Sws.Spinvoke.Ninject.
 
 Secondly, here's a complete guide to what happens when you use the Ninject ToNative extension method:
 
