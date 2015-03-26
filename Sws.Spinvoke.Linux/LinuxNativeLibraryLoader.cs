@@ -30,7 +30,7 @@ namespace Sws.Spinvoke.Linux
 			var errPtr = dlerror ();
 
 			if (errPtr != IntPtr.Zero) {
-				throw new NativeLibraryLoadException (string.Format ("dlsym errored trying to load function {0}.", functionName));
+				throw new NativeLibraryLoadException (string.Format ("dlsym errored trying to load function {0}.  Error was: {1}", functionName, Marshal.PtrToStringAuto(errPtr)));
 			}
 
 			return res;

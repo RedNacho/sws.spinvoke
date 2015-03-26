@@ -11,6 +11,10 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 		public object Process (object output, Type requiredReturnType)
 		{
+			if (output == null && requiredReturnType == typeof(void)) {
+				return output;
+			}
+
 			if (requiredReturnType.IsInstanceOfType (output)) {
 				return output;
 			}

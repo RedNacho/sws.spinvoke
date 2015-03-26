@@ -45,6 +45,16 @@ namespace Sws.Spinvoke.Interception.Tests
 			Assert.IsInstanceOf (typeof(decimal), result);
 			Assert.AreEqual (5m, result);
 		}
+
+		[Test ()]
+		public void WhenRequiredTypeIsVoidReturnsNullForNullInput()
+		{
+			var subject = new ChangeTypeReturnPostprocessor ();
+
+			var result = subject.Process (null, typeof(void));
+
+			Assert.IsNull (result);
+		}
 	}
 }
 
