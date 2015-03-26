@@ -49,7 +49,7 @@ namespace Sws.Spinvoke.Core.Facade
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing) {
-				this.NativeDelegateResolver.Dispose ();
+				NativeDelegateResolver.Dispose ();
 			}
 		}
 

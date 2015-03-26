@@ -74,37 +74,37 @@ namespace Sws.Spinvoke.Demo
 
 			Console.ReadKey ();
 		}
+	}
 
-		// Maps into native functions in libm.so (or equivalent on a non-Linux system).
-		public interface ICMath
+	// Maps into native functions in libm.so (or equivalent on a non-Linux system).
+	public interface ICMath
+	{
+		// Maps directly into pow function.
+		// Override attribute is present purely so we can use the capital "P" for our method name - if we called it "pow" like the C function it wouldn't be necessary.
+		[NativeDelegateDefinitionOverride(FunctionName = "pow")]
+		double Pow(double @base, double exponent);
+
+		// Illustrates one way of changing the setup of the native delegate.
+		// Arguments will be converted to doubles, passed to the native function, and then the output converted to an int.
+		// This can also be done with the InputTypes and OutputType properties of the NativeDelegateDefinitionOverride.
+		[NativeDelegateDefinitionOverride(FunctionName = "pow")]
+		[return: DefaultNativeReturnDefinitionOverride(typeof(double))]
+		int Pow(
+			[DefaultNativeArgumentDefinitionOverride(typeof(double))] int @base,
+			[DefaultNativeArgumentDefinitionOverride(typeof(double))] int exponent);
+	}
+
+	// Fake implementation
+	public class FakeCMath : ICMath
+	{
+		public double Pow (double @base, double exponent)
 		{
-			// Maps directly into pow function.
-			// Override attribute is present purely so we can use the capital "P" for our method name - if we called it "pow" like the C function it wouldn't be necessary.
-			[NativeDelegateDefinitionOverride(FunctionName = "pow")]
-			double Pow(double @base, double exponent);
-
-			// Illustrates one way of changing the setup of the native delegate.
-			// Arguments will be converted to doubles, passed to the native function, and then the output converted to an int.
-			// This can also be done with the InputTypes and OutputType properties of the NativeDelegateDefinitionOverride.
-			[NativeDelegateDefinitionOverride(FunctionName = "pow")]
-			[return: DefaultNativeReturnDefinitionOverride(typeof(double))]
-			int Pow(
-				[DefaultNativeArgumentDefinitionOverride(typeof(double))] int @base,
-				[DefaultNativeArgumentDefinitionOverride(typeof(double))] int exponent);
+			return Math.Pow (@base, exponent);
 		}
 
-		// Fake implementation
-		public class FakeCMath : ICMath
+		public int Pow (int @base, int exponent)
 		{
-			public double Pow (double @base, double exponent)
-			{
-				return Math.Pow (@base, exponent);
-			}
-
-			public int Pow (int @base, int exponent)
-			{
-				return (int) Math.Pow((double) @base, (double) exponent);
-			}
+			return (int) Math.Pow((double) @base, (double) exponent);
 		}
 	}
 }

@@ -5,7 +5,7 @@ using Sws.Spinvoke.Core;
 
 namespace Sws.Spinvoke.Windows
 {
-	// THIS HAS NOT YET BEEN TESTED ON WINDOWS
+	// BRIEFLY TESTED ON THE NEAREST COPY OF WINDOWS.
 	public class WindowsNativeLibraryLoader : INativeLibraryLoader
 	{
 		public SafeLibraryHandle LoadLibrary (string fileName)
