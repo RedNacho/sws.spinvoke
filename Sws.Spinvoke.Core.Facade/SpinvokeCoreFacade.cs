@@ -12,6 +12,8 @@ namespace Sws.Spinvoke.Core.Facade
 	// TODO More tests!
 	public class SpinvokeCoreFacade : IDisposable
 	{
+		public const string DefaultDynamicLibraryName = "SpinvokeCoreFacadeDynamicLibrary";
+
 		private readonly INativeDelegateResolver _nativeDelegateResolver;
 
 		private readonly INativeExpressionBuilder _nativeExpressionBuilder;
@@ -55,7 +57,9 @@ namespace Sws.Spinvoke.Core.Facade
 
 		public class Builder
 		{
-			private Func<IDelegateTypeProvider> _uncachedDelegateTypeProviderFactory;
+			private Func<string> _dynamicLibraryNameFactory;
+
+			private Func<Lazy<string>, IDelegateTypeProvider> _uncachedDelegateTypeProviderFactory;
 
 			private Func<ICompositeKeyedCache<Type>> _delegateTypeProviderCacheImplementationFactory;
 
@@ -71,9 +75,11 @@ namespace Sws.Spinvoke.Core.Facade
 
 			private Func<Lazy<INativeDelegateResolver>, Lazy<IDelegateTypeToDelegateSignatureConverter>, Lazy<IDelegateExpressionBuilder>, INativeExpressionBuilder> _nativeExpressionBuilderFactory;
 
-			public Builder(INativeLibraryLoader nativeLibraryLoader, string dynamicAssemblyName)
+			public Builder(INativeLibraryLoader nativeLibraryLoader)
 			{
-				_uncachedDelegateTypeProviderFactory = () => new DynamicAssemblyDelegateTypeProvider(dynamicAssemblyName);
+				_dynamicLibraryNameFactory = () => DefaultDynamicLibraryName;
+
+				_uncachedDelegateTypeProviderFactory = (dynamicLibraryName) => new DynamicAssemblyDelegateTypeProvider(dynamicLibraryName.Value);
 
 				_delegateTypeProviderCacheImplementationFactory = () => new SimpleCompositeKeyedCache<Type>();
 
@@ -91,9 +97,16 @@ namespace Sws.Spinvoke.Core.Facade
 					=> new DefaultNativeExpressionBuilder(nativeDelegateResolver.Value, delegateTypeToDelegateSignatureConverter.Value, delegateExpressionBuilder.Value);
 			}
 
+			public Builder WithDynamicLibraryName(string dynamicLibraryName)
+			{
+				_dynamicLibraryNameFactory = () => dynamicLibraryName;
+
+				return this;
+			}
+
 			public Builder WithUncachedDelegateTypeProvider(IDelegateTypeProvider uncachedDelegateTypeProvider)
 			{
-				_uncachedDelegateTypeProviderFactory = () => uncachedDelegateTypeProvider;
+				_uncachedDelegateTypeProviderFactory = (a) => uncachedDelegateTypeProvider;
 
 				return this;
 			}
@@ -149,7 +162,9 @@ namespace Sws.Spinvoke.Core.Facade
 
 			public SpinvokeCoreFacade Build()
 			{
-				var uncachedDelegateTypeProvider = new Lazy<IDelegateTypeProvider> (_uncachedDelegateTypeProviderFactory);
+				var dynamicLibraryName = new Lazy<string>(_dynamicLibraryNameFactory);
+
+				var uncachedDelegateTypeProvider = new Lazy<IDelegateTypeProvider> (() => _uncachedDelegateTypeProviderFactory(dynamicLibraryName));
 
 				var delegateTypeProviderCacheImplementation = new Lazy<ICompositeKeyedCache<Type>> (_delegateTypeProviderCacheImplementationFactory);
 
