@@ -60,7 +60,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		{
 			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
 
-			var ptr = Marshal.AllocHGlobal (Marshal.SizeOf<TestStruct>());
+			var ptr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(TestStruct)));
 
 			var testData = new TestStruct () { x = 7, y = 8, z = 9 };
 
