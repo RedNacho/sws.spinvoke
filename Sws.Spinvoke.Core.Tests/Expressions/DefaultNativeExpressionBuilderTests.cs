@@ -47,12 +47,12 @@ namespace Sws.Spinvoke.Core.Tests
 			delegateTypeToDelegateSignatureMock.Setup (dttds => dttds.CreateDelegateSignature (It.IsAny<Type> (), It.IsAny<CallingConvention> ()))
 				.Returns (delegateSignature);
 
-			var delegateExpressionBuilderMock = new Mock<IDelegateExpressionBuilder> ();
+			var delegateExpressionBuilderMock = new Mock<IWorkaroundDelegateExpressionBuilder> ();
 
-			delegateExpressionBuilderMock.Setup(deb => deb.BuildLinqExpression<Action>(It.IsAny<Delegate>()))
+			delegateExpressionBuilderMock.Setup(deb => deb.BuildLinqExpression(It.IsAny<Delegate>(), typeof(Action)))
 				.Returns(expression);
 
-			var subject = new DefaultNativeExpressionBuilder (nativeDelegateResolverMock.Object, delegateTypeToDelegateSignatureMock.Object, delegateExpressionBuilderMock.Object);
+			var subject = new DefaultNativeExpressionBuilder (nativeDelegateResolverMock.Object, delegateTypeToDelegateSignatureMock.Object, new WorkaroundDelegateExpressionBuilderAdapter(delegateExpressionBuilderMock.Object));
 
 			var nativeExpression = subject.BuildNativeExpression<Action> (LibraryName, FunctionName, CallingConvention, explicitDelegateType);
 
@@ -71,9 +71,9 @@ namespace Sws.Spinvoke.Core.Tests
 
 			nativeDelegateResolverMock.Verify(ndr => ndr.Resolve(It.IsAny<NativeDelegateDefinition>()), Times.Once);
 
-			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression<Action> (nativeAction), Times.Once);
+			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression (nativeAction, typeof(Action)), Times.Once);
 
-			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression<Action> (It.IsAny<Action> ()), Times.Once);
+			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression (It.IsAny<Action> (), typeof(Action)), Times.Once);
 		}
 
 		[Test ()]
@@ -106,15 +106,15 @@ namespace Sws.Spinvoke.Core.Tests
 			delegateTypeToDelegateSignatureMock.Setup (dttds => dttds.CreateDelegateSignature (It.IsAny<Type> ()))
 				.Returns (delegateSignature);
 
-			var delegateExpressionBuilderMock = new Mock<IDelegateExpressionBuilder> ();
+			var delegateExpressionBuilderMock = new Mock<IWorkaroundDelegateExpressionBuilder> ();
 
 			delegateTypeToDelegateSignatureMock.Setup(dttds => dttds.HasCallingConvention(It.IsAny<Type>()))
 				.Returns(true);
 
-			delegateExpressionBuilderMock.Setup(deb => deb.BuildLinqExpression<Action>(It.IsAny<Delegate>()))
+			delegateExpressionBuilderMock.Setup(deb => deb.BuildLinqExpression(It.IsAny<Delegate>(), typeof(Action)))
 				.Returns(expression);
 
-			var subject = new DefaultNativeExpressionBuilder (nativeDelegateResolverMock.Object, delegateTypeToDelegateSignatureMock.Object, delegateExpressionBuilderMock.Object);
+			var subject = new DefaultNativeExpressionBuilder (nativeDelegateResolverMock.Object, delegateTypeToDelegateSignatureMock.Object, new WorkaroundDelegateExpressionBuilderAdapter(delegateExpressionBuilderMock.Object));
 
 			var nativeExpression = subject.BuildNativeExpression<Action> (LibraryName, FunctionName, null, explicitDelegateType);
 
@@ -133,9 +133,9 @@ namespace Sws.Spinvoke.Core.Tests
 
 			nativeDelegateResolverMock.Verify(ndr => ndr.Resolve(It.IsAny<NativeDelegateDefinition>()), Times.Once);
 
-			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression<Action> (nativeAction), Times.Once);
+			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression (nativeAction, typeof(Action)), Times.Once);
 
-			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression<Action> (It.IsAny<Action> ()), Times.Once);
+			delegateExpressionBuilderMock.Verify (deb => deb.BuildLinqExpression (It.IsAny<Action> (), typeof(Action)), Times.Once);
 		}
 
 		[Test ()]
@@ -155,6 +155,36 @@ namespace Sws.Spinvoke.Core.Tests
 			var subject = new DefaultNativeExpressionBuilder (Mock.Of<INativeDelegateResolver>(), delegateTypeToDelegateSignatureMock.Object, Mock.Of<IDelegateExpressionBuilder>());
 
 			subject.BuildNativeExpression<Action> (LibraryName, FunctionName, null, explicitDelegateType);
+		}
+	}
+
+	/// <summary>
+	/// For some reason, Moq is now crashing without explanation on Mono when you try
+	/// to invoke the mocked IDelegateExpressionBuilder.BuildLinqExpression
+	/// method. It works if you remove the generic, so I am mocking that
+	/// instead, and then adapting it to the original interface.
+	/// 
+	/// It was working last time I looked at it - I suspect it's due to a change
+	/// in my environment, but it's a very strange one. I'll try to get to
+	/// a non-horrible fix when I have more time.
+	/// </summary>
+	public interface IWorkaroundDelegateExpressionBuilder
+	{
+		Expression BuildLinqExpression(Delegate target, Type expressionType);
+	}
+
+	public class WorkaroundDelegateExpressionBuilderAdapter : IDelegateExpressionBuilder
+	{
+		private readonly IWorkaroundDelegateExpressionBuilder _target;
+
+		public WorkaroundDelegateExpressionBuilderAdapter(IWorkaroundDelegateExpressionBuilder target)
+		{
+			_target = target;
+		}
+
+		public Expression<T> BuildLinqExpression<T> (Delegate target)
+		{
+			return (Expression<T>)_target.BuildLinqExpression (target, typeof(T));
 		}
 	}
 }
