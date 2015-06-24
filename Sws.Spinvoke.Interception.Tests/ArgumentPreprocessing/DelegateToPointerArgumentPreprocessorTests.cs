@@ -15,7 +15,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		{
 			var subject = new DelegateToPointerArgumentPreprocessor ();
 
-			Func<int, int> addOne = i => i + 1;
+			AddOneDelegate addOne = i => i + 1;
 
 			var canProcess = subject.CanProcess (addOne);
 
@@ -37,7 +37,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		{
 			var subject = new DelegateToPointerArgumentPreprocessor ();
 
-			Func<int, int> addOne = i => i + 1;
+			AddOneDelegate addOne = i => i + 1;
 
 			var ptr = (IntPtr) subject.Process (addOne);
 
