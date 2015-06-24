@@ -39,7 +39,7 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 		{
 			public override object Invoke (IntPtr ptr)
 			{
-				return Marshal.PtrToStructure<T> (ptr);
+				return Marshal.PtrToStructure (ptr, typeof(T));
 			}
 		}
 	}

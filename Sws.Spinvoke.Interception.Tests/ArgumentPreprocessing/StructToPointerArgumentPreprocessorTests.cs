@@ -50,7 +50,7 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			var ptr = (IntPtr)subject.Process (testData);
 
-			var actual = Marshal.PtrToStructure<TestStruct> (ptr);
+			var actual = Marshal.PtrToStructure (ptr, typeof(TestStruct));
 
 			Marshal.FreeHGlobal (ptr);
 
