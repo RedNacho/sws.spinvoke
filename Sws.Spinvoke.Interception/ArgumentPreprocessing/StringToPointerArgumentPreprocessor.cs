@@ -19,12 +19,17 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public object Process (object input)
 		{
-			return Marshal.StringToHGlobalAuto ((string)input);
+			return StringToHGlobal ((string)input);
 		}
 
 		public void ReleaseProcessedInput (object processedInput)
 		{
 			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted ((IntPtr)processedInput, _pointerManagementMode);
+		}
+
+		protected virtual IntPtr StringToHGlobal(string input)
+		{
+			return Marshal.StringToHGlobalAuto (input);
 		}
 	}
 }
