@@ -25,11 +25,16 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 			var ptr = (IntPtr)output;
 
-			var result = Marshal.PtrToStringAuto (ptr);
+			var result = PtrToString (ptr);
 
 			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode);
 
 			return result;
+		}
+
+		protected virtual string PtrToString(IntPtr ptr)
+		{
+			return Marshal.PtrToStringAuto (ptr);
 		}
 	}
 }
