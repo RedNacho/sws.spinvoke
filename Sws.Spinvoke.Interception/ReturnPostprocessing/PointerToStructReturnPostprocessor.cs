@@ -25,9 +25,21 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 			var specificInstance = Activator.CreateInstance (specificType) as PtrToStructureBase;
 			var result = specificInstance.Invoke (ptr);
 
-			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode);
+			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode, IsFreePointerImplemented ? (Action<IntPtr>)FreePointer : null);
 
 			return result;
+		}
+
+		protected virtual bool IsFreePointerImplemented
+		{
+			get {
+				return false;
+			}
+		}
+
+		protected virtual void FreePointer(IntPtr pointer)
+		{
+			throw new NotImplementedException ();
 		}
 
 		private abstract class PtrToStructureBase

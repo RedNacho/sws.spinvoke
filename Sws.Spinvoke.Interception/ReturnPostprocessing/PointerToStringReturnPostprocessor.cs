@@ -27,7 +27,7 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 			var result = PtrToString (ptr);
 
-			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode);
+			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode, IsFreePointerImplemented ? (Action<IntPtr>)FreePointer : null);
 
 			return result;
 		}
@@ -35,6 +35,18 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 		protected virtual string PtrToString(IntPtr ptr)
 		{
 			return Marshal.PtrToStringAuto (ptr);
+		}
+
+		protected virtual bool IsFreePointerImplemented
+		{
+			get {
+				return false;
+			}
+		}
+
+		protected virtual void FreePointer(IntPtr pointer)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
