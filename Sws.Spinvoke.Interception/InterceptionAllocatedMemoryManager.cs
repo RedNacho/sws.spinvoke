@@ -8,7 +8,7 @@ namespace Sws.Spinvoke.Interception
 {
 	public static class InterceptionAllocatedMemoryManager
 	{
-		private static readonly IDictionary<Tuple<string>, IList<IntPtr>> FreeReferences = new Dictionary<Tuple<string>, IList<IntPtr>>();
+		private static readonly IDictionary<Tuple<string>, IList<Tuple<IntPtr, Action<IntPtr>>>> FreeReferences = new Dictionary<Tuple<string>, IList<Tuple<IntPtr, Action<IntPtr>>>>();
 
 		private static readonly object SyncObject = new object();
 
@@ -83,34 +83,38 @@ namespace Sws.Spinvoke.Interception
 			}
 		}
 
-		public static void RegisterForGarbageCollection(IntPtr ptr)
+		public static void RegisterForGarbageCollection(IntPtr ptr, Action<IntPtr> freeAction = null)
 		{
+			freeAction = EnsureFreeAction (freeAction);
+
 			lock (SyncObject) {
 				var freeReferences = FreeReferences.ContainsKey(CurrentBlockName)
 					? FreeReferences[CurrentBlockName]
-					: (FreeReferences[CurrentBlockName] = new List<IntPtr>());
+					: (FreeReferences[CurrentBlockName] = new List<Tuple<IntPtr, Action<IntPtr>>>());
 
-				freeReferences.Add (ptr);
+				freeReferences.Add (Tuple.Create(ptr, freeAction));
 			}
 		}
 
-		public static void ReportPointerCallCompleted(IntPtr ptr, PointerManagementMode pointerManagementMode)
+		public static void ReportPointerCallCompleted(IntPtr ptr, PointerManagementMode pointerManagementMode, Action<IntPtr> freeAction = null)
 		{
+			freeAction = EnsureFreeAction (freeAction);
+
 			if (pointerManagementMode == PointerManagementMode.DestroyAfterCall) {
-				Marshal.FreeHGlobal (ptr);
+				freeAction (ptr);
 			} else if (pointerManagementMode == PointerManagementMode.DestroyOnInterceptionGarbageCollect) {
-				RegisterForGarbageCollection (ptr);
+				RegisterForGarbageCollection (ptr, freeAction);
 			}
 		}
 
-		private static void GarbageCollectKvps(params KeyValuePair<Tuple<string>, IList<IntPtr>>[] kvps)
+		private static void GarbageCollectKvps(params KeyValuePair<Tuple<string>, IList<Tuple<IntPtr, Action<IntPtr>>>>[] kvps)
 		{
 			var exceptionList = new List<Exception> ();
 
 			foreach (var kvp in kvps) {
 				foreach (var freeReference in kvp.Value.ToArray()) {
 					try {
-						Marshal.FreeHGlobal(freeReference);
+						freeReference.Item2(freeReference.Item1);
 
 						kvp.Value.Remove(freeReference);
 
@@ -131,6 +135,11 @@ namespace Sws.Spinvoke.Interception
 			} else {
 				throw new AggregateException (exceptionList);
 			}
+		}
+
+		private static Action<IntPtr> EnsureFreeAction(Action<IntPtr> freeAction)
+		{
+			return freeAction ?? Marshal.FreeHGlobal;
 		}
 	}
 }

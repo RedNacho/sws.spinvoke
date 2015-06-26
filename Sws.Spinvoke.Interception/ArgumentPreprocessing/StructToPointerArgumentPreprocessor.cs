@@ -28,7 +28,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public void ReleaseProcessedInput (object processedInput)
 		{
-			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted ((IntPtr)processedInput, _pointerManagementMode);
+			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted ((IntPtr)processedInput, _pointerManagementMode, Marshal.FreeHGlobal);
 		}
 	}
 }
