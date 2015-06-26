@@ -444,8 +444,8 @@ namespace Sws.Spinvoke.Interception.Tests
 				Assert.AreEqual (CallingConvention, argContext.NativeDelegateMapping.CallingConvention);
 				Assert.IsNull (argContext.NativeDelegateMapping.ExplicitDelegateType);
 				Assert.AreEqual (2, argContext.NativeDelegateMapping.ArgumentPreprocessors.Length);
-				Assert.IsNotNull (argContext.NativeDelegateMapping.ArgumentPreprocessors [0] as IContextualArgumentProcessor);
-				Assert.IsNotNull (argContext.NativeDelegateMapping.ArgumentPreprocessors [1] as IContextualArgumentProcessor);
+				Assert.IsNotNull (argContext.NativeDelegateMapping.ArgumentPreprocessors [0] as IContextualArgumentPreprocessor);
+				Assert.IsNotNull (argContext.NativeDelegateMapping.ArgumentPreprocessors [1] as IContextualArgumentPreprocessor);
 				Assert.IsNotNull (argContext.NativeDelegateMapping.ReturnPostprocessor as ChangeTypeReturnPostprocessor);
 				Assert.AreEqual (2, argContext.NativeDelegateMapping.InputTypes.Length);
 				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.InputTypes[0]);
@@ -649,11 +649,11 @@ namespace Sws.Spinvoke.Interception.Tests
 		public static IList<Tuple<ArgumentPreprocessorContext, object>> CanProcessContexts = new List<Tuple<ArgumentPreprocessorContext, object>>();
 		public static IList<Tuple<ArgumentPreprocessorContext, object>> ReleaseProcessedInputContexts = new List<Tuple<ArgumentPreprocessorContext, object>>();
 
-		private static IContextualArgumentProcessor CreateContextualArgumentPreprocessorMock()
+		private static IContextualArgumentPreprocessor CreateContextualArgumentPreprocessorMock()
 		{
 			ArgumentPreprocessorContext currentContext = null;
 
-			var argumentPreprocessorMock = new Mock<IContextualArgumentProcessor> ();
+			var argumentPreprocessorMock = new Mock<IContextualArgumentPreprocessor> ();
 
 			argumentPreprocessorMock.Setup (ap => ap.CanProcess (It.IsAny<object> ()))
 				.Callback ((object obj) => CanProcessContexts.Add (Tuple.Create (currentContext, obj)))
