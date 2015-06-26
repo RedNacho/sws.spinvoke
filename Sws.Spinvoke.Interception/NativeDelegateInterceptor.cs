@@ -81,7 +81,7 @@ namespace Sws.Spinvoke.Interception
 
 				var returnedValue = delegateInstance.DynamicInvoke (processedArguments.Select(arg => arg.Arg).ToArray());
 
-				SetReturnPostprocessorContext (returnPostprocessor, invocation, nativeDelegateMapping, processedArguments, delegateSignature, delegateInstance);
+				SetReturnPostprocessorContext (returnPostprocessor, invocation, nativeDelegateMapping, processedArguments, _nativeDelegateResolver, delegateSignature, delegateInstance);
 
 				if (!returnPostprocessor.CanProcess(returnedValue, invocation.Method.ReturnType))
 				{
@@ -135,12 +135,12 @@ namespace Sws.Spinvoke.Interception
 			}
 		}
 
-		private void SetReturnPostprocessorContext(IReturnPostprocessor returnPostprocessor, IInvocation invocation, NativeDelegateMapping nativeDelegateMapping, IEnumerable<ProcessedArgument> processedArguments, DelegateSignature delegateSignature, Delegate delegateInstance)
+		private void SetReturnPostprocessorContext(IReturnPostprocessor returnPostprocessor, IInvocation invocation, NativeDelegateMapping nativeDelegateMapping, IEnumerable<ProcessedArgument> processedArguments, INativeDelegateResolver nativeDelegateResolver, DelegateSignature delegateSignature, Delegate delegateInstance)
 		{
 			var contextualReturnPostprocessor = returnPostprocessor as IContextualReturnPostprocessor;
 
 			if (contextualReturnPostprocessor != null) {
-				contextualReturnPostprocessor.SetContext (new ReturnPostprocessorContext(invocation, nativeDelegateMapping, processedArguments.Select(processedArg => processedArg.Arg).ToArray(), delegateSignature, delegateInstance));
+				contextualReturnPostprocessor.SetContext (new ReturnPostprocessorContext(invocation, nativeDelegateMapping, processedArguments.Select(processedArg => processedArg.Arg).ToArray(), nativeDelegateResolver, delegateSignature, delegateInstance));
 			}
 		}
 

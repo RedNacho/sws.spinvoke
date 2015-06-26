@@ -526,6 +526,7 @@ namespace Sws.Spinvoke.Interception.Tests
 			Assert.AreEqual (typeof(int), returnContext.DelegateSignature.OutputType);
 			Assert.AreEqual (CallingConvention, returnContext.DelegateSignature.CallingConvention);
 			Assert.IsNotNull (returnContext.DelegateInstance as AddDelegate);
+			Assert.AreEqual (_nativeDelegateResolverMock.Object, returnContext.NativeDelegateResolver);
 		}
 
 		private void VerifyNativeDelegateResolverResolveCall(NativeDelegateDefinition nativeDelegateDefinition, Times times)
