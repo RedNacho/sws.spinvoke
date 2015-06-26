@@ -60,13 +60,17 @@ namespace Sws.Spinvoke.Interception
 
 			List<Exception> exceptionList = new List<Exception> ();
 
+			var argumentPreprocessorContexts = new Dictionary<int, ArgumentPreprocessorContext> ();
+
 			try {
-				foreach (var pair in invocation.Arguments.Zip(argumentPreprocessors, (arg, preprocessor) => new { Arg = arg, Preprocessor = preprocessor })) {
+				foreach (var pair in Enumerable.Range(0, invocation.Arguments.Length).Zip(argumentPreprocessors, (argIndex, preprocessor) => new { ArgIndex = argIndex, Arg = invocation.Arguments[argIndex], Preprocessor = preprocessor })) {
+					SetArgumentPreprocessorContext (pair.Preprocessor, pair.ArgIndex, invocation, nativeDelegateMapping, argumentPreprocessorContexts);
+
 					if (!pair.Preprocessor.CanProcess(pair.Arg)) {
 						throw new InvalidOperationException("ArgumentPreprocessor cannot process input.");
 					}
 
-					processedArguments.Add(new ProcessedArgument { Arg = pair.Preprocessor.Process(pair.Arg), Source = pair.Preprocessor });
+					processedArguments.Add(new ProcessedArgument { ArgIndex = pair.ArgIndex, Arg = pair.Preprocessor.Process(pair.Arg), Source = pair.Preprocessor });
 				}
 
 				inputTypes = inputTypes.Zip (processedArguments, (inputType, arg) => inputType.IsInstanceOfType (arg.Arg) ? inputType : arg.Arg.GetType ()).ToArray();
@@ -76,6 +80,8 @@ namespace Sws.Spinvoke.Interception
 				var delegateInstance = _nativeDelegateResolver.Resolve(new NativeDelegateDefinition(libraryName, functionName, delegateSignature, explicitDelegateType));
 
 				var returnedValue = delegateInstance.DynamicInvoke (processedArguments.Select(arg => arg.Arg).ToArray());
+
+				SetReturnPostprocessorContext (returnPostprocessor, invocation, nativeDelegateMapping, processedArguments, delegateSignature, delegateInstance);
 
 				if (!returnPostprocessor.CanProcess(returnedValue, invocation.Method.ReturnType))
 				{
@@ -90,6 +96,8 @@ namespace Sws.Spinvoke.Interception
 			finally {
 				foreach (var typedArgument in processedArguments) {
 					try {
+						SetArgumentPreprocessorContext (typedArgument.Source, typedArgument.ArgIndex, invocation, nativeDelegateMapping, argumentPreprocessorContexts);
+
 						typedArgument.Source.ReleaseProcessedInput (typedArgument.Arg);
 					}
 					catch (Exception ex) {
@@ -106,6 +114,33 @@ namespace Sws.Spinvoke.Interception
 				throw exceptionList.Single ();
 			} else {
 				throw new AggregateException (exceptionList);
+			}
+		}
+
+		private void SetArgumentPreprocessorContext(IArgumentPreprocessor argumentPreprocessor, int argIndex, IInvocation invocation, NativeDelegateMapping nativeDelegateMapping, IDictionary<int, ArgumentPreprocessorContext> cache)
+		{
+			var contextualPreprocessor = argumentPreprocessor as IContextualArgumentProcessor;
+
+			if (contextualPreprocessor != null) {
+				ArgumentPreprocessorContext context;
+
+				if (!cache.ContainsKey (argIndex)) {
+					context = new ArgumentPreprocessorContext (invocation, nativeDelegateMapping, argIndex);
+					cache [argIndex] = context;
+				} else {
+					context = cache [argIndex];
+				}
+
+				contextualPreprocessor.SetContext(context);
+			}
+		}
+
+		private void SetReturnPostprocessorContext(IReturnPostprocessor returnPostprocessor, IInvocation invocation, NativeDelegateMapping nativeDelegateMapping, IEnumerable<ProcessedArgument> processedArguments, DelegateSignature delegateSignature, Delegate delegateInstance)
+		{
+			var contextualReturnPostprocessor = returnPostprocessor as IContextualReturnPostprocessor;
+
+			if (contextualReturnPostprocessor != null) {
+				contextualReturnPostprocessor.SetContext (new ReturnPostprocessorContext(invocation, nativeDelegateMapping, processedArguments.Select(processedArg => processedArg.Arg).ToArray(), delegateSignature, delegateInstance));
 			}
 		}
 
@@ -154,17 +189,16 @@ namespace Sws.Spinvoke.Interception
 
 				outputType = returnDefinitionOverrideAttribute.OutputType ?? outputType;
 
-				nativeDelegateMapping = new NativeDelegateMapping {
-					MapNative = mapNative,
-					LibraryName = libraryName,
-					FunctionName = functionName,
-					CallingConvention = callingConvention,
-					ArgumentPreprocessors = argumentDefinitionOverrideAttributes.Select(adoa => adoa.ArgumentPreprocessor).ToArray(),
-					ExplicitDelegateType = explicitDelegateType,
-					InputTypes = inputTypes,
-					OutputType = outputType,
-					ReturnPostprocessor = returnDefinitionOverrideAttribute.ReturnPostprocessor
-				};
+				nativeDelegateMapping = new NativeDelegateMapping (
+					mapNative,
+					libraryName,
+					functionName,
+					callingConvention,
+					argumentDefinitionOverrideAttributes.Select (adoa => adoa.ArgumentPreprocessor).ToArray (),
+					explicitDelegateType,
+					inputTypes,
+					outputType,
+					returnDefinitionOverrideAttribute.ReturnPostprocessor);
 
 				_nativeDelegateMappings [methodInfo] = nativeDelegateMapping;
 
@@ -172,29 +206,10 @@ namespace Sws.Spinvoke.Interception
 			}
 		}
 
-		private class NativeDelegateMapping
-		{
-			public bool MapNative { get; set;}
-
-			public string LibraryName { get; set; }
-
-			public string FunctionName { get; set;}
-
-			public CallingConvention CallingConvention { get; set; }
-
-			public IArgumentPreprocessor[] ArgumentPreprocessors { get; set; }
-
-			public Type ExplicitDelegateType { get; set; }
-
-			public Type[] InputTypes { get; set; }
-
-			public Type OutputType { get; set; }
-
-			public IReturnPostprocessor ReturnPostprocessor { get; set;}
-		}
-
 		private class ProcessedArgument
 		{
+			public int ArgIndex { get; set; }
+
 			public object Arg { get; set; }
 
 			public IArgumentPreprocessor Source { get; set; }

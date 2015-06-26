@@ -61,6 +61,12 @@ namespace Sws.Spinvoke.Interception.DynamicProxy
 				}
 			}
 
+			public object Proxy {
+				get {
+					return _invocation.Proxy;
+				}
+			}
+
 			public void Proceed() {
 				_invocation.Proceed ();
 			}
