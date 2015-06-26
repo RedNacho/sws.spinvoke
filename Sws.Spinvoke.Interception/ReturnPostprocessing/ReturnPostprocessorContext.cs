@@ -8,18 +8,21 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 		private readonly IInvocation _invocation;
 		private readonly NativeDelegateMapping _nativeDelegateMapping;
 		private readonly object[] _processedArguments;
+		private readonly INativeDelegateResolver _nativeDelegateResolver;
 		private readonly DelegateSignature _delegateSignature;
 		private readonly Delegate _delegateInstance;
 
 		internal ReturnPostprocessorContext (IInvocation invocation,
 			NativeDelegateMapping nativeDelegateMapping,
 			object[] processedArguments,
+			INativeDelegateResolver nativeDelegateResolver,
 			DelegateSignature delegateSignature,
 			Delegate delegateInstance)
 		{
 			_invocation = invocation;
 			_nativeDelegateMapping = nativeDelegateMapping;
 			_processedArguments = processedArguments;
+			_nativeDelegateResolver = nativeDelegateResolver;
 			_delegateSignature = delegateSignature;
 			_delegateInstance = delegateInstance;
 		}
@@ -34,6 +37,10 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 		public object[] ProcessedArguments {
 			get { return _processedArguments; }
+		}
+
+		public INativeDelegateResolver NativeDelegateResolver {
+			get { return _nativeDelegateResolver; }
 		}
 
 		public DelegateSignature DelegateSignature {
