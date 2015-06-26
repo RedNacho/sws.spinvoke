@@ -2,7 +2,7 @@
 
 namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
-	public interface IContextualArgumentProcessor : IArgumentPreprocessor
+	public interface IContextualArgumentPreprocessor : IArgumentPreprocessor
 	{
 		void SetContext(ArgumentPreprocessorContext context);
 	}

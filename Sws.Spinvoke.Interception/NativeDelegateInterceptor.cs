@@ -119,7 +119,7 @@ namespace Sws.Spinvoke.Interception
 
 		private void SetArgumentPreprocessorContext(IArgumentPreprocessor argumentPreprocessor, int argIndex, IInvocation invocation, NativeDelegateMapping nativeDelegateMapping, IDictionary<int, ArgumentPreprocessorContext> cache)
 		{
-			var contextualPreprocessor = argumentPreprocessor as IContextualArgumentProcessor;
+			var contextualPreprocessor = argumentPreprocessor as IContextualArgumentPreprocessor;
 
 			if (contextualPreprocessor != null) {
 				ArgumentPreprocessorContext context;
