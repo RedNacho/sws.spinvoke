@@ -370,6 +370,164 @@ namespace Sws.Spinvoke.Interception.Tests
 			Assert.AreEqual (XPlusY, invocationMock.Object.ReturnValue);
 		}
 
+		[Test ()]
+		public void InterceptorInvokesSetContextForContextualArgumentPreprocessor()
+		{
+			const int X = 2;
+			const int Y = 3;
+			const int XPlusY = 5;
+
+			_nativeDelegateResolverMock.ResetCalls ();
+
+			_nativeDelegateResolverMock.Setup (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()))
+				.Returns (() => new AddDelegate((x, y) => x + y));
+
+			var invocationMock = new Mock<IInvocation> ();
+
+			var proxy = new object ();
+
+			invocationMock.SetupGet (i => i.Arguments).Returns (new object[] { X, Y });
+			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithContextualArgumentPreprocessor).GetMethod ("Add"));
+			invocationMock.SetupProperty (i => i.ReturnValue);
+			invocationMock.SetupGet (i => i.Proxy).Returns(proxy);
+
+			var subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
+
+			ContextualArgumentPreprocessorMockAttribute.CanProcessContexts.Clear ();
+			ContextualArgumentPreprocessorMockAttribute.ProcessContexts.Clear ();
+			ContextualArgumentPreprocessorMockAttribute.ReleaseProcessedInputContexts.Clear ();
+
+			subject.Intercept (invocationMock.Object);
+
+			Assert.AreEqual(2, ContextualArgumentPreprocessorMockAttribute.CanProcessContexts.Count);
+			Assert.AreEqual(2, ContextualArgumentPreprocessorMockAttribute.ProcessContexts.Count);
+			Assert.AreEqual (2, ContextualArgumentPreprocessorMockAttribute.ReleaseProcessedInputContexts.Count);
+
+			var arg0canProcessContext = ContextualArgumentPreprocessorMockAttribute.CanProcessContexts.FirstOrDefault (tuple => tuple.Item1 != null && tuple.Item1.ArgumentIndex == 0);
+			var arg0processContext = ContextualArgumentPreprocessorMockAttribute.ProcessContexts.FirstOrDefault (tuple => tuple.Item1 != null && tuple.Item1.ArgumentIndex == 0);
+			var arg0releaseProcessedInputContext = ContextualArgumentPreprocessorMockAttribute.ReleaseProcessedInputContexts.FirstOrDefault (tuple => tuple.Item1 != null && tuple.Item1.ArgumentIndex == 0);
+
+			var arg1canProcessContext = ContextualArgumentPreprocessorMockAttribute.CanProcessContexts.FirstOrDefault (tuple => tuple.Item1 != null && tuple.Item1.ArgumentIndex == 1);
+			var arg1processContext = ContextualArgumentPreprocessorMockAttribute.ProcessContexts.FirstOrDefault (tuple => tuple.Item1 != null && tuple.Item1.ArgumentIndex == 1);
+			var arg1releaseProcessedInputContext = ContextualArgumentPreprocessorMockAttribute.ReleaseProcessedInputContexts.FirstOrDefault (tuple => tuple.Item1 != null && tuple.Item1.ArgumentIndex == 1);
+
+			Assert.IsNotNull (arg0canProcessContext);
+			Assert.IsNotNull (arg0processContext);
+			Assert.IsNotNull (arg0releaseProcessedInputContext);
+
+			Assert.AreEqual (X, arg0canProcessContext.Item2);
+			Assert.AreEqual (X, arg0processContext.Item2);
+			Assert.AreEqual (X, arg0releaseProcessedInputContext.Item2);
+
+			Assert.AreEqual (arg0processContext.Item1, arg0canProcessContext.Item1);
+			Assert.AreEqual (arg0processContext.Item1, arg0releaseProcessedInputContext.Item1);
+
+			var arg0context = arg0processContext.Item1;
+
+			Assert.IsNotNull (arg1canProcessContext);
+			Assert.IsNotNull (arg1processContext);
+			Assert.IsNotNull (arg1releaseProcessedInputContext);
+
+			Assert.AreEqual (Y, arg1canProcessContext.Item2);
+			Assert.AreEqual (Y, arg1processContext.Item2);
+			Assert.AreEqual (Y, arg1releaseProcessedInputContext.Item2);
+
+			Assert.AreEqual (arg1processContext.Item1, arg1canProcessContext.Item1);
+			Assert.AreEqual (arg1processContext.Item1, arg1releaseProcessedInputContext.Item1);
+
+			var arg1context = arg0processContext.Item1;
+
+			foreach (var argContext in new [] { arg0context, arg1context }) {
+				Assert.AreEqual (invocationMock.Object, argContext.Invocation);
+				Assert.AreEqual ("Add", argContext.NativeDelegateMapping.FunctionName);
+				Assert.AreEqual (LibraryName, argContext.NativeDelegateMapping.LibraryName);
+				Assert.AreEqual (CallingConvention, argContext.NativeDelegateMapping.CallingConvention);
+				Assert.IsNull (argContext.NativeDelegateMapping.ExplicitDelegateType);
+				Assert.AreEqual (2, argContext.NativeDelegateMapping.ArgumentPreprocessors.Length);
+				Assert.IsNotNull (argContext.NativeDelegateMapping.ArgumentPreprocessors [0] as IContextualArgumentProcessor);
+				Assert.IsNotNull (argContext.NativeDelegateMapping.ArgumentPreprocessors [1] as IContextualArgumentProcessor);
+				Assert.IsNotNull (argContext.NativeDelegateMapping.ReturnPostprocessor as ChangeTypeReturnPostprocessor);
+				Assert.AreEqual (2, argContext.NativeDelegateMapping.InputTypes.Length);
+				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.InputTypes[0]);
+				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.InputTypes[1]);
+				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.OutputType);
+				Assert.IsTrue (argContext.NativeDelegateMapping.MapNative);
+			}
+		}
+
+		[Test ()]
+		public void InterceptorInvokesSetContextForContextualReturnPostprocessor()
+		{
+			const int X = 2;
+			const int Y = 3;
+			const int XPlusY = 5;
+
+			_nativeDelegateResolverMock.ResetCalls ();
+
+			_nativeDelegateResolverMock.Setup (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()))
+				.Returns (() => new AddDelegate((x, y) => x + y));
+
+			var invocationMock = new Mock<IInvocation> ();
+
+			var proxy = new object ();
+
+			invocationMock.SetupGet (i => i.Arguments).Returns (new object[] { X, Y });
+			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithContextualReturnPostprocessor).GetMethod ("Add"));
+			invocationMock.SetupProperty (i => i.ReturnValue);
+			invocationMock.SetupGet (i => i.Proxy).Returns(proxy);
+
+			var subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
+
+			ContextualReturnPostprocessorMockAttribute.CanProcessContexts.Clear ();
+			ContextualReturnPostprocessorMockAttribute.ProcessContexts.Clear ();
+
+			subject.Intercept (invocationMock.Object);
+
+			Assert.AreEqual(1, ContextualReturnPostprocessorMockAttribute.CanProcessContexts.Count);
+			Assert.AreEqual(1, ContextualReturnPostprocessorMockAttribute.ProcessContexts.Count);
+
+			var returnCanProcessContext = ContextualReturnPostprocessorMockAttribute.CanProcessContexts.Single();
+			var returnProcessContext = ContextualReturnPostprocessorMockAttribute.ProcessContexts.Single();
+
+			Assert.IsNotNull (returnCanProcessContext);
+			Assert.IsNotNull (returnProcessContext);
+
+			Assert.AreEqual (XPlusY, returnCanProcessContext.Item2);
+			Assert.AreEqual (typeof(int), returnCanProcessContext.Item3);
+			Assert.AreEqual (XPlusY, returnProcessContext.Item2);
+			Assert.AreEqual (typeof(int), returnProcessContext.Item3);
+
+			Assert.AreEqual (returnProcessContext.Item1, returnCanProcessContext.Item1);
+
+			var returnContext = returnProcessContext.Item1;
+
+			Assert.IsNotNull (returnContext);
+
+			Assert.AreEqual (invocationMock.Object, returnContext.Invocation);
+			Assert.AreEqual ("Add", returnContext.NativeDelegateMapping.FunctionName);
+			Assert.AreEqual (LibraryName, returnContext.NativeDelegateMapping.LibraryName);
+			Assert.AreEqual (CallingConvention, returnContext.NativeDelegateMapping.CallingConvention);
+			Assert.IsNull (returnContext.NativeDelegateMapping.ExplicitDelegateType);
+			Assert.AreEqual (2, returnContext.NativeDelegateMapping.ArgumentPreprocessors.Length);
+			Assert.IsNotNull (returnContext.NativeDelegateMapping.ArgumentPreprocessors [0] as ChangeTypeArgumentPreprocessor);
+			Assert.IsNotNull (returnContext.NativeDelegateMapping.ArgumentPreprocessors [1] as ChangeTypeArgumentPreprocessor);
+			Assert.IsNotNull (returnContext.NativeDelegateMapping.ReturnPostprocessor as IContextualReturnPostprocessor);
+			Assert.AreEqual (2, returnContext.NativeDelegateMapping.InputTypes.Length);
+			Assert.AreEqual (typeof(int), returnContext.NativeDelegateMapping.InputTypes[0]);
+			Assert.AreEqual (typeof(int), returnContext.NativeDelegateMapping.InputTypes[1]);
+			Assert.AreEqual (typeof(int), returnContext.NativeDelegateMapping.OutputType);
+			Assert.IsTrue (returnContext.NativeDelegateMapping.MapNative);
+			Assert.AreEqual (2, returnContext.ProcessedArguments.Length);
+			Assert.AreEqual (X, returnContext.ProcessedArguments [0]);
+			Assert.AreEqual (Y, returnContext.ProcessedArguments [1]);
+			Assert.AreEqual (2, returnContext.DelegateSignature.InputTypes.Length);
+			Assert.AreEqual (typeof(int), returnContext.DelegateSignature.InputTypes [0]);
+			Assert.AreEqual (typeof(int), returnContext.DelegateSignature.InputTypes [1]);
+			Assert.AreEqual (typeof(int), returnContext.DelegateSignature.OutputType);
+			Assert.AreEqual (CallingConvention, returnContext.DelegateSignature.CallingConvention);
+			Assert.IsNotNull (returnContext.DelegateInstance as AddDelegate);
+		}
+
 		private void VerifyNativeDelegateResolverResolveCall(NativeDelegateDefinition nativeDelegateDefinition, Times times)
 		{
 			_nativeDelegateResolverMock.Verify (ndr => ndr.Resolve (It.Is<NativeDelegateDefinition> (
@@ -436,6 +594,82 @@ namespace Sws.Spinvoke.Interception.Tests
 	{
 		[NativeDelegateDefinitionOverride(MapNative = false)]
 		int Add(int x, int y);
+	}
+
+	public interface IInterceptorTestWithContextualArgumentPreprocessor
+	{
+		int Add([ContextualArgumentPreprocessorMock] int x, [ContextualArgumentPreprocessorMock] int y);
+	}
+
+	public interface IInterceptorTestWithContextualReturnPostprocessor
+	{
+		[return: ContextualReturnPostprocessorMock] int Add(int x, int y);
+	}
+
+	public class ContextualReturnPostprocessorMockAttribute : NativeReturnDefinitionOverrideAttribute
+	{
+		public ContextualReturnPostprocessorMockAttribute()
+			: base(CreateContextualReturnPostprocessorMock())
+		{
+		}
+
+		public static IList<Tuple<ReturnPostprocessorContext, object, Type>> CanProcessContexts = new List<Tuple<ReturnPostprocessorContext, object, Type>> ();
+		public static IList<Tuple<ReturnPostprocessorContext, object, Type>> ProcessContexts = new List<Tuple<ReturnPostprocessorContext, object, Type>> ();
+
+		private static IContextualReturnPostprocessor CreateContextualReturnPostprocessorMock ()
+		{
+			ReturnPostprocessorContext currentContext = null;
+
+			var returnPostprocessorMock = new Mock<IContextualReturnPostprocessor> ();
+
+			returnPostprocessorMock.Setup (rp => rp.CanProcess (It.IsAny<object> (), It.IsAny<Type> ()))
+				.Callback ((object obj, Type type) => CanProcessContexts.Add(Tuple.Create(currentContext, obj, type)))
+				.Returns (true);
+
+			returnPostprocessorMock.Setup (rp => rp.Process (It.IsAny<object> (), It.IsAny<Type> ()))
+				.Callback ((object obj, Type type) => ProcessContexts.Add(Tuple.Create(currentContext, obj, type)))
+				.Returns ((object obj, Type type) => obj);
+
+			returnPostprocessorMock.Setup (rp => rp.SetContext (It.IsAny<ReturnPostprocessorContext> ()))
+				.Callback ((ReturnPostprocessorContext context) => currentContext = context);
+
+			return returnPostprocessorMock.Object;
+		}
+	}
+
+	public class ContextualArgumentPreprocessorMockAttribute : NativeArgumentDefinitionOverrideAttribute
+	{
+		public ContextualArgumentPreprocessorMockAttribute()
+			: base(CreateContextualArgumentPreprocessorMock())
+		{
+		}
+
+		public static IList<Tuple<ArgumentPreprocessorContext, object>> ProcessContexts = new List<Tuple<ArgumentPreprocessorContext, object>>();
+		public static IList<Tuple<ArgumentPreprocessorContext, object>> CanProcessContexts = new List<Tuple<ArgumentPreprocessorContext, object>>();
+		public static IList<Tuple<ArgumentPreprocessorContext, object>> ReleaseProcessedInputContexts = new List<Tuple<ArgumentPreprocessorContext, object>>();
+
+		private static IContextualArgumentProcessor CreateContextualArgumentPreprocessorMock()
+		{
+			ArgumentPreprocessorContext currentContext = null;
+
+			var argumentPreprocessorMock = new Mock<IContextualArgumentProcessor> ();
+
+			argumentPreprocessorMock.Setup (ap => ap.CanProcess (It.IsAny<object> ()))
+				.Callback ((object obj) => CanProcessContexts.Add (Tuple.Create (currentContext, obj)))
+				.Returns (true);
+
+			argumentPreprocessorMock.Setup (ap => ap.Process (It.IsAny<object>()))
+				.Callback ((object obj) => ProcessContexts.Add (Tuple.Create (currentContext, obj)))
+				.Returns((object obj) => obj);
+
+			argumentPreprocessorMock.Setup (ap => ap.ReleaseProcessedInput (It.IsAny<object> ()))
+				.Callback ((object obj) => ReleaseProcessedInputContexts.Add (Tuple.Create (currentContext, obj)));
+
+			argumentPreprocessorMock.Setup (ap => ap.SetContext (It.IsAny<ArgumentPreprocessorContext> ()))
+				.Callback ((ArgumentPreprocessorContext context) => currentContext = context);
+
+			return argumentPreprocessorMock.Object;
+		}
 	}
 
 	public class NativeReturnsOneLessAttribute : NativeReturnDefinitionOverrideAttribute

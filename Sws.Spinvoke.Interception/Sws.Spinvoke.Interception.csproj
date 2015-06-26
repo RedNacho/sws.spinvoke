@@ -60,6 +60,11 @@
     <Compile Include="DefaultNativeDelegateInterceptorFactory.cs" />
     <Compile Include="NativeArgumentAsFunctionPointerAttribute.cs" />
     <Compile Include="ArgumentPreprocessing\DelegateToPointerArgumentPreprocessor.cs" />
+    <Compile Include="ArgumentPreprocessing\IContextualArgumentPreprocessor.cs" />
+    <Compile Include="ArgumentPreprocessing\ArgumentPreprocessorContext.cs" />
+    <Compile Include="NativeDelegateMapping.cs" />
+    <Compile Include="ReturnPostprocessing\IContextualReturnPostprocessor.cs" />
+    <Compile Include="ReturnPostprocessing\ReturnPostprocessorContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
