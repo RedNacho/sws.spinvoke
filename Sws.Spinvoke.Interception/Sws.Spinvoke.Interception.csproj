@@ -65,6 +65,7 @@
     <Compile Include="NativeDelegateMapping.cs" />
     <Compile Include="ReturnPostprocessing\IContextualReturnPostprocessor.cs" />
     <Compile Include="ReturnPostprocessing\ReturnPostprocessorContext.cs" />
+    <Compile Include="MemoryManagement\PointerMemoryManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -76,6 +77,7 @@
   <ItemGroup>
     <Folder Include="ArgumentPreprocessing\" />
     <Folder Include="ReturnPostprocessing\" />
+    <Folder Include="MemoryManagement\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
