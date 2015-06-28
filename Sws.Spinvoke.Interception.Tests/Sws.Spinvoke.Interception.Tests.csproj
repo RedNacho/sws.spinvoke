@@ -45,6 +45,7 @@
     <Compile Include="ArgumentPreprocessing\StringToPointerArgumentPreprocessorTests.cs" />
     <Compile Include="ReturnPostprocessing\PointerToStringReturnPostprocessorTests.cs" />
     <Compile Include="ArgumentPreprocessing\DelegateToPointerArgumentPreprocessorTests.cs" />
+    <Compile Include="MemoryManagement\PointerMemoryManagerTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -53,6 +54,7 @@
   <ItemGroup>
     <Folder Include="ArgumentPreprocessing\" />
     <Folder Include="ReturnPostprocessing\" />
+    <Folder Include="MemoryManagement\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
