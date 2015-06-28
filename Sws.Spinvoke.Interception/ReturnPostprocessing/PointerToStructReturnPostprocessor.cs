@@ -33,10 +33,8 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 		public object Process (object output, Type requiredReturnType)
 		{
 			IntPtr ptr = (IntPtr)output;
-			var genericType = typeof(PtrToStructureTyped<>);
-			var specificType = genericType.MakeGenericType (requiredReturnType);
-			var specificInstance = Activator.CreateInstance (specificType) as PtrToStructureBase;
-			var result = specificInstance.Invoke (ptr);
+
+			var result = Marshal.PtrToStructure (ptr, requiredReturnType);
 
 			_pointerMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode, IsFreePointerImplemented ? (Action<IntPtr>)FreePointer : null);
 
@@ -53,19 +51,6 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 		protected virtual void FreePointer(IntPtr pointer)
 		{
 			throw new NotImplementedException ();
-		}
-
-		private abstract class PtrToStructureBase
-		{
-			public abstract object Invoke(IntPtr ptr);
-		}
-
-		private class PtrToStructureTyped<T> : PtrToStructureBase
-		{
-			public override object Invoke (IntPtr ptr)
-			{
-				return Marshal.PtrToStructure (ptr, typeof(T));
-			}
 		}
 	}
 }
