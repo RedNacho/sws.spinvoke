@@ -10,7 +10,15 @@ namespace Sws.Spinvoke.Interception
 {
 	public static class InterceptionAllocatedMemoryManager
 	{
-		private static readonly PointerMemoryManager PointerMemoryManager = new PointerMemoryManager ();
+		public static readonly PointerMemoryManager PointerMemoryManager = new FreeHGlobalPointerMemoryManager ();
+
+		private class FreeHGlobalPointerMemoryManager : PointerMemoryManager
+		{
+			protected override void DefaultFreeAction (IntPtr ptr)
+			{
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
 
 		public static void BeginNamedBlock(string name)
 		{
@@ -54,22 +62,12 @@ namespace Sws.Spinvoke.Interception
 
 		public static void RegisterForGarbageCollection(IntPtr ptr, Action<IntPtr> freeAction = null)
 		{
-			freeAction = EnsureFreeAction (freeAction);
-
 			PointerMemoryManager.RegisterForGarbageCollection (ptr, freeAction);
 		}
 
 		public static void ReportPointerCallCompleted(IntPtr ptr, PointerManagementMode pointerManagementMode, Action<IntPtr> freeAction = null)
 		{
-			freeAction = EnsureFreeAction (freeAction);
-
 			PointerMemoryManager.ReportPointerCallCompleted (ptr, pointerManagementMode, freeAction);
-		}
-
-		private static Action<IntPtr> EnsureFreeAction(Action<IntPtr> freeAction)
-		{
-			return freeAction ?? Marshal.FreeHGlobal;
 		}
 	}
 }
-

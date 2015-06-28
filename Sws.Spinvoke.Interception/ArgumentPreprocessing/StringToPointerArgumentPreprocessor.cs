@@ -1,15 +1,29 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+using Sws.Spinvoke.Interception.MemoryManagement;
+
 namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class StringToPointerArgumentPreprocessor : IArgumentPreprocessor
 	{
 		private readonly PointerManagementMode _pointerManagementMode;
 
-		public StringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode)
+		private readonly PointerMemoryManager _pointerMemoryManager;
+
+		[Obsolete("Please inject a PointerMemoryManager")]
+		public StringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode) : this(pointerManagementMode, InterceptionAllocatedMemoryManager.PointerMemoryManager)
 		{
+		}
+
+		public StringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager)
+		{
+			if (pointerMemoryManager == null) {
+				throw new ArgumentNullException ("pointerMemoryManager");
+			}
+
 			_pointerManagementMode = pointerManagementMode;
+			_pointerMemoryManager = pointerMemoryManager;
 		}
 
 		public bool CanProcess (object input)
@@ -24,7 +38,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public void ReleaseProcessedInput (object processedInput)
 		{
-			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted ((IntPtr)processedInput, _pointerManagementMode, FreePointer);
+			_pointerMemoryManager.ReportPointerCallCompleted ((IntPtr)processedInput, _pointerManagementMode, FreePointer);
 		}
 
 		protected virtual IntPtr StringToPointer(string input)

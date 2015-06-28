@@ -2,7 +2,10 @@
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
+using Moq;
+
 using Sws.Spinvoke.Interception.ReturnPostprocessing;
+using Sws.Spinvoke.Interception.MemoryManagement;
 
 namespace Sws.Spinvoke.Interception.Tests
 {
@@ -22,7 +25,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForIntPtrAndRequiredValueType()
 		{
-			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var output = new IntPtr (0);
 
@@ -34,7 +37,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonIntPtr()
 		{
-			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			const int Output = 75;
 
@@ -46,7 +49,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForRequiredReferenceType()
 		{
-			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var output = new IntPtr (0);
 
@@ -58,7 +61,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void PreallocatedPointerIsMarshaledBackToStruct()
 		{
-			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new PointerToStructReturnPostprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var ptr = Marshal.AllocHGlobal (Marshal.SizeOf(typeof(TestStruct)));
 

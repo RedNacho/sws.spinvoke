@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Sws.Spinvoke.Interception.MemoryManagement
 {
-	public class PointerMemoryManager
+	public abstract class PointerMemoryManager
 	{
 		private readonly IDictionary<Tuple<string>, IList<Tuple<IntPtr, Action<IntPtr>>>> _freeReferences = new Dictionary<Tuple<string>, IList<Tuple<IntPtr, Action<IntPtr>>>>();
 
@@ -12,7 +12,7 @@ namespace Sws.Spinvoke.Interception.MemoryManagement
 
 		private Tuple<string> _currentBlockName = Tuple.Create<string>(null);
 
-		public void BeginNamedBlock(string name)
+		public virtual void BeginNamedBlock(string name)
 		{
 			lock (_syncObject)
 			{
@@ -24,7 +24,7 @@ namespace Sws.Spinvoke.Interception.MemoryManagement
 			}
 		}
 
-		public void EndNamedBlock()
+		public virtual void EndNamedBlock()
 		{
 			lock (_syncObject) {
 				if (_currentBlockName.Item1 == null) {
@@ -35,7 +35,7 @@ namespace Sws.Spinvoke.Interception.MemoryManagement
 			}
 		}
 
-		public void GarbageCollectNamed(string blockName)
+		public virtual void GarbageCollectNamed(string blockName)
 		{
 			if (blockName == null) {
 				throw new ArgumentNullException ("blockName");
@@ -46,11 +46,9 @@ namespace Sws.Spinvoke.Interception.MemoryManagement
 			}
 		}
 
-		public void RegisterForGarbageCollection(IntPtr ptr, Action<IntPtr> freeAction)
+		public virtual void RegisterForGarbageCollection(IntPtr ptr, Action<IntPtr> freeAction = null)
 		{
-			if (freeAction == null) {
-				throw new ArgumentNullException ("freeAction");
-			}
+			freeAction = EnsureFreeAction (freeAction);
 
 			lock (_syncObject) {
 				var freeReferences = _freeReferences.ContainsKey(_currentBlockName)
@@ -61,11 +59,9 @@ namespace Sws.Spinvoke.Interception.MemoryManagement
 			}
 		}
 
-		public void ReportPointerCallCompleted(IntPtr ptr, PointerManagementMode pointerManagementMode, Action<IntPtr> freeAction)
+		public virtual void ReportPointerCallCompleted(IntPtr ptr, PointerManagementMode pointerManagementMode, Action<IntPtr> freeAction = null)
 		{
-			if (freeAction == null) {
-				throw new ArgumentNullException ("freeAction");
-			}
+			freeAction = EnsureFreeAction (freeAction);
 
 			if (pointerManagementMode == PointerManagementMode.DestroyAfterCall) {
 				freeAction (ptr);
@@ -74,35 +70,35 @@ namespace Sws.Spinvoke.Interception.MemoryManagement
 			}
 		}
 
-		public bool HasGarbageCollectibleMemory()
+		public virtual bool HasGarbageCollectibleMemory()
 		{
 			lock (_syncObject) {
 				return _freeReferences.Any ();
 			}
 		}
 
-		public void GarbageCollectAll ()
+		public virtual void GarbageCollectAll ()
 		{	
 			lock (_syncObject) {
 				GarbageCollectKvps (_freeReferences.ToArray ());
 			}
 		}
 
-		public void GarbageCollectCurrentBlock()
+		public virtual void GarbageCollectCurrentBlock()
 		{
 			lock (_syncObject) {
 				GarbageCollectKvps (_freeReferences.Where (kvp => kvp.Key == _currentBlockName).ToArray ());
 			}
 		}
 
-		public IEnumerable<string> GetNamedBlocksWithGarbageCollectibleMemory()
+		public virtual IEnumerable<string> GetNamedBlocksWithGarbageCollectibleMemory()
 		{
 			lock (_syncObject) {
 				return _freeReferences.Where (kvp => kvp.Key.Item1 != null).Select (kvp => kvp.Key.Item1).ToArray();
 			}
 		}
 
-		public bool HasUnnamedGarbageCollectibleMemory()
+		public virtual bool HasUnnamedGarbageCollectibleMemory()
 		{
 			lock (_syncObject) {
 				return _freeReferences.Any(kvp => kvp.Key.Item1 == null);
@@ -138,6 +134,13 @@ namespace Sws.Spinvoke.Interception.MemoryManagement
 				throw new AggregateException (exceptionList);
 			}
 		}
+
+		private Action<IntPtr> EnsureFreeAction(Action<IntPtr> freeAction)
+		{
+			return freeAction ?? DefaultFreeAction;
+		}
+
+		protected abstract void DefaultFreeAction (IntPtr ptr);
 	}
 }
 

@@ -2,7 +2,10 @@
 using System;
 using System.Runtime.InteropServices;
 
+using Moq;
+
 using Sws.Spinvoke.Interception.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.MemoryManagement;
 
 namespace Sws.Spinvoke.Interception.Tests
 {
@@ -22,7 +25,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForValueType()
 		{
-			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var canProcessStruct = subject.CanProcess (new TestStruct ());
 
@@ -32,7 +35,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForReferenceType()
 		{
-			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var canProcessObj = subject.CanProcess (new object ());
 
@@ -42,7 +45,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void StructureCanBeMarshaledBackFromPointer()
 		{
-			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new StructToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var testData = new TestStruct () {
 				x = 3, y = 4, z = 5

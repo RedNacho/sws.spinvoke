@@ -1,7 +1,10 @@
 ﻿using NUnit.Framework;
 using System;
 
+using Moq;
+
 using Sws.Spinvoke.Interception.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.MemoryManagement;
 
 using System.Runtime.InteropServices;
 
@@ -13,7 +16,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForString ()
 		{
-			var subject = new StringToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new StringToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var canProcess = subject.CanProcess ("Test");
 
@@ -23,7 +26,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonString()
 		{
-			var subject = new StringToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new StringToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var canProcess = subject.CanProcess (new object ());
 
@@ -35,7 +38,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		{
 			const string TestString = "Hello!";
 
-			var subject = new StringToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy);
+			var subject = new StringToPointerArgumentPreprocessor (PointerManagementMode.DoNotDestroy, Mock.Of<PointerMemoryManager> ());
 
 			var ptr = (IntPtr) subject.Process (TestString);
 

@@ -1,15 +1,29 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+using Sws.Spinvoke.Interception.MemoryManagement;
+
 namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
 	public class PointerToStringReturnPostprocessor : IReturnPostprocessor
 	{
 		private readonly PointerManagementMode _pointerManagementMode;
 
-		public PointerToStringReturnPostprocessor(PointerManagementMode pointerManagementMode)
+		private readonly PointerMemoryManager _pointerMemoryManager;
+
+		[Obsolete("Please inject a PointerMemoryManager")]
+		public PointerToStringReturnPostprocessor(PointerManagementMode pointerManagementMode) : this(pointerManagementMode, InterceptionAllocatedMemoryManager.PointerMemoryManager)
 		{
+		}
+
+		public PointerToStringReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager)
+		{
+			if (pointerMemoryManager == null) {
+				throw new ArgumentNullException ("pointerMemoryManager");
+			}
+
 			_pointerManagementMode = pointerManagementMode;
+			_pointerMemoryManager = pointerMemoryManager;
 		}
 
 		public bool CanProcess (object output, Type requiredReturnType)
@@ -27,7 +41,7 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 			var result = PtrToString (ptr);
 
-			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode, IsFreePointerImplemented ? (Action<IntPtr>)FreePointer : null);
+			_pointerMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode, IsFreePointerImplemented ? (Action<IntPtr>)FreePointer : null);
 
 			return result;
 		}
