@@ -8,7 +8,7 @@ namespace Sws.Spinvoke.Interception
 	public class NativeReturnsStructPointerAttribute : NativeReturnDefinitionOverrideAttribute
 	{
 		public NativeReturnsStructPointerAttribute (PointerManagementMode pointerManagementMode = PointerManagementMode.DoNotDestroy)
-			: base(new PointerToStructReturnPostprocessor(pointerManagementMode), typeof(IntPtr))
+			: base(new PointerToStructReturnPostprocessor(pointerManagementMode, InterceptionAllocatedMemoryManager.PointerMemoryManager), typeof(IntPtr))
 		{
 		}
 	}

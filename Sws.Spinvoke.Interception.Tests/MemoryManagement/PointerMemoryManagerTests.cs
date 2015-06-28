@@ -11,10 +11,33 @@ namespace Sws.Spinvoke.Interception.Tests
 	[TestFixture ()]
 	public class PointerMemoryManagerTests
 	{
+		public class TestPointerMemoryManager : PointerMemoryManager
+		{
+			private readonly Action<IntPtr> _defaultFreeAction;
+
+			public TestPointerMemoryManager () : this(null)
+			{
+			}
+
+			public TestPointerMemoryManager (Action<IntPtr> defaultFreeAction)
+			{
+				if (defaultFreeAction == null) {
+					defaultFreeAction = ptr => { };
+				}
+
+				_defaultFreeAction = defaultFreeAction;
+			}
+
+			protected override void DefaultFreeAction (IntPtr ptr)
+			{
+				_defaultFreeAction (ptr);
+			}
+		}
+
 		[Test ()]
 		public void ReportPointerCallCompletedWithDestroyAfterCallDisposesPointer()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var intPtr = new IntPtr (12345);
 
@@ -28,9 +51,25 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
+		public void ReportPointerCallCompletedWithDestroyAfterCallFallsBackToDefaultFreeAction ()
+		{
+			var disposed = new List<IntPtr> ();
+
+			var subject = new TestPointerMemoryManager (disposed.Add);
+
+			var intPtr = new IntPtr (12345);
+
+			subject.ReportPointerCallCompleted (intPtr, PointerManagementMode.DestroyAfterCall);
+
+			Assert.AreEqual (1, disposed.Count);
+
+			Assert.AreEqual (intPtr, disposed.Single ());
+		}
+
+		[Test ()]
 		public void ReportPointerCallCompletedWithDoNotDestroyDoesNotDisposeMemory()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var intPtr = new IntPtr (12345);
 
@@ -38,11 +77,23 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			subject.ReportPointerCallCompleted (intPtr, PointerManagementMode.DoNotDestroy, disposed.Add);
 
-			var disposedBeforeGarbageCollection = disposed.Count;
-
 			subject.GarbageCollectAll ();
 
-			Assert.AreEqual (0, disposedBeforeGarbageCollection);
+			Assert.AreEqual (0, disposed.Count);
+		}
+
+		[Test ()]
+		public void ReportPointerCallCompletedWithDoNotDestroyDoesNotFallBackToDefaultFreeAction ()
+		{
+			var disposed = new List<IntPtr> ();
+
+			var subject = new TestPointerMemoryManager (disposed.Add);
+
+			var intPtr = new IntPtr (12345);
+
+			subject.ReportPointerCallCompleted (intPtr, PointerManagementMode.DoNotDestroy);
+
+			subject.GarbageCollectAll ();
 
 			Assert.AreEqual (0, disposed.Count);
 		}
@@ -50,7 +101,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void ReportPointerCallCompletedWithDestroyOnInterceptionGarbageCollectDisposesMemoryOnGarbageCollectionCall()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var intPtr = new IntPtr (12345);
 
@@ -68,9 +119,69 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
+		public void ReportPointerCallCompletedWithDestroyOnInterceptionGarbageCollectFallsBackToDefaultFreeAction ()
+		{
+			var disposed = new List<IntPtr> ();
+
+			var subject = new TestPointerMemoryManager (disposed.Add);
+
+			var intPtr = new IntPtr (12345);
+
+			subject.ReportPointerCallCompleted (intPtr, PointerManagementMode.DestroyOnInterceptionGarbageCollect);
+
+			var disposedBeforeGarbageCollection = disposed.Count;
+
+			subject.GarbageCollectAll ();
+
+			Assert.AreEqual (0, disposedBeforeGarbageCollection);
+
+			Assert.AreEqual (1, disposed.Count);
+		}
+
+		[Test ()]
+		public void RegisterForGarbageCollectionDisposesMemoryOnGarbageCollectionCall()
+		{
+			var subject = new TestPointerMemoryManager ();
+
+			var intPtr = new IntPtr (12345);
+
+			var disposed = new List<IntPtr> ();
+
+			subject.RegisterForGarbageCollection (intPtr, disposed.Add);
+
+			var disposedBeforeGarbageCollection = disposed.Count;
+
+			subject.GarbageCollectAll ();
+
+			Assert.AreEqual (0, disposedBeforeGarbageCollection);
+
+			Assert.AreEqual (1, disposed.Count);
+		}
+
+		[Test ()]
+		public void RegisterForGarbageCollectionFallsBackOnDefaultFreeAction ()
+		{
+			var disposed = new List<IntPtr> ();
+
+			var subject = new TestPointerMemoryManager (disposed.Add);
+
+			var intPtr = new IntPtr (12345);
+
+			subject.RegisterForGarbageCollection (intPtr);
+
+			var disposedBeforeGarbageCollection = disposed.Count;
+
+			subject.GarbageCollectAll ();
+
+			Assert.AreEqual (0, disposedBeforeGarbageCollection);
+
+			Assert.AreEqual (1, disposed.Count);
+		}
+
+		[Test ()]
 		public void GarbageCollectAllThrowsSingleExceptionAfterAllProcessing()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var intPtr = new IntPtr (12345);
 
@@ -104,7 +215,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void GarbageCollectAllThrowsAggregateExceptionForMultipleExceptions ()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var intPtr = new IntPtr (12345);
 
@@ -139,7 +250,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void HasGarbageCollectibleMemoryReturnsTrueIfGarbageCollectibleMemory ()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var garbageCollectibleMemoryAtStart = subject.HasGarbageCollectibleMemory ();
 
@@ -178,7 +289,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void GarbageCollectNamedDisposesOfNamedBlock()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var disposed = new List<IntPtr> ();
 
@@ -206,7 +317,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void GarbageCollectAllIncludesNamedBlock()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var disposed = new List<IntPtr> ();
 
@@ -236,7 +347,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void HasGarbageCollectibleMemoryIncludesNamedBlock()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			subject.BeginNamedBlock ("Test");
 
@@ -250,7 +361,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void GetNamedBlocksWithGarbageCollectibleMemoryReturnsNamedBlocksWithPointersQueued()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			subject.BeginNamedBlock ("Test1");
 
@@ -284,7 +395,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void HasUnnamedGarbageCollectibleMemoryReturnsTrueIfUnnamedGarbageCollectibleMemory ()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			subject.BeginNamedBlock ("Test");
 
@@ -304,7 +415,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void GarbageCollectCurrentBlockCollectsCurrentNamedBlock ()
 		{
-			var subject = new PointerMemoryManager ();
+			var subject = new TestPointerMemoryManager ();
 
 			var disposed = new List<IntPtr> ();
 

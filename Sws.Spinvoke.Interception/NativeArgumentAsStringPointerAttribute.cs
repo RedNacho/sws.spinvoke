@@ -8,7 +8,7 @@ namespace Sws.Spinvoke.Interception
 	public class NativeArgumentAsStringPointerAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
 		public NativeArgumentAsStringPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DestroyAfterCall)
-			: base(new StringToPointerArgumentPreprocessor(pointerManagementMode), typeof(IntPtr))
+			: base(new StringToPointerArgumentPreprocessor(pointerManagementMode, InterceptionAllocatedMemoryManager.PointerMemoryManager), typeof(IntPtr))
 		{
 		}
 	}

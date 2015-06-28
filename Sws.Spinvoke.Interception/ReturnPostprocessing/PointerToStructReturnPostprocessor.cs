@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Sws.Spinvoke.Interception.MemoryManagement;
 
 namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
 	public class PointerToStructReturnPostprocessor : IReturnPostprocessor
 	{
+		private readonly PointerMemoryManager _pointerMemoryManager;
+
 		private readonly PointerManagementMode _pointerManagementMode;
 
-		public PointerToStructReturnPostprocessor(PointerManagementMode pointerManagementMode)
+		[Obsolete("Please inject a PointerMemoryManager")]
+		public PointerToStructReturnPostprocessor(PointerManagementMode pointerManagementMode) : this(pointerManagementMode, InterceptionAllocatedMemoryManager.PointerMemoryManager)
 		{
+		}
+
+		public PointerToStructReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager)
+		{
+			if (pointerMemoryManager == null) {
+				throw new ArgumentNullException ("pointerMemoryManager");
+			}
+
 			_pointerManagementMode = pointerManagementMode;
+			_pointerMemoryManager = pointerMemoryManager;
 		}
 
 		public bool CanProcess (object output, Type requiredReturnType)
@@ -25,7 +38,7 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 			var specificInstance = Activator.CreateInstance (specificType) as PtrToStructureBase;
 			var result = specificInstance.Invoke (ptr);
 
-			InterceptionAllocatedMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode, IsFreePointerImplemented ? (Action<IntPtr>)FreePointer : null);
+			_pointerMemoryManager.ReportPointerCallCompleted (ptr, _pointerManagementMode, IsFreePointerImplemented ? (Action<IntPtr>)FreePointer : null);
 
 			return result;
 		}
