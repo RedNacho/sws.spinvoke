@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Sws.Spinvoke.Interception.ReturnPostprocessing;
+using Sws.Spinvoke.Interception.MemoryManagement;
 
 namespace Sws.Spinvoke.Interception
 {
@@ -19,6 +20,11 @@ namespace Sws.Spinvoke.Interception
 
 			_returnPostprocessor = returnPostprocessor;
 			_outputType = outputType;
+		}
+
+		public static PointerMemoryManager DefaultPointerMemoryManager
+		{
+			get { return InterceptionAllocatedMemoryManager.PointerMemoryManager; }
 		}
 
 		public IReturnPostprocessor ReturnPostprocessor
