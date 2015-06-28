@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Sws.Spinvoke.Interception.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.MemoryManagement;
 
 namespace Sws.Spinvoke.Interception
 {
@@ -19,6 +20,11 @@ namespace Sws.Spinvoke.Interception
 
 			_argumentPreprocessor = argumentPreprocessor;
 			_inputType = inputType;
+		}
+
+		public static PointerMemoryManager DefaultPointerMemoryManager
+		{
+			get { return InterceptionAllocatedMemoryManager.PointerMemoryManager; }
 		}
 
 		public IArgumentPreprocessor ArgumentPreprocessor
