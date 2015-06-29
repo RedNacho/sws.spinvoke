@@ -371,6 +371,75 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
+		public void InterceptorReleasesModifiedInputIfArgumentPreprocessorSpecified ()
+		{
+			const int X = 2;
+			const int Y = 3;
+
+			_nativeDelegateResolverMock.ResetCalls ();
+
+			_nativeDelegateResolverMock.Setup (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()))
+				.Returns (() => new AddDelegate((x, y) => (x + 1) + (y + 1)));
+
+			var invocationMock = new Mock<IInvocation> ();
+
+			invocationMock.SetupGet (i => i.Arguments).Returns (new object[] { X, Y });
+			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithArgumentPreprocessor).GetMethod ("Add"));
+			invocationMock.SetupProperty (i => i.ReturnValue);
+
+			NativeArgumentOneLessAttribute.ReleaseProcessedInputCalls.Clear ();
+
+			_subject.Intercept (invocationMock.Object);
+
+			Assert.AreEqual (2, NativeArgumentOneLessAttribute.ReleaseProcessedInputCalls.Count);
+
+			Assert.AreEqual (X - 1, NativeArgumentOneLessAttribute.ReleaseProcessedInputCalls [0]);
+			Assert.AreEqual (Y - 1, NativeArgumentOneLessAttribute.ReleaseProcessedInputCalls [1]);
+		}
+
+		[Test ()]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InterceptorThrowsExceptionIfArgumentPreprocessorCannotProcessArgument ()
+		{
+			const int X = 2;
+			const int Y = 3;
+
+			_nativeDelegateResolverMock.ResetCalls ();
+
+			_nativeDelegateResolverMock.Setup (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()))
+				.Returns (() => new AddDelegate((x, y) => (x + 1) + (y + 1)));
+
+			var invocationMock = new Mock<IInvocation> ();
+
+			invocationMock.SetupGet (i => i.Arguments).Returns (new object[] { (decimal) X, Y });
+			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithArgumentPreprocessor).GetMethod ("Add"));
+			invocationMock.SetupProperty (i => i.ReturnValue);
+
+			_subject.Intercept (invocationMock.Object);
+		}
+
+		[Test ()]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InterceptorThrowsExceptionIfReturnPostprocessorCannotProcessReturnValue ()
+		{
+			const int X = 2;
+			const int Y = 3;
+
+			_nativeDelegateResolverMock.ResetCalls ();
+
+			_nativeDelegateResolverMock.Setup (ndr => ndr.Resolve (It.IsAny<NativeDelegateDefinition> ()))
+				.Returns (() => (Func<int, int, decimal>)((x, y) => (decimal)(x + y - 1)));
+
+			var invocationMock = new Mock<IInvocation> ();
+
+			invocationMock.SetupGet (i => i.Arguments).Returns (new object[] { X, Y });
+			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithReturnPostprocessor).GetMethod ("Add"));
+			invocationMock.SetupProperty (i => i.ReturnValue);
+
+			_subject.Intercept (invocationMock.Object);
+		}
+
+		[Test ()]
 		public void InterceptorInvokesSetContextForContextualArgumentPreprocessor()
 		{
 			const int X = 2;
@@ -703,6 +772,8 @@ namespace Sws.Spinvoke.Interception.Tests
 		{
 		}
 
+		public static IList<int> ReleaseProcessedInputCalls = new List<int> ();
+
 		private static IArgumentPreprocessor CreateSubtractOneArgumentPreprocessor()
 		{
 			var argumentPreprocessorMock = new Mock<IArgumentPreprocessor> ();
@@ -714,7 +785,7 @@ namespace Sws.Spinvoke.Interception.Tests
 				.Returns((object input) => (int)input - 1);
 
 			argumentPreprocessorMock.Setup (ap => ap.ReleaseProcessedInput(It.IsAny<object>()))
-				.Callback(() => { });
+				.Callback((object input) => ReleaseProcessedInputCalls.Add((int)input));
 
 			return argumentPreprocessorMock.Object;
 		}
