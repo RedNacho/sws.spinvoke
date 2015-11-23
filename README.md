@@ -286,3 +286,9 @@ Just in case, however: The changes I have made to allow the freeing of pointers 
 2. Alternatively, the PointerMemoryManager also allows an optional argument which explicitly specifies how a pointer is to be freed. This is probably the preferred approach. If, for example, you have a situation where the library you are using has a customised function for freeing a returned pointer once you've processed the data, you can create your own NativeReturnDefinitionOverrideAttribute, and in the IReturnPostprocessor implementation, pass a call to this function to the PointerMemoryManager to ensure that the pointer is freed. (If you implement the new interface IContextualReturnPostprocessor instead, you can capture context relating to the interception call, in case it's useful.)
 
 Separately, I came back to Mono to find a bizarre bug killing the unit tests dead, which definitely wasn't happening last time I looked. I've fixed this with a horrible workaround for now (see commit labelled "Horrible workaround for horrible Moq problem.").
+
+NOVEMBER 2015 UPDATE
+
+I have generalised the integration tests and added Windows support for these, since this is what I expect most people will be using. Depending on which OS you are using, you will want to unload one or both of the IntegrationTest.Linux/Windows projects, as the tests will fail on the wrong OS.
+
+I will try to set this up as a compile-time flag in due course.
