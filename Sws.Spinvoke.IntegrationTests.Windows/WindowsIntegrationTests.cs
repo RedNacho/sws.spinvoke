@@ -49,7 +49,7 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 			);
 		}
 	}
-
+    
 	public interface IDynamicProxyPointerTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "pointerAdd")]
@@ -74,7 +74,7 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
     public class NativeReturnsGccStructPointerAttribute : NativeReturnDefinitionOverrideAttribute
     {
         public NativeReturnsGccStructPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DoNotDestroy)
-            : base(new PointerToStructReturnPostprocessor(pointerManagementMode, new GccPointerMemoryManager()), typeof(IntPtr))
+            : base(new GccPointerToStructReturnPostprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
         {
         }
     }
@@ -82,7 +82,7 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
     public class NativeReturnsGccAnsiStringPointerAttribute : NativeReturnDefinitionOverrideAttribute
     {
         public NativeReturnsGccAnsiStringPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DoNotDestroy)
-            : base(new PointerToAnsiStringReturnPostprocessor(pointerManagementMode, new GccPointerMemoryManager()), typeof(IntPtr))
+            : base(new GccPointerToAnsiStringReturnPostprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
         {
         }
     }
@@ -95,15 +95,42 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
         }
     }
 
-    public class PointerToAnsiStringReturnPostprocessor : PointerToStringReturnPostprocessor
+    public class GccPointerToStructReturnPostprocessor : PointerToStructReturnPostprocessor
     {
-        public PointerToAnsiStringReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
+        public GccPointerToStructReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
+        {
+        }
+
+        protected override bool IsFreePointerImplemented
+        {
+            get { return true; }
+        }
+
+        protected override void FreePointer(IntPtr pointer)
+        {
+            GccHelper.FreePointer(pointer);
+        }
+    }
+
+    public class GccPointerToAnsiStringReturnPostprocessor : PointerToStringReturnPostprocessor
+    {
+        public GccPointerToAnsiStringReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
         {
         }
 
         protected override string PtrToString(IntPtr ptr)
         {
             return Marshal.PtrToStringAnsi(ptr);
+        }
+
+        protected override bool IsFreePointerImplemented
+        {
+            get { return true; }
+        }
+        
+        protected override void FreePointer(IntPtr pointer)
+        {
+            GccHelper.FreePointer(pointer);
         }
     }
 
@@ -119,12 +146,14 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
         }
     }
 
-    public class GccPointerMemoryManager : PointerMemoryManager
+    public class GccHelper
     {
+        private GccHelper() { }
+
         [DllImport("msvcrt.dll")]
         private static extern void free(IntPtr ptr);
 
-        protected override void DefaultFreeAction(IntPtr ptr)
+        public static void FreePointer(IntPtr ptr)
         {
             free(ptr);
         }
