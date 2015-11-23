@@ -27,12 +27,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Windows", "Sws.Spinvoke.Windows\Sws.Spinvoke.Windows.csproj", "{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTests.Agnostic", "Sws.Spinvoke.IntegrationTests.Agnostic\Sws.Spinvoke.IntegrationTests.Agnostic.csproj", "{36387693-E300-4C2B-BB13-CC4D86ECEF32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTests.Windows", "Sws.Spinvoke.IntegrationTests.Windows\Sws.Spinvoke.IntegrationTests.Windows.csproj", "{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}.Debug|x86.Build.0 = Debug|Any CPU
+		{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}.Release|x86.ActiveCfg = Release|Any CPU
+		{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}.Release|x86.Build.0 = Release|Any CPU
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Debug|x86.Build.0 = Debug|Any CPU
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Release|x86.ActiveCfg = Release|Any CPU
@@ -41,6 +49,10 @@ Global
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Debug|x86.Build.0 = Debug|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.ActiveCfg = Release|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.Build.0 = Release|Any CPU
+		{36387693-E300-4C2B-BB13-CC4D86ECEF32}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36387693-E300-4C2B-BB13-CC4D86ECEF32}.Debug|x86.Build.0 = Debug|Any CPU
+		{36387693-E300-4C2B-BB13-CC4D86ECEF32}.Release|x86.ActiveCfg = Release|Any CPU
+		{36387693-E300-4C2B-BB13-CC4D86ECEF32}.Release|x86.Build.0 = Release|Any CPU
 		{5D3ED5BF-AE5E-46C7-BD1D-0C5BFC8DFCDD}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{5D3ED5BF-AE5E-46C7-BD1D-0C5BFC8DFCDD}.Debug|x86.Build.0 = Debug|Any CPU
 		{5D3ED5BF-AE5E-46C7-BD1D-0C5BFC8DFCDD}.Release|x86.ActiveCfg = Release|Any CPU

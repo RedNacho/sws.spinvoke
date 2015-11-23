@@ -5,10 +5,10 @@ using Sws.Spinvoke.Linux;
 using Sws.Spinvoke.Interception;
 using Sws.Spinvoke.IntegrationTests.Agnostic;
 
-namespace Sws.Spinvoke.IntegrationTests.Linux
+namespace Sws.Spinvoke.IntegrationTests.Windows
 {
 	[TestFixture ()]
-	public class LinuxIntegrationTests : PlatformIntegrationTestsBase
+	public class WindowsIntegrationTests : PlatformIntegrationTestsBase
 	{
 		protected override INativeLibraryLoader CreateNativeLibraryLoader ()
 		{
@@ -66,4 +66,6 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		string ReverseString([NativeArgumentAsStringPointer(pointerManagementMode: PointerManagementMode.DestroyOnInterceptionGarbageCollect)] string input);
 	}
 }
+
+
 
