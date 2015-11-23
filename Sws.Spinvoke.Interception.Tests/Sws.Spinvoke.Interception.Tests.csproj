@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -51,11 +51,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ArgumentPreprocessing\" />
-    <Folder Include="ReturnPostprocessing\" />
-    <Folder Include="MemoryManagement\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
       <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
@@ -65,5 +61,8 @@
       <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
       <Name>Sws.Spinvoke.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 </Project>

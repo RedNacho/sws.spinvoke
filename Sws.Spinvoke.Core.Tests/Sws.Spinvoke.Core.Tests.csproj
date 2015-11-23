@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -40,12 +40,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Delegates\" />
-    <Folder Include="Caching\" />
-    <Folder Include="Resolver\" />
-    <Folder Include="Expressions\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="Delegates\DynamicAssemblyDelegateTypeProviderTests.cs" />
     <Compile Include="Caching\CacheKeyTests.cs" />
@@ -61,5 +56,8 @@
       <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
       <Name>Sws.Spinvoke.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 </Project>
