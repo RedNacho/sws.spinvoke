@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FF49DD79-253B-4541-A455-B472CB36F212}</ProjectGuid>
+    <ProjectGuid>{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sws.Spinvoke.IntegrationTests.Linux</RootNamespace>
-    <AssemblyName>Sws.Spinvoke.IntegrationTests.Linux</AssemblyName>
+    <RootNamespace>Sws.Spinvoke.IntegrationTests.Windows</RootNamespace>
+    <AssemblyName>Sws.Spinvoke.IntegrationTests.Windows</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -34,30 +34,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LinuxIntegrationTests.cs" />
+    <Compile Include="WindowsIntegrationTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="libSws.Spinvoke.IntegrationTests.so" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
-      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
-      <Name>Sws.Spinvoke.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Agnostic\Sws.Spinvoke.IntegrationTests.Agnostic.csproj">
       <Project>{36387693-E300-4C2B-BB13-CC4D86ECEF32}</Project>
       <Name>Sws.Spinvoke.IntegrationTests.Agnostic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj">
-      <Project>{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}</Project>
-      <Name>Sws.Spinvoke.Linux</Name>
+    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
+      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
+      <Name>Sws.Spinvoke.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
       <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
       <Name>Sws.Spinvoke.Interception</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Windows\Sws.Spinvoke.Windows.csproj">
+      <Project>{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}</Project>
+      <Name>Sws.Spinvoke.Windows</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="libsws.spinvoke.windows.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
