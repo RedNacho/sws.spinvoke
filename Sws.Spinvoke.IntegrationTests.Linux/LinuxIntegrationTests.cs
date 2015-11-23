@@ -23,7 +23,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		[Test ()]
 		public void NativeCodeInvokedWithStructPointerConversion()
 		{
-			NativeCodeInvokedWithStructPointerConversion (
+			TestNativeAddFunction (
 				(IDynamicProxyPointerTest proxy, int x, int y) => proxy.Add(x, y)
 			);
 		}
@@ -31,7 +31,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		[Test ()]
 		public void NativeCodeInvokedWithStringPointerConversion()
 		{
-			NativeCodeInvokedWithStringPointerConversion (
+			TestNativeReverseStringFunction (
 				(IDynamicProxyStringTest proxy, string input) => proxy.ReverseString(input)
 			);
 		}
@@ -39,7 +39,7 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		[Test ()]
 		public void InterceptionAllocatedMemoryManagerAllowsManualDeallocationOfGeneratedPointers()
 		{
-			InterceptionAllocatedMemoryManagerAllowsManualDeallocationOfGeneratedPointers (
+			TestNativeReverseStringFunctionWithManualReleaseInput (
 				(IDynamicProxyManualMemoryReleaseTest proxy, string input) => proxy.ReverseString(input)
 			);
 		}

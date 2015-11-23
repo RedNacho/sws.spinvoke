@@ -75,53 +75,17 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 		[Test ()]
 		public void NativeCodeInvokedThroughNinjectToNativeExtensionMethod()
 		{
-			var kernel = new StandardKernel();
+			var kernel = new StandardKernel ();
 
-			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader (), new ProxyGenerator (new CastleProxyGenerator ()));
 
 			kernel.Bind<IDynamicProxyTest> ().ToNative (LibraryName);
 
-			var proxy = kernel.Get<IDynamicProxyTest>();
+			var proxy = kernel.Get<IDynamicProxyTest> ();
 
-			var result = proxy.Add(2, 3);
+			var result = proxy.Add (2, 3);
 
-			Assert.AreEqual(5, result);
-		}
-
-		protected void NativeCodeInvokedWithStructPointerConversion<TDynamicProxyPointerTest>(Func<TDynamicProxyPointerTest, int, int, int> addFunction)
-			where TDynamicProxyPointerTest : class
-		{
-			var kernel = new StandardKernel();
-
-			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
-
-			kernel.Bind<TDynamicProxyPointerTest>().ToNative(LibraryName);
-
-			var proxy = kernel.Get<TDynamicProxyPointerTest>();
-
-			var result = addFunction(proxy, 2, 3);
-
-			Assert.AreEqual(5, result);
-		}
-
-		protected void NativeCodeInvokedWithStringPointerConversion<TDynamicProxyStringTest>(Func<TDynamicProxyStringTest, string, string> reverseStringFunction)
-			where TDynamicProxyStringTest : class
-		{
-			const string TestString = "I am a test.";
-
-			var expected = new string(TestString.Reverse ().ToArray ());
-
-			var kernel = new StandardKernel();
-
-			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
-
-			kernel.Bind<TDynamicProxyStringTest>().ToNative(LibraryName);
-
-			var proxy = kernel.Get<TDynamicProxyStringTest>();
-
-			var actual = reverseStringFunction (proxy, TestString);
-
-			Assert.AreEqual (expected, actual);
+			Assert.AreEqual (5, result);
 		}
 
 		[Test ()]
@@ -143,36 +107,6 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			var actual = proxy.Add (X, Y);
 
 			Assert.AreEqual (Expected, actual);
-		}
-
-		protected void InterceptionAllocatedMemoryManagerAllowsManualDeallocationOfGeneratedPointers<TDynamicProxyManualMemoryReleaseTest>(
-			Func<TDynamicProxyManualMemoryReleaseTest, string, string> reverseStringFunction
-		)
-			where TDynamicProxyManualMemoryReleaseTest : class
-		{
-			const string TestString = "I am a test.";
-
-			var expected = new string(TestString.Reverse ().ToArray ());
-
-			var kernel = new StandardKernel();
-
-			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
-
-			kernel.Bind<TDynamicProxyManualMemoryReleaseTest>().ToNative(LibraryName);
-
-			var proxy = kernel.Get<TDynamicProxyManualMemoryReleaseTest>();
-
-			var actual = reverseStringFunction(proxy, TestString);
-
-			var hasGarbageCollectibleMemoryBefore = InterceptionAllocatedMemoryManager.HasGarbageCollectibleMemory ();
-
-			InterceptionAllocatedMemoryManager.GarbageCollectAll ();
-
-			var hasGarbageCollectibleMemoryAfter = InterceptionAllocatedMemoryManager.HasGarbageCollectibleMemory ();
-
-			Assert.AreEqual (expected, actual);
-			Assert.IsTrue (hasGarbageCollectibleMemoryBefore);
-			Assert.IsFalse (hasGarbageCollectibleMemoryAfter);
 		}
 
 		[Test ()]
@@ -336,6 +270,72 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			coreFacade.Dispose ();
 
 			Assert.AreEqual(16, result);
+		}
+
+		protected void TestNativeAddFunction<TDynamicProxyWithAddFunction>(Func<TDynamicProxyWithAddFunction, int, int, int> addFunction)
+			where TDynamicProxyWithAddFunction : class
+		{
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<TDynamicProxyWithAddFunction>().ToNative(LibraryName);
+
+			var proxy = kernel.Get<TDynamicProxyWithAddFunction>();
+
+			var result = addFunction(proxy, 2, 3);
+
+			Assert.AreEqual(5, result);
+		}
+
+		protected void TestNativeReverseStringFunction<TDynamicProxyWithReverseStringFunction>(Func<TDynamicProxyWithReverseStringFunction, string, string> reverseStringFunction)
+			where TDynamicProxyWithReverseStringFunction : class
+		{
+			const string TestString = "I am a test.";
+
+			var expected = new string(TestString.Reverse ().ToArray ());
+
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<TDynamicProxyWithReverseStringFunction>().ToNative(LibraryName);
+
+			var proxy = kernel.Get<TDynamicProxyWithReverseStringFunction>();
+
+			var actual = reverseStringFunction (proxy, TestString);
+
+			Assert.AreEqual (expected, actual);
+		}
+
+		protected void TestNativeReverseStringFunctionWithManualReleaseInput<TDynamicProxyWithReverseStringFunctionWithManualReleaseInput>(
+			Func<TDynamicProxyWithReverseStringFunctionWithManualReleaseInput, string, string> reverseStringFunction
+		)
+			where TDynamicProxyWithReverseStringFunctionWithManualReleaseInput : class
+		{
+			const string TestString = "I am a test.";
+
+			var expected = new string(TestString.Reverse ().ToArray ());
+
+			var kernel = new StandardKernel();
+
+			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+
+			kernel.Bind<TDynamicProxyWithReverseStringFunctionWithManualReleaseInput>().ToNative(LibraryName);
+
+			var proxy = kernel.Get<TDynamicProxyWithReverseStringFunctionWithManualReleaseInput>();
+
+			var actual = reverseStringFunction(proxy, TestString);
+
+			var hasGarbageCollectibleMemoryBefore = InterceptionAllocatedMemoryManager.HasGarbageCollectibleMemory ();
+
+			InterceptionAllocatedMemoryManager.GarbageCollectAll ();
+
+			var hasGarbageCollectibleMemoryAfter = InterceptionAllocatedMemoryManager.HasGarbageCollectibleMemory ();
+
+			Assert.AreEqual (expected, actual);
+			Assert.IsTrue (hasGarbageCollectibleMemoryBefore);
+			Assert.IsFalse (hasGarbageCollectibleMemoryAfter);
 		}
 	}
 
