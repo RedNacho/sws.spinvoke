@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -46,6 +46,10 @@
       <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
       <Name>Sws.Spinvoke.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Agnostic\Sws.Spinvoke.IntegrationTests.Agnostic.csproj">
+      <Project>{36387693-e300-4c2b-bb13-cc4d86ecef32}</Project>
+      <Name>Sws.Spinvoke.IntegrationTests.Agnostic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj">
       <Project>{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}</Project>
       <Name>Sws.Spinvoke.Linux</Name>
@@ -54,9 +58,8 @@
       <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
       <Name>Sws.Spinvoke.Interception</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Agnostic\Sws.Spinvoke.IntegrationTests.Agnostic.csproj">
-      <Project>{36387693-E300-4C2B-BB13-CC4D86ECEF32}</Project>
-      <Name>Sws.Spinvoke.IntegrationTests.Agnostic</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 </Project>
