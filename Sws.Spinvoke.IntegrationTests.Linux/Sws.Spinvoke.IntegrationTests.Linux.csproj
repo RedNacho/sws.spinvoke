@@ -47,7 +47,7 @@
       <Name>Sws.Spinvoke.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Agnostic\Sws.Spinvoke.IntegrationTests.Agnostic.csproj">
-      <Project>{36387693-e300-4c2b-bb13-cc4d86ecef32}</Project>
+      <Project>{36387693-E300-4C2B-BB13-CC4D86ECEF32}</Project>
       <Name>Sws.Spinvoke.IntegrationTests.Agnostic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj">

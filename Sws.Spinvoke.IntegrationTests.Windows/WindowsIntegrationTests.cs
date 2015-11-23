@@ -97,10 +97,6 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 
     public class PointerToAnsiStringReturnPostprocessor : PointerToStringReturnPostprocessor
     {
-        public PointerToAnsiStringReturnPostprocessor(PointerManagementMode pointerManagementMode) : base(pointerManagementMode)
-        {
-        }
-
         public PointerToAnsiStringReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
         {
         }
@@ -113,10 +109,6 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 
     public class AnsiStringToPointerArgumentPreprocessor : StringToPointerArgumentPreprocessor
     {
-        public AnsiStringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode) : base(pointerManagementMode)
-        {
-        }
-
         public AnsiStringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
         {
         }
