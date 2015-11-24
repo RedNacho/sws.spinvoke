@@ -168,10 +168,8 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 		}
 	}
 
-	public class GccHelper
+	public static class GccHelper
 	{
-		private GccHelper() { }
-
 		[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void free(IntPtr ptr);
 
