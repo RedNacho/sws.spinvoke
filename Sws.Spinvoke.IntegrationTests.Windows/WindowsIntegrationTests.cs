@@ -25,7 +25,20 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 			get { return "libsws.spinvoke.windows.dll"; }
 		}
 
-		[Test ()]
+	    protected override CallingConvention CallingConvention
+	    {
+	        get { return CallingConvention.Cdecl; }
+	    }
+
+        [Test()]
+        public void NativeCodeInvokedThroughExplicitDelegateTypeIfSpecified()
+        {
+            TestNativeAddFunctionWithDecimalResult(
+                (IDynamicProxyExplicitDelegateTypeTest proxy, int x, int y) => proxy.Add(x, y)
+            );
+        }
+
+	    [Test ()]
 		public void NativeCodeInvokedWithStructPointerConversion()
 		{
 			TestNativeAddFunction (
@@ -49,7 +62,16 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 			);
 		}
 	}
-    
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate int ExplicitAddDelegate(int x, int y);
+
+    public interface IDynamicProxyExplicitDelegateTypeTest
+    {
+        [NativeDelegateDefinitionOverride(FunctionName = "add", ExplicitDelegateType = typeof(ExplicitAddDelegate))]
+        decimal Add(int x, int y);
+    }
+
 	public interface IDynamicProxyPointerTest
 	{
 		[NativeDelegateDefinitionOverride(FunctionName = "pointerAdd")]
@@ -150,7 +172,7 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
     {
         private GccHelper() { }
 
-        [DllImport("msvcrt.dll")]
+        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void free(IntPtr ptr);
 
         public static void FreePointer(IntPtr ptr)
