@@ -21,20 +21,20 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 			get { return "libSws.Spinvoke.IntegrationTests.so"; }
 		}
 
-	    protected override CallingConvention CallingConvention
-	    {
-	        get { return CallingConvention.Winapi; }
-	    }
+		protected override CallingConvention CallingConvention
+		{
+			get { return CallingConvention.Winapi; }
+		}
 
-        [Test()]
-        public void NativeCodeInvokedThroughExplicitDelegateTypeIfSpecified()
-        {
-            TestNativeAddFunctionWithDecimalResult(
-                (IDynamicProxyExplicitDelegateTypeTest proxy, int x, int y) => proxy.Add(x, y)
-            );
-        }
+		[Test()]
+		public void NativeCodeInvokedThroughExplicitDelegateTypeIfSpecified()
+		{
+			TestNativeAddFunctionWithDecimalResult(
+				(IDynamicProxyExplicitDelegateTypeTest proxy, int x, int y) => proxy.Add(x, y)
+			);
+		}
 
-	    [Test ()]
+		[Test ()]
 		public void NativeCodeInvokedWithStructPointerConversion()
 		{
 			TestNativeAddFunction (
@@ -59,13 +59,13 @@ namespace Sws.Spinvoke.IntegrationTests.Linux
 		}
 	}
 
-    public delegate int ExplicitAddDelegate(int x, int y);
+	public delegate int ExplicitAddDelegate(int x, int y);
 
-    public interface IDynamicProxyExplicitDelegateTypeTest
-    {
-        [NativeDelegateDefinitionOverride(FunctionName = "add", ExplicitDelegateType = typeof(ExplicitAddDelegate))]
-        decimal Add(int x, int y);
-    }
+	public interface IDynamicProxyExplicitDelegateTypeTest
+	{
+		[NativeDelegateDefinitionOverride(FunctionName = "add", ExplicitDelegateType = typeof(ExplicitAddDelegate))]
+		decimal Add(int x, int y);
+	}
 
 	public interface IDynamicProxyPointerTest
 	{

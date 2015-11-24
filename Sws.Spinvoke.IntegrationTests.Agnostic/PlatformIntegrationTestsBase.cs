@@ -28,7 +28,7 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 
 		protected abstract string LibraryName { get; }
 
-        protected abstract CallingConvention CallingConvention { get; }
+		protected abstract CallingConvention CallingConvention { get; }
 
 		[Test ()]
 		public void NativeCodeInvokedThroughGeneratedDelegate ()
@@ -82,7 +82,7 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader (), new ProxyGenerator (new CastleProxyGenerator ()));
 
 			kernel.Bind<IDynamicProxyTest> ().ToNative (LibraryName)
-                .WithCallingConvention(CallingConvention);
+				.WithCallingConvention(CallingConvention);
 
 			var proxy = kernel.Get<IDynamicProxyTest> ();
 
@@ -102,7 +102,7 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
 			kernel.Bind<IDynamicProxyUnmappedTest> ().ToNative (LibraryName)
-                .WithCallingConvention(CallingConvention);
+				.WithCallingConvention(CallingConvention);
 
 			var proxy = kernel.Get<IDynamicProxyUnmappedTest>();
 
@@ -124,7 +124,7 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), noTargetProxyGeneratorMock.Object);
 
 			kernel.Bind<IDynamicProxyUnmappedTest> ().ToNative (LibraryName)
-                .WithCallingConvention(CallingConvention)
+				.WithCallingConvention(CallingConvention)
 				.WithNonNativeFallback (context => nonNativeFallbackMock.Object);
 		}
 
@@ -256,22 +256,22 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			Assert.AreEqual(16, result);
 		}
 
-        protected void TestNativeAddFunctionWithDecimalResult<TDynamicProxyWithAddFunction>(Func<TDynamicProxyWithAddFunction, int, int, decimal> addFunction)
-            where TDynamicProxyWithAddFunction : class
-        {
-            var kernel = new StandardKernel();
+		protected void TestNativeAddFunctionWithDecimalResult<TDynamicProxyWithAddFunction>(Func<TDynamicProxyWithAddFunction, int, int, decimal> addFunction)
+			where TDynamicProxyWithAddFunction : class
+		{
+			var kernel = new StandardKernel();
 
-            SpinvokeNinjectExtensionsConfiguration.Configure(CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
+			SpinvokeNinjectExtensionsConfiguration.Configure(CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
-            kernel.Bind<TDynamicProxyWithAddFunction>().ToNative(LibraryName)
-                .WithCallingConvention(CallingConvention);
+			kernel.Bind<TDynamicProxyWithAddFunction>().ToNative(LibraryName)
+				.WithCallingConvention(CallingConvention);
 
-            var proxy = kernel.Get<TDynamicProxyWithAddFunction>();
+			var proxy = kernel.Get<TDynamicProxyWithAddFunction>();
 
-            var result = addFunction(proxy, 2, 3);
+			var result = addFunction(proxy, 2, 3);
 
-            Assert.AreEqual(5, result);
-        }
+			Assert.AreEqual(5, result);
+		}
 
 		protected void TestNativeAddFunction<TDynamicProxyWithAddFunction>(Func<TDynamicProxyWithAddFunction, int, int, int> addFunction)
 			where TDynamicProxyWithAddFunction : class
@@ -281,7 +281,7 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
 			kernel.Bind<TDynamicProxyWithAddFunction>().ToNative(LibraryName)
-                .WithCallingConvention(CallingConvention);
+				.WithCallingConvention(CallingConvention);
 
 			var proxy = kernel.Get<TDynamicProxyWithAddFunction>();
 
@@ -302,7 +302,7 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
 			kernel.Bind<TDynamicProxyWithReverseStringFunction>().ToNative(LibraryName)
-                .WithCallingConvention(CallingConvention);
+				.WithCallingConvention(CallingConvention);
 
 			var proxy = kernel.Get<TDynamicProxyWithReverseStringFunction>();
 
@@ -325,7 +325,7 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), new ProxyGenerator(new CastleProxyGenerator()));
 
 			kernel.Bind<TDynamicProxyWithReverseStringFunctionWithManualReleaseInput>().ToNative(LibraryName)
-                .WithCallingConvention(CallingConvention);
+				.WithCallingConvention(CallingConvention);
 
 			var proxy = kernel.Get<TDynamicProxyWithReverseStringFunctionWithManualReleaseInput>();
 

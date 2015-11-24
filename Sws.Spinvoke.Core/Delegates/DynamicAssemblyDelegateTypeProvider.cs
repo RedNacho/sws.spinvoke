@@ -46,8 +46,8 @@ namespace Sws.Spinvoke.Core.Delegates
 				}
 
 				var typeBuilder = _moduleBuilder.DefineType (string.Concat (DelegateTypeNamePrefix, typeIndex.ToString ()),
-					                  TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.AnsiClass | TypeAttributes.AutoClass,
-					                  typeof(MulticastDelegate));
+									  TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.AnsiClass | TypeAttributes.AutoClass,
+									  typeof(MulticastDelegate));
 
 				typeBuilder.SetCustomAttribute (new CustomAttributeBuilder (typeof(UnmanagedFunctionPointerAttribute).GetConstructor(new Type[] { typeof(CallingConvention) }), new object[] { callingConvention }));
 
