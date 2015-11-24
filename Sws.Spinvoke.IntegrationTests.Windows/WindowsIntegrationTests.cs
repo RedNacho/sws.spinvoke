@@ -25,20 +25,20 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 			get { return "libsws.spinvoke.windows.dll"; }
 		}
 
-	    protected override CallingConvention CallingConvention
-	    {
-	        get { return CallingConvention.Cdecl; }
-	    }
+		protected override CallingConvention CallingConvention
+		{
+			get { return CallingConvention.Cdecl; }
+		}
 
-        [Test()]
-        public void NativeCodeInvokedThroughExplicitDelegateTypeIfSpecified()
-        {
-            TestNativeAddFunctionWithDecimalResult(
-                (IDynamicProxyExplicitDelegateTypeTest proxy, int x, int y) => proxy.Add(x, y)
-            );
-        }
+		[Test()]
+		public void NativeCodeInvokedThroughExplicitDelegateTypeIfSpecified()
+		{
+			TestNativeAddFunctionWithDecimalResult(
+				(IDynamicProxyExplicitDelegateTypeTest proxy, int x, int y) => proxy.Add(x, y)
+			);
+		}
 
-	    [Test ()]
+		[Test ()]
 		public void NativeCodeInvokedWithStructPointerConversion()
 		{
 			TestNativeAddFunction (
@@ -63,14 +63,14 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 		}
 	}
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate int ExplicitAddDelegate(int x, int y);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	public delegate int ExplicitAddDelegate(int x, int y);
 
-    public interface IDynamicProxyExplicitDelegateTypeTest
-    {
-        [NativeDelegateDefinitionOverride(FunctionName = "add", ExplicitDelegateType = typeof(ExplicitAddDelegate))]
-        decimal Add(int x, int y);
-    }
+	public interface IDynamicProxyExplicitDelegateTypeTest
+	{
+		[NativeDelegateDefinitionOverride(FunctionName = "add", ExplicitDelegateType = typeof(ExplicitAddDelegate))]
+		decimal Add(int x, int y);
+	}
 
 	public interface IDynamicProxyPointerTest
 	{
@@ -93,91 +93,91 @@ namespace Sws.Spinvoke.IntegrationTests.Windows
 		string ReverseString([NativeArgumentAsAnsiStringPointer(pointerManagementMode: PointerManagementMode.DestroyOnInterceptionGarbageCollect)] string input);
 	}
 
-    public class NativeReturnsGccStructPointerAttribute : NativeReturnDefinitionOverrideAttribute
-    {
-        public NativeReturnsGccStructPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DoNotDestroy)
-            : base(new GccPointerToStructReturnPostprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
-        {
-        }
-    }
+	public class NativeReturnsGccStructPointerAttribute : NativeReturnDefinitionOverrideAttribute
+	{
+		public NativeReturnsGccStructPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DoNotDestroy)
+			: base(new GccPointerToStructReturnPostprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
+		{
+		}
+	}
 
-    public class NativeReturnsGccAnsiStringPointerAttribute : NativeReturnDefinitionOverrideAttribute
-    {
-        public NativeReturnsGccAnsiStringPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DoNotDestroy)
-            : base(new GccPointerToAnsiStringReturnPostprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
-        {
-        }
-    }
+	public class NativeReturnsGccAnsiStringPointerAttribute : NativeReturnDefinitionOverrideAttribute
+	{
+		public NativeReturnsGccAnsiStringPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DoNotDestroy)
+			: base(new GccPointerToAnsiStringReturnPostprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
+		{
+		}
+	}
 
-    public class NativeArgumentAsAnsiStringPointerAttribute : NativeArgumentDefinitionOverrideAttribute
-    {
-        public NativeArgumentAsAnsiStringPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DestroyAfterCall)
-            : base(new AnsiStringToPointerArgumentPreprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
-        {
-        }
-    }
+	public class NativeArgumentAsAnsiStringPointerAttribute : NativeArgumentDefinitionOverrideAttribute
+	{
+		public NativeArgumentAsAnsiStringPointerAttribute(PointerManagementMode pointerManagementMode = PointerManagementMode.DestroyAfterCall)
+			: base(new AnsiStringToPointerArgumentPreprocessor(pointerManagementMode, DefaultPointerMemoryManager), typeof(IntPtr))
+		{
+		}
+	}
 
-    public class GccPointerToStructReturnPostprocessor : PointerToStructReturnPostprocessor
-    {
-        public GccPointerToStructReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
-        {
-        }
+	public class GccPointerToStructReturnPostprocessor : PointerToStructReturnPostprocessor
+	{
+		public GccPointerToStructReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
+		{
+		}
 
-        protected override bool IsFreePointerImplemented
-        {
-            get { return true; }
-        }
+		protected override bool IsFreePointerImplemented
+		{
+			get { return true; }
+		}
 
-        protected override void FreePointer(IntPtr pointer)
-        {
-            GccHelper.FreePointer(pointer);
-        }
-    }
+		protected override void FreePointer(IntPtr pointer)
+		{
+			GccHelper.FreePointer(pointer);
+		}
+	}
 
-    public class GccPointerToAnsiStringReturnPostprocessor : PointerToStringReturnPostprocessor
-    {
-        public GccPointerToAnsiStringReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
-        {
-        }
+	public class GccPointerToAnsiStringReturnPostprocessor : PointerToStringReturnPostprocessor
+	{
+		public GccPointerToAnsiStringReturnPostprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
+		{
+		}
 
-        protected override string PtrToString(IntPtr ptr)
-        {
-            return Marshal.PtrToStringAnsi(ptr);
-        }
+		protected override string PtrToString(IntPtr ptr)
+		{
+			return Marshal.PtrToStringAnsi(ptr);
+		}
 
-        protected override bool IsFreePointerImplemented
-        {
-            get { return true; }
-        }
-        
-        protected override void FreePointer(IntPtr pointer)
-        {
-            GccHelper.FreePointer(pointer);
-        }
-    }
+		protected override bool IsFreePointerImplemented
+		{
+			get { return true; }
+		}
+		
+		protected override void FreePointer(IntPtr pointer)
+		{
+			GccHelper.FreePointer(pointer);
+		}
+	}
 
-    public class AnsiStringToPointerArgumentPreprocessor : StringToPointerArgumentPreprocessor
-    {
-        public AnsiStringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
-        {
-        }
+	public class AnsiStringToPointerArgumentPreprocessor : StringToPointerArgumentPreprocessor
+	{
+		public AnsiStringToPointerArgumentPreprocessor(PointerManagementMode pointerManagementMode, PointerMemoryManager pointerMemoryManager) : base(pointerManagementMode, pointerMemoryManager)
+		{
+		}
 
-        protected override IntPtr StringToPointer(string input)
-        {
-            return Marshal.StringToHGlobalAnsi(input);
-        }
-    }
+		protected override IntPtr StringToPointer(string input)
+		{
+			return Marshal.StringToHGlobalAnsi(input);
+		}
+	}
 
-    public class GccHelper
-    {
-        private GccHelper() { }
+	public class GccHelper
+	{
+		private GccHelper() { }
 
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void free(IntPtr ptr);
+		[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+		private static extern void free(IntPtr ptr);
 
-        public static void FreePointer(IntPtr ptr)
-        {
-            free(ptr);
-        }
-    }
+		public static void FreePointer(IntPtr ptr)
+		{
+			free(ptr);
+		}
+	}
 }
