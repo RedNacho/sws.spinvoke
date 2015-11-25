@@ -8,7 +8,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		private readonly NativeDelegateMapping _nativeDelegateMapping;
 		private readonly int _argumentIndex;
 
-		internal ArgumentPreprocessorContext (IInvocation invocation,
+		public ArgumentPreprocessorContext (IInvocation invocation,
 			NativeDelegateMapping nativeDelegateMapping, int argumentIndex)
 		{
 			_invocation = invocation;

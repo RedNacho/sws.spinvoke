@@ -12,7 +12,7 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 		private readonly DelegateSignature _delegateSignature;
 		private readonly Delegate _delegateInstance;
 
-		internal ReturnPostprocessorContext (IInvocation invocation,
+		public ReturnPostprocessorContext (IInvocation invocation,
 			NativeDelegateMapping nativeDelegateMapping,
 			object[] processedArguments,
 			INativeDelegateResolver nativeDelegateResolver,
