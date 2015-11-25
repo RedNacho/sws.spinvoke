@@ -17,7 +17,7 @@ namespace Sws.Spinvoke.Interception
 		private readonly Type _outputType;
 		private readonly IReturnPostprocessor _returnPostprocessor;
 
-		internal NativeDelegateMapping(bool mapNative,
+		public NativeDelegateMapping(bool mapNative,
 			string libraryName,
 			string functionName,
 			CallingConvention callingConvention,

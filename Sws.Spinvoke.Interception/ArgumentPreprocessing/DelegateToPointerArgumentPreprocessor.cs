@@ -12,11 +12,18 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public object Process (object input)
 		{
-			return Marshal.GetFunctionPointerForDelegate ((Delegate)input);
+			Delegate mappedInput = MapToInteropCompatibleDelegate ((Delegate)input);
+
+			return Marshal.GetFunctionPointerForDelegate (mappedInput);
 		}
 
 		public void ReleaseProcessedInput (object processedInput)
 		{
+		}
+
+		protected virtual Delegate MapToInteropCompatibleDelegate (Delegate del)
+		{
+			return del;
 		}
 	}
 }
