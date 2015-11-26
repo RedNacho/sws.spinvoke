@@ -180,7 +180,7 @@ using (var coreFacade = new SpinvokeCoreFacade.Builder(new LinuxNativeLibraryLoa
 
 * **You don't have to use Castle DynamicProxy.**  Instead of using Sws.Spinvoke.Interception.DynamicProxy.SpinvokeInterceptor, you can write an interceptor adapter for whatever proxy generator you want to use instead, and use that directly.  If you still want to use the Ninject extension methods, you can provide your own implementation of Sws.Spinvoke.Interception.IProxyGenerator, and pass this to the SpinvokeNinjectExtensionsConfiguration.Configure method.
 
-* **You don't have to use interception at all.**  I have deliberately left the interception code out of the code.  If you want to use the core directly, the main entry point is INativeDelegateResolver (which you can get an instance of through the facade as shown above, or through the Ninject module).  This lets you resolve native delegates provided that you can supply NativeDelegateDefinitions which describe them.  I have also added an alternative wrapper for this, which lets you generate ad-hoc lambda expressions for calling native code.  You get to this through INativeExpressionBuilder (also available through the core facade):
+* **You don't have to use interception at all.**  I have deliberately left the interception code out of the core.  If you want to use the core directly, the main entry point is INativeDelegateResolver (which you can get an instance of through the facade as shown above, or through the Ninject module).  This lets you resolve native delegates provided that you can supply NativeDelegateDefinitions which describe them.  I have also added an alternative wrapper for this, which lets you generate ad-hoc lambda expressions for calling native code.  You get to this through INativeExpressionBuilder (also available through the core facade):
 
 ```
 #!c#
@@ -287,8 +287,10 @@ Just in case, however: The changes I have made to allow the freeing of pointers 
 
 Separately, I came back to Mono to find a bizarre bug killing the unit tests dead, which definitely wasn't happening last time I looked. I've fixed this with a horrible workaround for now (see commit labelled "Horrible workaround for horrible Moq problem.").
 
-NOVEMBER 2015 UPDATE
+**NOVEMBER 2015 UPDATE**
 
-I have generalised the integration tests and added Windows support for these, since this is what I expect most people will be using. Depending on which OS you are using, you will want to unload one or both of the IntegrationTest.Linux/Windows projects, as the tests will fail on the wrong OS.
+I have generalised the integration tests and added Windows support for these, since this is what I expect most people will be using. Depending on which OS you are using, you will want to unload one or both of the IntegrationTest.Linux/Windows projects, as the tests will fail on the wrong OS. However, I think this is an improvement - before, Spinvoke was not really Windows/Visual Studio compatible, because you had to hack away at it before the integration tests would pass.
 
-I will try to set this up as a compile-time flag in due course.
+I will try to configure this to use compile-time flags in due course, so that you don't have to unload any projects. I am also considering writing some sort of platform-detecting bootstrapper, so that e.g. you don't have to manually select the right INativeLibraryLoader for your OS. I don't know how useful this will be, since if you're calling native code you're going to have cross-platform issues anyway, but I suppose it's one less thing to worry about.
+
+Also, I have attempted to use Spinvoke on OSX. This seemed to work fine - the INativeLibraryLoader implementation is exactly the same as LinuxNativeLibraryLoader, except that libdl.so is libdl.dylib. I'll try to incorporate OSX support when I have some time.
