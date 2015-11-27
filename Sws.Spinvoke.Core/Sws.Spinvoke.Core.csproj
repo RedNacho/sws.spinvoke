@@ -52,6 +52,8 @@
     <Compile Include="Expressions\DefaultDelegateExpressionBuilder.cs" />
     <Compile Include="Expressions\IDelegateExpressionBuilder.cs" />
     <Compile Include="SafeLibraryHandle.cs" />
+    <Compile Include="LibraryLoading\ILibDlManaged.cs" />
+    <Compile Include="LibraryLoading\LibDlNativeLibraryLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Delegates\" />
@@ -60,6 +62,7 @@
     <Folder Include="Native\" />
     <Folder Include="Resolver\" />
     <Folder Include="Expressions\" />
+    <Folder Include="LibraryLoading\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
