@@ -51,6 +51,7 @@
     <Compile Include="Expressions\DefaultNativeExpressionBuilderTests.cs" />
     <Compile Include="Expressions\DefaultDelegateExpressionBuilderTests.cs" />
     <Compile Include="LibraryLoading\LibDlNativeLibraryLoaderTests.cs" />
+    <Compile Include="LibraryLoading\Kernel32NativeLibraryLoaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">

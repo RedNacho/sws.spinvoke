@@ -54,6 +54,8 @@
     <Compile Include="SafeLibraryHandle.cs" />
     <Compile Include="LibraryLoading\ILibDlManaged.cs" />
     <Compile Include="LibraryLoading\LibDlNativeLibraryLoader.cs" />
+    <Compile Include="LibraryLoading\Kernel32NativeLibraryLoader.cs" />
+    <Compile Include="LibraryLoading\IKernel32Managed.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Delegates\" />

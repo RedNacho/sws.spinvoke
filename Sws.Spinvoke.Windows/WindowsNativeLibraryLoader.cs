@@ -2,45 +2,15 @@
 using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
+using Sws.Spinvoke.Core.LibraryLoading;
 
 namespace Sws.Spinvoke.Windows
 {
 	// BRIEFLY TESTED ON THE NEAREST COPY OF WINDOWS.
-	public class WindowsNativeLibraryLoader : INativeLibraryLoader
+	public class WindowsNativeLibraryLoader : Kernel32NativeLibraryLoader<WindowsKernel32Managed.WindowsSafeLibraryHandle>
 	{
-		public SafeLibraryHandle LoadLibrary (string fileName)
+		public WindowsNativeLibraryLoader() : base(new WindowsKernel32Managed())
 		{
-			return NativeMethods.LoadLibrary (fileName);
-		}
-
-		public void UnloadLibrary (SafeLibraryHandle libHandle)
-		{
-			libHandle.Close ();
-		}
-
-		public IntPtr GetFunctionPointer (SafeLibraryHandle libHandle, string functionName)
-		{
-			return NativeMethods.GetProcAddress (libHandle, functionName);
-		}
-
-		private static class NativeMethods
-		{
-			[DllImport("kernel32.dll")]
-			public static extern WindowsSafeLibraryHandle LoadLibrary(string dllToLoad);
-
-			[DllImport("kernel32.dll")]
-			public static extern IntPtr GetProcAddress(SafeHandle hModule, string procedureName);
-
-			[DllImport("kernel32.dll")]
-			public static extern bool FreeLibrary(IntPtr hModule);
-		}
-
-		private sealed class WindowsSafeLibraryHandle : SafeLibraryHandle
-		{
-			protected override bool ReleaseHandle ()
-			{
-				return NativeMethods.FreeLibrary (handle);
-			}
 		}
 	}
 }
