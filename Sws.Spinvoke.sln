@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTests.Windows", "Sws.Spinvoke.IntegrationTests.Windows\Sws.Spinvoke.IntegrationTests.Windows.csproj", "{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTests.OSX", "Sws.Spinvoke.IntegrationTests.OSX\Sws.Spinvoke.IntegrationTests.OSX.csproj", "{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.OSX", "Sws.Spinvoke.OSX\Sws.Spinvoke.OSX.csproj", "{220D8827-FC49-4FB1-A0BD-A9344AABD92A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -45,10 +49,18 @@ Global
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Debug|x86.Build.0 = Debug|Any CPU
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Release|x86.ActiveCfg = Release|Any CPU
 		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Release|x86.Build.0 = Release|Any CPU
+		{220D8827-FC49-4FB1-A0BD-A9344AABD92A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{220D8827-FC49-4FB1-A0BD-A9344AABD92A}.Debug|x86.Build.0 = Debug|Any CPU
+		{220D8827-FC49-4FB1-A0BD-A9344AABD92A}.Release|x86.ActiveCfg = Release|Any CPU
+		{220D8827-FC49-4FB1-A0BD-A9344AABD92A}.Release|x86.Build.0 = Release|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Debug|x86.Build.0 = Debug|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.ActiveCfg = Release|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.Build.0 = Release|Any CPU
+		{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}.Debug|x86.Build.0 = Debug|Any CPU
+		{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}.Release|x86.ActiveCfg = Release|Any CPU
+		{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}.Release|x86.Build.0 = Release|Any CPU
 		{36387693-E300-4C2B-BB13-CC4D86ECEF32}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{36387693-E300-4C2B-BB13-CC4D86ECEF32}.Debug|x86.Build.0 = Debug|Any CPU
 		{36387693-E300-4C2B-BB13-CC4D86ECEF32}.Release|x86.ActiveCfg = Release|Any CPU
