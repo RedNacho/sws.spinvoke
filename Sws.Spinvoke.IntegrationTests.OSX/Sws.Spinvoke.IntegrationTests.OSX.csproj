@@ -39,7 +39,9 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="libSws.Spinvoke.IntegrationTests.so" />
+    <None Include="libSws.Spinvoke.IntegrationTests.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
