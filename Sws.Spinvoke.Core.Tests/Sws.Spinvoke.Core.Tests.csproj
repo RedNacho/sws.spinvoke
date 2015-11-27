@@ -50,6 +50,7 @@
     <Compile Include="Delegates\DefaultDelegateTypeToDelegateSignatureConverterTests.cs" />
     <Compile Include="Expressions\DefaultNativeExpressionBuilderTests.cs" />
     <Compile Include="Expressions\DefaultDelegateExpressionBuilderTests.cs" />
+    <Compile Include="LibraryLoading\LibDlNativeLibraryLoaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
