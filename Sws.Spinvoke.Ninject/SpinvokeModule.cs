@@ -37,6 +37,8 @@ namespace Sws.Spinvoke.Ninject
 		{
 			Bind<INativeDelegateResolver>().To<DefaultNativeDelegateResolver>().InScope(_resolverScope);
 
+			Bind<INativeExpressionBuilder> ().To<DefaultNativeExpressionBuilder> ().InScope(_resolverScope);
+
 			Bind<CachedDelegateTypeProvider> ().ToSelf ();
 
 			Bind<DynamicAssemblyDelegateTypeProvider> ().ToSelf ()
@@ -57,8 +59,6 @@ namespace Sws.Spinvoke.Ninject
 			Bind<IDelegateTypeToDelegateSignatureConverter> ().To<DefaultDelegateTypeToDelegateSignatureConverter> ();
 
 			Bind<IDelegateExpressionBuilder> ().To<DefaultDelegateExpressionBuilder> ();
-
-			Bind<INativeExpressionBuilder> ().To<DefaultNativeExpressionBuilder> ();
 		}
 	}
 }
