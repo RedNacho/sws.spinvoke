@@ -40,6 +40,7 @@ namespace Sws.Spinvoke.Ninject
 			Bind<CachedDelegateTypeProvider> ().ToSelf ();
 
 			Bind<DynamicAssemblyDelegateTypeProvider> ().ToSelf ()
+				.InSingletonScope()
 				.WithConstructorArgument("assemblyName", _dynamicAssemblyName);
 
 			Bind<IDelegateTypeProvider> ()
