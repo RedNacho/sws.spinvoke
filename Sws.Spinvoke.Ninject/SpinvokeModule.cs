@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Sws.Nindapter.Extensions;
-
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Core.Delegates;
 using Sws.Spinvoke.Core.Expressions;
@@ -42,10 +40,11 @@ namespace Sws.Spinvoke.Ninject
 			Bind<CachedDelegateTypeProvider> ().ToSelf ();
 
 			Bind<IDelegateTypeProvider> ()
-				.ThroughDecorator (dtp => Kernel.Get<CachedDelegateTypeProvider>(new ConstructorArgument("innerProvider", dtp)))
-				.To<DynamicAssemblyDelegateTypeProvider> ()
-				.InSingletonScope()
-				.WithConstructorArgument (_dynamicAssemblyName);
+				.ToMethod (ctx =>
+					Kernel.Get<CachedDelegateTypeProvider>(
+						new ConstructorArgument("innerProvider",
+							new DynamicAssemblyDelegateTypeProvider(_dynamicAssemblyName))))
+				.InSingletonScope();
 
 			Bind<ICompositeKeyedCache<Type>>().To<SimpleCompositeKeyedCache<Type>>().WhenInjectedInto<CachedDelegateTypeProvider>();
 
