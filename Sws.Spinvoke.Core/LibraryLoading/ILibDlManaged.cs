@@ -3,10 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.Core.LibraryLoading
 {
-	public interface ILibDlManaged<TSafeLibraryHandle>
-		where TSafeLibraryHandle : SafeLibraryHandle
+	public interface ILibDlManaged
 	{
-		TSafeLibraryHandle DlOpen(string filename, int flags);
+		SafeLibraryHandle DlOpen(string filename, int flags);
 		IntPtr DlError();
 		IntPtr DlSym(SafeHandle handle, string symbol);
 		string StringFromDlError(IntPtr dlErrorPtr);

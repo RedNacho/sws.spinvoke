@@ -6,9 +6,9 @@ using Sws.Spinvoke.Core;
 
 namespace Sws.Spinvoke.Linux
 {
-	public class LinuxLibDlManaged : ILibDlManaged<LinuxLibDlManaged.LinuxSafeLibraryHandle>
+	public class LinuxLibDlManaged : ILibDlManaged
 	{
-		public LinuxSafeLibraryHandle DlOpen (string filename, int flags)
+		public SafeLibraryHandle DlOpen (string filename, int flags)
 		{
 			return dlopen (filename, flags);
 		}
@@ -45,7 +45,7 @@ namespace Sws.Spinvoke.Linux
 		[DllImport("libdl.so")]
 		private static extern IntPtr dlsym(SafeHandle handle, string symbol);
 
-		public sealed class LinuxSafeLibraryHandle : SafeLibraryHandle
+		private sealed class LinuxSafeLibraryHandle : SafeLibraryHandle
 		{
 			protected override bool ReleaseHandle ()
 			{

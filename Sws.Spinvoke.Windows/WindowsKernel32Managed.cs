@@ -5,9 +5,9 @@ using Sws.Spinvoke.Core;
 
 namespace Sws.Spinvoke.Windows
 {
-	public class WindowsKernel32Managed : IKernel32Managed<WindowsKernel32Managed.WindowsSafeLibraryHandle>
+	public class WindowsKernel32Managed : IKernel32Managed
 	{
-		public WindowsSafeLibraryHandle LoadLibrary (string fileName)
+		public SafeLibraryHandle LoadLibrary (string fileName)
 		{
 			return NativeMethods.LoadLibrary (fileName);
 		}
@@ -29,7 +29,7 @@ namespace Sws.Spinvoke.Windows
 			public static extern bool FreeLibrary(IntPtr hModule);
 		}
 
-		public sealed class WindowsSafeLibraryHandle : SafeLibraryHandle
+		private sealed class WindowsSafeLibraryHandle : SafeLibraryHandle
 		{
 			protected override bool ReleaseHandle ()
 			{

@@ -5,9 +5,9 @@ using Sws.Spinvoke.Core;
 
 namespace Sws.Spinvoke.OSX
 {
-	public class OSXLibDlManaged : ILibDlManaged<OSXLibDlManaged.OSXSafeLibraryHandle>
+	public class OSXLibDlManaged : ILibDlManaged
 	{
-		public OSXSafeLibraryHandle DlOpen (string filename, int flags)
+		public SafeLibraryHandle DlOpen (string filename, int flags)
 		{
 			return dlopen (filename, flags);
 		}
@@ -44,7 +44,7 @@ namespace Sws.Spinvoke.OSX
 		[DllImport("libdl.dylib")]
 		private static extern IntPtr dlsym(SafeHandle handle, string symbol);
 
-		public sealed class OSXSafeLibraryHandle : SafeLibraryHandle
+		private sealed class OSXSafeLibraryHandle : SafeLibraryHandle
 		{
 			protected override bool ReleaseHandle ()
 			{
@@ -55,4 +55,3 @@ namespace Sws.Spinvoke.OSX
 		}
 	}
 }
-
