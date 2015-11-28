@@ -39,11 +39,14 @@ namespace Sws.Spinvoke.Ninject
 
 			Bind<CachedDelegateTypeProvider> ().ToSelf ();
 
+			Bind<DynamicAssemblyDelegateTypeProvider> ().ToSelf ()
+				.WithConstructorArgument("assemblyName", _dynamicAssemblyName);
+
 			Bind<IDelegateTypeProvider> ()
 				.ToMethod (ctx =>
 					Kernel.Get<CachedDelegateTypeProvider>(
 						new ConstructorArgument("innerProvider",
-							new DynamicAssemblyDelegateTypeProvider(_dynamicAssemblyName))))
+							Kernel.Get<DynamicAssemblyDelegateTypeProvider>())))
 				.InSingletonScope();
 
 			Bind<ICompositeKeyedCache<Type>>().To<SimpleCompositeKeyedCache<Type>>().WhenInjectedInto<CachedDelegateTypeProvider>();
