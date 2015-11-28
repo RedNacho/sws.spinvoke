@@ -37,7 +37,7 @@ namespace Sws.Spinvoke.Ninject
 		{
 			Bind<INativeDelegateResolver>().To<DefaultNativeDelegateResolver>().InScope(_resolverScope);
 
-			Bind<INativeExpressionBuilder> ().To<DefaultNativeExpressionBuilder> ().InScope(_resolverScope);
+			Bind<INativeExpressionBuilder> ().To<DefaultNativeExpressionBuilder> ();
 
 			Bind<CachedDelegateTypeProvider> ().ToSelf ();
 
