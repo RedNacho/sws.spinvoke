@@ -1,5 +1,4 @@
-﻿using System;
-using Sws.Spinvoke.Core.LibraryLoading;
+﻿using Sws.Spinvoke.Core.LibraryLoading;
 
 namespace Sws.Spinvoke.OSX
 {

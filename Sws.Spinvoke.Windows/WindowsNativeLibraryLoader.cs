@@ -1,8 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-using Sws.Spinvoke.Core;
-using Sws.Spinvoke.Core.LibraryLoading;
+﻿using Sws.Spinvoke.Core.LibraryLoading;
 
 namespace Sws.Spinvoke.Windows
 {
