@@ -2,12 +2,11 @@
 
 namespace Sws.Spinvoke.Core.LibraryLoading
 {
-	public class Kernel32NativeLibraryLoader<TSafeLibraryHandle> : INativeLibraryLoader
-		where TSafeLibraryHandle : SafeLibraryHandle
+	public class Kernel32NativeLibraryLoader : INativeLibraryLoader
 	{
-		private readonly IKernel32Managed<TSafeLibraryHandle> _kernel32Managed;
+		private readonly IKernel32Managed _kernel32Managed;
 
-		public Kernel32NativeLibraryLoader (IKernel32Managed<TSafeLibraryHandle> kernel32Managed)
+		public Kernel32NativeLibraryLoader (IKernel32Managed kernel32Managed)
 		{
 			_kernel32Managed = kernel32Managed;
 		}

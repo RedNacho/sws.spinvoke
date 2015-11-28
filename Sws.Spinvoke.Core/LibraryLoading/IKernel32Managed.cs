@@ -3,10 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.Core.LibraryLoading
 {
-	public interface IKernel32Managed<TSafeLibraryHandle>
-		where TSafeLibraryHandle : SafeLibraryHandle
+	public interface IKernel32Managed
 	{
-		TSafeLibraryHandle LoadLibrary (string fileName);
+		SafeLibraryHandle LoadLibrary (string fileName);
 		IntPtr GetProcAddress (SafeHandle hModule, string procedureName);
 	}
 }

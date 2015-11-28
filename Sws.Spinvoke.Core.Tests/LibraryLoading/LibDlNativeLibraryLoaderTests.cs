@@ -20,12 +20,12 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var safeLibraryHandle = new TestSafeLibraryHandle ();
 
-			var libDlMock = new Mock<ILibDlManaged<TestSafeLibraryHandle>> ();
+			var libDlMock = new Mock<ILibDlManaged> ();
 
 			libDlMock.Setup (libDl => libDl.DlOpen (TestLibraryName, RTLD_NOW))
 				.Returns (safeLibraryHandle);
 
-			var nativeLibraryLoader = new LibDlNativeLibraryLoader<TestSafeLibraryHandle> (libDlMock.Object);
+			var nativeLibraryLoader = new LibDlNativeLibraryLoader (libDlMock.Object);
 
 			var actualSafeLibraryHandle = nativeLibraryLoader.LoadLibrary (TestLibraryName);
 
@@ -48,12 +48,12 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var safeLibraryHandle = new TestSafeLibraryHandle ();
 
-			var libDlMock = new Mock<ILibDlManaged<TestSafeLibraryHandle>> ();
+			var libDlMock = new Mock<ILibDlManaged> ();
 
 			libDlMock.Setup (libDl => libDl.DlOpen (TestLibraryName, RTLD_NOW))
 				.Returns (safeLibraryHandle);
 
-			var nativeLibraryLoader = new LibDlNativeLibraryLoader<TestSafeLibraryHandle> (libDlMock.Object);
+			var nativeLibraryLoader = new LibDlNativeLibraryLoader (libDlMock.Object);
 
 			var actualSafeLibraryHandle = nativeLibraryLoader.LoadLibrary (TestLibraryName);
 
@@ -83,7 +83,7 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var testHandle = new TestSafeLibraryHandle ();
 
-			var libDlMock = new Mock<ILibDlManaged<TestSafeLibraryHandle>> ();
+			var libDlMock = new Mock<ILibDlManaged> ();
 
 			libDlMock.Setup (libDl => libDl.DlError ())
 				.Callback (() => calls.Add ("dlerror"))
@@ -93,7 +93,7 @@ namespace Sws.Spinvoke.Core.Tests
 				.Callback (() => calls.Add ("dlsym"))
 				.Returns (expectedFunctionPtr);
 
-			var libDlNativeLibraryLoader = new LibDlNativeLibraryLoader<TestSafeLibraryHandle> (libDlMock.Object);
+			var libDlNativeLibraryLoader = new LibDlNativeLibraryLoader (libDlMock.Object);
 
 			var actualFunctionPtr = libDlNativeLibraryLoader.GetFunctionPointer (testHandle, TestFunctionName);
 
@@ -129,7 +129,7 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var testHandle = new TestSafeLibraryHandle ();
 
-			var libDlMock = new Mock<ILibDlManaged<TestSafeLibraryHandle>> ();
+			var libDlMock = new Mock<ILibDlManaged> ();
 
 			var errorPtrs = new [] { IntPtr.Zero, expectedErrorPtr };
 
@@ -147,7 +147,7 @@ namespace Sws.Spinvoke.Core.Tests
 				.Callback (() => calls.Add ("stringfromdlerror"))
 				.Returns (ExpectedErrorString);
 
-			var libDlNativeLibraryLoader = new LibDlNativeLibraryLoader<TestSafeLibraryHandle> (libDlMock.Object);
+			var libDlNativeLibraryLoader = new LibDlNativeLibraryLoader (libDlMock.Object);
 
 			try {
 			    libDlNativeLibraryLoader.GetFunctionPointer (testHandle, TestFunctionName);

@@ -16,12 +16,12 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var safeLibraryHandle = new TestSafeLibraryHandle ();
 
-			var kernel32Mock = new Mock<IKernel32Managed<TestSafeLibraryHandle>> ();
+			var kernel32Mock = new Mock<IKernel32Managed> ();
 
 			kernel32Mock.Setup (kernel32 => kernel32.LoadLibrary (TestLibraryName))
 				.Returns (safeLibraryHandle);
 
-			var nativeLibraryLoader = new Kernel32NativeLibraryLoader<TestSafeLibraryHandle> (kernel32Mock.Object);
+			var nativeLibraryLoader = new Kernel32NativeLibraryLoader (kernel32Mock.Object);
 
 			var actualSafeLibraryHandle = nativeLibraryLoader.LoadLibrary (TestLibraryName);
 
@@ -42,12 +42,12 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var safeLibraryHandle = new TestSafeLibraryHandle ();
 
-			var kernel32Mock = new Mock<IKernel32Managed<TestSafeLibraryHandle>> ();
+			var kernel32Mock = new Mock<IKernel32Managed> ();
 
 			kernel32Mock.Setup (kernel32 => kernel32.LoadLibrary (TestLibraryName))
 				.Returns (safeLibraryHandle);
 
-			var nativeLibraryLoader = new Kernel32NativeLibraryLoader<TestSafeLibraryHandle> (kernel32Mock.Object);
+			var nativeLibraryLoader = new Kernel32NativeLibraryLoader (kernel32Mock.Object);
 
 			var actualSafeLibraryHandle = nativeLibraryLoader.LoadLibrary (TestLibraryName);
 
@@ -73,12 +73,12 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var testHandle = new TestSafeLibraryHandle ();
 
-			var kernel32Mock = new Mock<IKernel32Managed<TestSafeLibraryHandle>> ();
+			var kernel32Mock = new Mock<IKernel32Managed> ();
 
 			kernel32Mock.Setup (kernel32 => kernel32.GetProcAddress (testHandle, TestFunctionName))
 				.Returns (expectedFunctionPtr);
 
-			var kernel32NativeLibraryLoader = new Kernel32NativeLibraryLoader<TestSafeLibraryHandle> (kernel32Mock.Object);
+			var kernel32NativeLibraryLoader = new Kernel32NativeLibraryLoader (kernel32Mock.Object);
 
 			var actualFunctionPtr = kernel32NativeLibraryLoader.GetFunctionPointer (testHandle, TestFunctionName);
 

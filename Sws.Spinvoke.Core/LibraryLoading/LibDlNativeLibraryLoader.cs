@@ -3,14 +3,13 @@ using Sws.Spinvoke.Core.Exceptions;
 
 namespace Sws.Spinvoke.Core.LibraryLoading
 {
-	public class LibDlNativeLibraryLoader<TSafeLibraryHandle> : INativeLibraryLoader
-		where TSafeLibraryHandle : SafeLibraryHandle
+	public class LibDlNativeLibraryLoader : INativeLibraryLoader
 	{
 		private const int RTLD_NOW = 2;
 
-		private readonly ILibDlManaged<TSafeLibraryHandle> _libDlManaged;
+		private readonly ILibDlManaged _libDlManaged;
 
-		public LibDlNativeLibraryLoader(ILibDlManaged<TSafeLibraryHandle> libDlManaged)
+		public LibDlNativeLibraryLoader(ILibDlManaged libDlManaged)
 		{
 			this._libDlManaged = libDlManaged;
 		}
