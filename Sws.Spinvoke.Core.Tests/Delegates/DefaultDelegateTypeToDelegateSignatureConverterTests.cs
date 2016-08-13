@@ -38,12 +38,11 @@ namespace Sws.Spinvoke.Core.Tests
 		}
 
 		[Test ()]
-		[ExpectedException (typeof(InvalidOperationException))]
 		public void ThrowsInvalidOperationExceptionIfCallingConventionNotSupplied()
 		{
 			var subject = new DefaultDelegateTypeToDelegateSignatureConverter();
 
-			subject.CreateDelegateSignature (typeof(Action<int, string>));
+			Assert.Throws<InvalidOperationException>(() => subject.CreateDelegateSignature (typeof(Action<int, string>)));
 		}
 
 		[Test ()]

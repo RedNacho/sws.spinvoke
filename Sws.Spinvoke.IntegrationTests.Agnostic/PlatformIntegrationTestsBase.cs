@@ -92,7 +92,6 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 		}
 
 		[Test ()]
-		[ExpectedException (typeof(NotImplementedException))]
 		public void ProxyThrowsNotImplementedIfNoFallbackAndUnmapped()
 		{
 			const int TestInput = -5;
@@ -106,11 +105,10 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 
 			var proxy = kernel.Get<IDynamicProxyUnmappedTest>();
 
-			proxy.Abs (TestInput);
+			Assert.Throws<NotImplementedException>(() => proxy.Abs (TestInput));
 		}
 
 		[Test ()]
-		[ExpectedException (typeof(InvalidOperationException))]
 		public void WithNonNativeFallbackThrowsInvalidOperationExceptionIfProxyGeneratorDoesNotSupportTargets()
 		{
 			var kernel = new StandardKernel();
@@ -123,9 +121,9 @@ namespace Sws.Spinvoke.IntegrationTests.Agnostic
 
 			SpinvokeNinjectExtensionsConfiguration.Configure (CreateNativeLibraryLoader(), noTargetProxyGeneratorMock.Object);
 
-			kernel.Bind<IDynamicProxyUnmappedTest> ().ToNative (LibraryName)
+			Assert.Throws<InvalidOperationException>(() => kernel.Bind<IDynamicProxyUnmappedTest> ().ToNative (LibraryName)
 				.WithCallingConvention(CallingConvention)
-				.WithNonNativeFallback (context => nonNativeFallbackMock.Object);
+				.WithNonNativeFallback (context => nonNativeFallbackMock.Object));
 		}
 
 		[Test ()]
