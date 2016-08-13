@@ -139,7 +139,6 @@ namespace Sws.Spinvoke.Core.Tests
 		}
 
 		[Test ()]
-		[ExpectedException (typeof(ArgumentException))]
 		public void BuildNativeExpressionThrowsExceptionIfCallingConventionRequiredButNotSupplied ()
 		{
 			const string LibraryName = "TestLibrary";
@@ -154,7 +153,7 @@ namespace Sws.Spinvoke.Core.Tests
 
 			var subject = new DefaultNativeExpressionBuilder (Mock.Of<INativeDelegateResolver>(), delegateTypeToDelegateSignatureMock.Object, Mock.Of<IDelegateExpressionBuilder>());
 
-			subject.BuildNativeExpression<Action> (LibraryName, FunctionName, null, explicitDelegateType);
+			Assert.Throws<ArgumentException>(() => subject.BuildNativeExpression<Action> (LibraryName, FunctionName, null, explicitDelegateType));
 		}
 	}
 

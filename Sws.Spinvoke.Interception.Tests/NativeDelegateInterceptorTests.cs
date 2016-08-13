@@ -25,7 +25,7 @@ namespace Sws.Spinvoke.Interception.Tests
 
 		private NativeDelegateInterceptor _subject;
 
-		[TestFixtureSetUp ()]
+		[SetUp ()]
 		public void TestSetup()
 		{
 			_nativeDelegateResolverMock = new Mock<INativeDelegateResolver> ();
@@ -398,7 +398,6 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void InterceptorThrowsExceptionIfArgumentPreprocessorCannotProcessArgument ()
 		{
 			const int X = 2;
@@ -415,11 +414,10 @@ namespace Sws.Spinvoke.Interception.Tests
 			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithArgumentPreprocessor).GetMethod ("Add"));
 			invocationMock.SetupProperty (i => i.ReturnValue);
 
-			_subject.Intercept (invocationMock.Object);
+			Assert.Throws<InvalidOperationException>(() => _subject.Intercept (invocationMock.Object));
 		}
 
 		[Test ()]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void InterceptorThrowsExceptionIfReturnPostprocessorCannotProcessReturnValue ()
 		{
 			const int X = 2;
@@ -436,7 +434,7 @@ namespace Sws.Spinvoke.Interception.Tests
 			invocationMock.SetupGet (i => i.Method).Returns (typeof(IInterceptorTestWithReturnPostprocessor).GetMethod ("Add"));
 			invocationMock.SetupProperty (i => i.ReturnValue);
 
-			_subject.Intercept (invocationMock.Object);
+			Assert.Throws<InvalidOperationException>(() => _subject.Intercept (invocationMock.Object));
 		}
 
 		[Test ()]
