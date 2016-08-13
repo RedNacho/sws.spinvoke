@@ -294,3 +294,10 @@ Separately, I came back to Mono to find a bizarre bug killing the unit tests dea
 Since I now have a bit more access to the relevant operating systems, I have generalised the integration tests and added Windows/OSX support. This now means that even if you are using MonoDevelop on Linux (which is the home for this solution), you will have some test failures, because the Windows and OSX tests will not work. You can resolve this by unloading the failing test projects. On the plus side, the code is now entirely testable within Visual Studio on Windows (which, considering this is a .NET solution, is a big bonus).
 
 I will try to configure the tests to use compile-time flags in due course, so that you don't have to unload any projects. I am also considering writing some sort of platform-detecting bootstrapper, so that e.g. you don't have to manually select the right INativeLibraryLoader for your OS. I don't know how useful this will be, since if you're calling native code you're going to have cross-platform issues anyway, but I suppose it's one less thing to worry about.
+
+**AUGUST 2016 UPDATE**
+
+I recently tried to use this library with Mono running inside a Docker container on a Raspberry Pi. It *almost* worked out of the box, but I had a problem because the Docker image only included an explicitly versioned libdl.so.2 library, and did not include a symlink libdl.so. This library is required by the LinuxNativeLibraryLoader to dynamically load libraries; and the problem manifests in a DllNotFoundException for libdl.so. As far as I can tell, Mono does not look for the explicitly versioned file when resolving the DllImport for libdl. If you have a similar problem, you can resolve it as follows:
+
+1. Find libdl on the target system (Google can explain how to do this). If you can't find it, you may have to install something.
+2. Add dllmap configuration for the Sws.Spinvoke.Linux library (Google can also explain this one), pointing "libdl.so" to the version which is available, e.g. "libdl.so.2".
