@@ -301,3 +301,5 @@ I recently tried to use this library with Mono running inside a Docker container
 
 1. Find libdl on the target system (Google can explain how to do this). If you can't find it, you may have to install something.
 2. Add dllmap configuration for the Sws.Spinvoke.Linux library (Google can also explain this one), pointing "libdl.so" to the version which is available, e.g. "libdl.so.2".
+
+I also attempted to implement a platform-detecting bootstrapper (Sws.Spinvoke.Bootstrapper) but it is highly experimental. Feel free to try it, but don't feel free to rely on it.
