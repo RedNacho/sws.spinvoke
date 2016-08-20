@@ -9,9 +9,9 @@ namespace Sws.Spinvoke.Bootstrapper.Tests
 	[TestFixture ()]
 	public class NativeLibraryLoaderVerifierTests
 	{
-		private INativeLibraryLoader SetupNativeLibraryLoader<TDelegate>(string libraryName,
+		private INativeLibraryLoader SetupNativeLibraryLoader(string libraryName,
 			string functionName,
-			TDelegate functionToExecute
+			Delegate functionToExecute
 		) {
 			var nativeLibraryLoaderMock = new Mock<INativeLibraryLoader> ();
 
@@ -30,12 +30,14 @@ namespace Sws.Spinvoke.Bootstrapper.Tests
 
 		private delegate int GetPidDelegate();
 	
+		private delegate IntPtr GetCurrentProcessDelegate();
+
 		[Test ()]
 		public void AcceptsIntegerResultOfGetPidWhenOSIsX11 ()
 		{
 			int getPidCallCounts = 0;
 
-			Func<int> getPid = () => {
+			GetPidDelegate getPid = () => {
 				getPidCallCounts++;
 				return 1;
 			};
@@ -46,6 +48,25 @@ namespace Sws.Spinvoke.Bootstrapper.Tests
 				.VerifyNativeLibraryLoader (nativeLibraryLoader);
 
 			Assert.AreEqual(1, getPidCallCounts);
+			Assert.AreEqual (nativeLibraryLoader, result);
+		}
+
+		[Test ()]
+		public void AcceptsIntPtrResultOfGetCurrentProcessWhenOSIsWindows ()
+		{
+			int getCurrentProcessCallCounts = 0;
+
+			GetCurrentProcessDelegate getCurrentProcess = () => {
+				getCurrentProcessCallCounts++;
+				return new IntPtr(1);
+			};
+
+			var nativeLibraryLoader = SetupNativeLibraryLoader ("Kernel32.dll", "GetCurrentProcess", getCurrentProcess);
+
+			var result = (new NativeLibraryLoaderVerifier (() => OS.Windows))
+				.VerifyNativeLibraryLoader (nativeLibraryLoader);
+
+			Assert.AreEqual(1, getCurrentProcessCallCounts);
 			Assert.AreEqual (nativeLibraryLoader, result);
 		}
 
