@@ -10,8 +10,6 @@ namespace Sws.Spinvoke.Bootstrapper
 {
 	public static class Bootstrapper
 	{
-		private delegate int GetPidDelegate ();
-
 		private static readonly Func<INativeLibraryLoader> NativeLibraryLoaderFactory =
 			(new NativeLibraryLoaderFactory (OSDetector.DetectOS)).Create;
 
