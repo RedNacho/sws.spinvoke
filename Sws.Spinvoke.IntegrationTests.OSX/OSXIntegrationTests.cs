@@ -5,12 +5,20 @@ using System.Runtime.InteropServices;
 using Sws.Spinvoke.Interception;
 using Sws.Spinvoke.IntegrationTests.Agnostic;
 using Sws.Spinvoke.OSX;
+using Sws.Spinvoke.Bootstrapper;
 
 namespace Sws.Spinvoke.IntegrationTests.OSX
 {
 	[TestFixture ()]
 	public class OSXIntegrationTests : PlatformIntegrationTestsBase
 	{
+		[TestFixtureSetUp()]
+		public void TestFixtureSetUp() {
+			if (OSDetector.DetectOS () != OS.Mac) {
+				Assert.Ignore ("Non-Mac OS detected. If this is a mistake, please remove this clause.");
+			}
+		}
+
 		protected override INativeLibraryLoader CreateNativeLibraryLoader ()
 		{
 			return new OSXNativeLibraryLoader ();

@@ -54,6 +54,10 @@
       <Project>{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}</Project>
       <Name>Sws.Spinvoke.Windows</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Bootstrapper\Sws.Spinvoke.Bootstrapper.csproj">
+      <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
+      <Name>Sws.Spinvoke.Bootstrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="libsws.spinvoke.windows.dll">

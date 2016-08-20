@@ -5,12 +5,20 @@ using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Linux;
 using Sws.Spinvoke.Interception;
 using Sws.Spinvoke.IntegrationTests.Agnostic;
+using Sws.Spinvoke.Bootstrapper;
 
 namespace Sws.Spinvoke.IntegrationTests.Linux
 {
 	[TestFixture ()]
 	public class LinuxIntegrationTests : PlatformIntegrationTestsBase
 	{
+		[TestFixtureSetUp()]
+		public void TestFixtureSetUp() {
+			if (OSDetector.DetectOS () != OS.X11) {
+				Assert.Ignore ("Non-Linux OS detected. If this is a mistake, please remove this clause.");
+			}
+		}
+
 		protected override INativeLibraryLoader CreateNativeLibraryLoader ()
 		{
 			return new LinuxNativeLibraryLoader ();

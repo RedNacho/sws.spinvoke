@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FF49DD79-253B-4541-A455-B472CB36F212}</ProjectGuid>
+    <ProjectGuid>{D1D5524C-6D1E-4C5A-9822-322E7929338D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sws.Spinvoke.IntegrationTests.Linux</RootNamespace>
-    <AssemblyName>Sws.Spinvoke.IntegrationTests.Linux</AssemblyName>
+    <RootNamespace>Sws.Spinvoke.Bootstrapper.Tests</RootNamespace>
+    <AssemblyName>Sws.Spinvoke.Bootstrapper.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,38 +32,50 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.5.21\lib\net45\Moq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LinuxIntegrationTests.cs" />
+    <Compile Include="NativeLibraryLoaderFactoryTests.cs" />
+    <Compile Include="BootstrapperTests.cs" />
+    <Compile Include="NativeLibraryLoaderVerifierTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="libSws.Spinvoke.IntegrationTests.so" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sws.Spinvoke.Bootstrapper\Sws.Spinvoke.Bootstrapper.csproj">
+      <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
+      <Name>Sws.Spinvoke.Bootstrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Linux\Sws.Spinvoke.IntegrationTests.Linux.csproj">
+      <Project>{FF49DD79-253B-4541-A455-B472CB36F212}</Project>
+      <Name>Sws.Spinvoke.IntegrationTests.Linux</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
       <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
       <Name>Sws.Spinvoke.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Agnostic\Sws.Spinvoke.IntegrationTests.Agnostic.csproj">
-      <Project>{36387693-E300-4C2B-BB13-CC4D86ECEF32}</Project>
-      <Name>Sws.Spinvoke.IntegrationTests.Agnostic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj">
       <Project>{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}</Project>
       <Name>Sws.Spinvoke.Linux</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
-      <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
-      <Name>Sws.Spinvoke.Interception</Name>
+    <ProjectReference Include="..\Sws.Spinvoke.Windows\Sws.Spinvoke.Windows.csproj">
+      <Project>{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}</Project>
+      <Name>Sws.Spinvoke.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Bootstrapper\Sws.Spinvoke.Bootstrapper.csproj">
-      <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
-      <Name>Sws.Spinvoke.Bootstrapper</Name>
+    <ProjectReference Include="..\Sws.Spinvoke.OSX\Sws.Spinvoke.OSX.csproj">
+      <Project>{220D8827-FC49-4FB1-A0BD-A9344AABD92A}</Project>
+      <Name>Sws.Spinvoke.OSX</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\Sws.Spinvoke.Core.Facade\Sws.Spinvoke.Core.Facade.csproj">
+      <Project>{81DE20AF-6A08-438D-9B72-3A685960DBD1}</Project>
+      <Name>Sws.Spinvoke.Core.Facade</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
