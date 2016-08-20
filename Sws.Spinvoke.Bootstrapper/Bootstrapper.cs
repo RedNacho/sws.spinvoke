@@ -70,18 +70,27 @@ namespace Sws.Spinvoke.Bootstrapper
 		/// <returns>The core facade builder for OS.</returns>
 		public static SpinvokeCoreFacade.Builder CreateCoreFacadeBuilderForOS() {
 			return new SpinvokeCoreFacade.Builder (
-				verifyNativeLibraryLoader (_nativeLibraryLoaderFactory ()));
+				CreateNativeLibraryLoaderForOS ());
 		}
 
 		/// <summary>
 		/// Creates a Spinvoke Core facade for the current OS.
 		/// </summary>
-		/// <returns>The core facade for O.</returns>
+		/// <returns>The core facade for OS.</returns>
 		public static SpinvokeCoreFacade CreateCoreFacadeForOS() {
 			return CreateCoreFacadeBuilderForOS ().Build ();
 		}
 
-		private static INativeLibraryLoader verifyNativeLibraryLoader(INativeLibraryLoader nativeLibraryLoader) {
+		/// <summary>
+		/// Creates a native library loader for the current OS. This can then be used
+		/// with e.g. the Ninject extensions.
+		/// </summary>
+		/// <returns>The native library loader for OS.</returns>
+		public static INativeLibraryLoader CreateNativeLibraryLoaderForOS() {
+			return VerifyNativeLibraryLoader (_nativeLibraryLoaderFactory ());
+		}
+
+		private static INativeLibraryLoader VerifyNativeLibraryLoader(INativeLibraryLoader nativeLibraryLoader) {
 			if (!_verificationEnabled) {
 				return nativeLibraryLoader;
 			}
