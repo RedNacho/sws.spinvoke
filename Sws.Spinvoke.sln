@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.OSX", "Sws.Spi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Bootstrapper", "Sws.Spinvoke.Bootstrapper\Sws.Spinvoke.Bootstrapper.csproj", "{C9060F82-7105-454A-A243-F7837140E416}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Bootstrapper.Tests", "Sws.Spinvoke.Bootstrapper.Tests\Sws.Spinvoke.Bootstrapper.Tests.csproj", "{D1D5524C-6D1E-4C5A-9822-322E7929338D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -107,6 +109,10 @@ Global
 		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Debug|x86.Build.0 = Debug|Any CPU
 		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Release|x86.ActiveCfg = Release|Any CPU
 		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Release|x86.Build.0 = Release|Any CPU
+		{D1D5524C-6D1E-4C5A-9822-322E7929338D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D1D5524C-6D1E-4C5A-9822-322E7929338D}.Debug|x86.Build.0 = Debug|Any CPU
+		{D1D5524C-6D1E-4C5A-9822-322E7929338D}.Release|x86.ActiveCfg = Release|Any CPU
+		{D1D5524C-6D1E-4C5A-9822-322E7929338D}.Release|x86.Build.0 = Release|Any CPU
 		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Debug|x86.Build.0 = Debug|Any CPU
 		{FE0212AC-62FE-46AA-9EC8-6500020C5479}.Release|x86.ActiveCfg = Release|Any CPU
