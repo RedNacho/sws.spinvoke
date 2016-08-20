@@ -38,6 +38,16 @@ namespace Sws.Spinvoke.Bootstrapper
 					new object[0],
 					output => output != null && output is IntPtr);
 				break;
+			case OS.Mac:
+				TestNativeLibraryLoader<GetPidDelegate> (os,
+					nativeLibraryLoader,
+					"libc.dylib",
+					"getpid",
+					new object[0],
+					output => output != null && output is int);
+				break;
+			default:
+				throw new InvalidOperationException(string.Format("Cannot verify INativeLibraryLoader instance; OS {0} is not recognised. If this isn't your OS, the bootstrapper has made a mistake.", os));
 			}
 			return nativeLibraryLoader;
 		}
