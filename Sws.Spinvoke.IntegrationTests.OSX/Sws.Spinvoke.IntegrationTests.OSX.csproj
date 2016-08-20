@@ -60,6 +60,10 @@
       <Project>{220D8827-FC49-4FB1-A0BD-A9344AABD92A}</Project>
       <Name>Sws.Spinvoke.OSX</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Bootstrapper\Sws.Spinvoke.Bootstrapper.csproj">
+      <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
+      <Name>Sws.Spinvoke.Bootstrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

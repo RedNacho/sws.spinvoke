@@ -9,12 +9,20 @@ using Sws.Spinvoke.Interception.ArgumentPreprocessing;
 using Sws.Spinvoke.Interception.MemoryManagement;
 using Sws.Spinvoke.Interception.ReturnPostprocessing;
 using Sws.Spinvoke.Windows;
+using Sws.Spinvoke.Bootstrapper;
 
 namespace Sws.Spinvoke.IntegrationTests.Windows
 {
 	[TestFixture ()]
 	public class WindowsIntegrationTests : PlatformIntegrationTestsBase
 	{
+		[TestFixtureSetUp()]
+		public void TestFixtureSetUp() {
+			if (OSDetector.DetectOS () != OS.Windows) {
+				Assert.Ignore ("Non-Windows OS detected. If this is a mistake, please remove this clause.");
+			}
+		}
+
 		protected override INativeLibraryLoader CreateNativeLibraryLoader ()
 		{
 			return new WindowsNativeLibraryLoader ();
