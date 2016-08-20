@@ -58,6 +58,10 @@
       <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
       <Name>Sws.Spinvoke.Interception</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke.Bootstrapper\Sws.Spinvoke.Bootstrapper.csproj">
+      <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
+      <Name>Sws.Spinvoke.Bootstrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
