@@ -79,8 +79,14 @@ namespace Sws.Spinvoke.Bootstrapper
 			} catch (Exception ex) {
 				innerException = ex;
 			} finally {
-				if (library != null) {
-					nativeLibraryLoader.UnloadLibrary (library);
+				try {
+					if (library != null) {
+						nativeLibraryLoader.UnloadLibrary (library);
+					}
+				} catch (Exception ex) {
+					if (innerException == null) {
+						innerException = ex;
+					}
 				}
 			}
 
