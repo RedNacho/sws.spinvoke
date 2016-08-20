@@ -71,6 +71,25 @@ namespace Sws.Spinvoke.Bootstrapper.Tests
 		}
 
 		[Test ()]
+		public void AcceptsIntegerResultOfGetPidWhenOSIsMac ()
+		{
+			int getPidCallCounts = 0;
+
+			GetPidDelegate getPid = () => {
+				getPidCallCounts++;
+				return 1;
+			};
+
+			var nativeLibraryLoader = SetupNativeLibraryLoader ("libc.dylib", "getpid", getPid);
+
+			var result = (new NativeLibraryLoaderVerifier (() => OS.Mac))
+				.VerifyNativeLibraryLoader (nativeLibraryLoader);
+
+			Assert.AreEqual(1, getPidCallCounts);
+			Assert.AreEqual (nativeLibraryLoader, result);
+		}
+
+		[Test ()]
 		public void FailsOnExceptionFromGetPidWhenOSIsX11 ()
 		{
 			GetPidDelegate getPid = () => {
@@ -82,6 +101,42 @@ namespace Sws.Spinvoke.Bootstrapper.Tests
 			Assert.Throws<InvalidOperationException>(() =>
 				(new NativeLibraryLoaderVerifier (() => OS.X11))
 					.VerifyNativeLibraryLoader (nativeLibraryLoader));
+		}
+
+		[Test ()]
+		public void FailsOnExceptionFromGetCurrentProcessWhenOSIsWindows ()
+		{
+			GetCurrentProcessDelegate getCurrentProcess = () => {
+				throw new Exception ("GetCurrentProcess isn't working");
+			};
+
+			var nativeLibraryLoader = SetupNativeLibraryLoader ("Kernel32.dll", "GetCurrentProcess", getCurrentProcess);
+
+			Assert.Throws<InvalidOperationException>(() =>
+				(new NativeLibraryLoaderVerifier (() => OS.Windows))
+					.VerifyNativeLibraryLoader (nativeLibraryLoader));
+		}
+
+		[Test ()]
+		public void FailsOnExceptionFromGetPidWhenOSIsMac ()
+		{
+			GetPidDelegate getPid = () => {
+				throw new Exception ("GetPid isn't working");
+			};
+
+			var nativeLibraryLoader = SetupNativeLibraryLoader ("libc.dylib", "getpid", getPid);
+
+			Assert.Throws<InvalidOperationException>(() =>
+				(new NativeLibraryLoaderVerifier (() => OS.Mac))
+					.VerifyNativeLibraryLoader (nativeLibraryLoader));
+		}
+
+		[Test ()]
+		public void AlwaysFailsWhenOSIsUnrecognised ()
+		{
+			Assert.Throws<InvalidOperationException>(() =>
+				(new NativeLibraryLoaderVerifier (() => OS.Other))
+					.VerifyNativeLibraryLoader (Mock.Of<INativeLibraryLoader>()));
 		}
 	}
 }
