@@ -8,6 +8,8 @@ namespace Sws.Spinvoke.Bootstrapper
 	{
 		private delegate int GetPidDelegate ();
 
+		private delegate IntPtr GetCurrentProcessDelegate ();
+
 		private readonly Func<OS> _osDetector;
 
 		public NativeLibraryLoaderVerifier(Func<OS> osDetector) {
@@ -27,6 +29,14 @@ namespace Sws.Spinvoke.Bootstrapper
 					"getpid",
 					new object[0],
 					output => output != null && output is int);
+				break;
+			case OS.Windows:
+				TestNativeLibraryLoader<GetCurrentProcessDelegate> (os,
+					nativeLibraryLoader,
+					"Kernel32.dll",
+					"GetCurrentProcess",
+					new object[0],
+					output => output != null && output is IntPtr);
 				break;
 			}
 			return nativeLibraryLoader;
