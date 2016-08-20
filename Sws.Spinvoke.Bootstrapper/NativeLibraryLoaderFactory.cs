@@ -3,7 +3,6 @@ using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Linux;
 using Sws.Spinvoke.Windows;
 using Sws.Spinvoke.OSX;
-using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.Bootstrapper
 {
