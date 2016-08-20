@@ -88,7 +88,7 @@ namespace Sws.Spinvoke.Bootstrapper
 				return;
 			}
 
-			string failureMessage = string.Format ("INativeLibraryLoader test call did not work correctly. Is your OS {0}? If not, the bootstrapper has made a mistake.", os);
+			string failureMessage = string.Format ("INativeLibraryLoader test call (library {1}, function {2}) did not work correctly. Is your OS {0}? If not, the bootstrapper has made a mistake.", os, libraryName, functionName);
 
 			if (innerException != null) {
 				throw new InvalidOperationException (failureMessage, innerException);
