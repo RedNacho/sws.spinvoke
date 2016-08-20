@@ -60,13 +60,5 @@
       <Project>{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}</Project>
       <Name>Sws.Spinvoke.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
-      <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
-      <Name>Sws.Spinvoke.Interception</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Interception.Facade\Sws.Spinvoke.Interception.Facade.csproj">
-      <Project>{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}</Project>
-      <Name>Sws.Spinvoke.Interception.Facade</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

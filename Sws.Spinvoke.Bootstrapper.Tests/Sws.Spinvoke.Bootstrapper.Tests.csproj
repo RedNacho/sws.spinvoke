@@ -53,10 +53,6 @@
       <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
       <Name>Sws.Spinvoke.Bootstrapper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Linux\Sws.Spinvoke.IntegrationTests.Linux.csproj">
-      <Project>{FF49DD79-253B-4541-A455-B472CB36F212}</Project>
-      <Name>Sws.Spinvoke.IntegrationTests.Linux</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
       <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
       <Name>Sws.Spinvoke.Core</Name>

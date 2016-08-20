@@ -1,10 +1,6 @@
 ﻿using System;
 using Sws.Spinvoke.Core.Facade;
 using Sws.Spinvoke.Core;
-using Sws.Spinvoke.Interception.Facade;
-using Sws.Spinvoke.Interception;
-using System.Runtime.InteropServices;
-using Sws.Spinvoke.Linux;
 
 namespace Sws.Spinvoke.Bootstrapper
 {
