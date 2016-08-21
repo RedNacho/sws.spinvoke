@@ -3,7 +3,7 @@ using Sws.Spinvoke.Core;
 
 namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 {
-	public class DecoratedReturnPostprocessorContext<TDecoration> : ReturnPostprocessorContext {
+	public class DecoratedReturnPostprocessorContext<TDecoration> : ReturnPostprocessorContext, IDecorated<TDecoration> {
 		private readonly TDecoration _decoration;
 
 		public DecoratedReturnPostprocessorContext(IInvocation invocation,
