@@ -310,6 +310,6 @@ In reality, however, the core is really just a glorified P/Invoke helper, while 
 
 I therefore decided to refactor Sws.Spinvoke.Core and Sws.Spinvoke.Interception into a single library: Sws.Spinvoke. I also rolled the facades into this library, since they are extremely lightweight, and you can just not use them if you don't like them.
 
-This dramatically simplifies the dependency model, requiring you only to introduce additional dependencies for your OS (e.g. Sws.Spinvoke.Linux), your proxy generator (e.g. Sws.Spinvoke.Interception.DynamicProxy), and your DI container (e.g. Sws.Ninject).
+This dramatically simplifies the dependency model, requiring you only to introduce additional dependencies for your OS (e.g. Sws.Spinvoke.Linux), your proxy generator (e.g. Sws.Spinvoke.Interception.DynamicProxy), and your DI container (e.g. Sws.Spinvoke.Ninject).
 
 I've done my best to update this ridiculous readme (itself long overdue a colossal refactoring), but if you see any references to libraries which no longer exist, they're probably in Sws.Spinvoke.
