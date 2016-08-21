@@ -19,11 +19,17 @@ namespace Sws.Spinvoke.Interception
 
 		private readonly INativeDelegateResolver _nativeDelegateResolver;
 
+		private readonly Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> _argumentPreprocessorContextDecorator;
+
+		private readonly Func<ReturnPostprocessorContext, ReturnPostprocessorContext> _returnPostprocessorContextDecorator;
+
 		private readonly object _nativeDelegateMappingsSyncObject = new object ();
 
 		private readonly IDictionary<MethodInfo, NativeDelegateMapping> _nativeDelegateMappings = new Dictionary<MethodInfo, NativeDelegateMapping>();
 
-		public NativeDelegateInterceptor(string libraryName, CallingConvention callingConvention, INativeDelegateResolver nativeDelegateResolver)
+		public NativeDelegateInterceptor(string libraryName, CallingConvention callingConvention, INativeDelegateResolver nativeDelegateResolver,
+			Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> argumentPreprocessorContextDecorator = null,
+			Func<ReturnPostprocessorContext, ReturnPostprocessorContext> returnPostprocessorContextDecorator = null)
 		{
 			if (libraryName == null)
 				throw new ArgumentNullException ("libraryName");
@@ -34,6 +40,8 @@ namespace Sws.Spinvoke.Interception
 			_libraryName = libraryName;
 			_callingConvention = callingConvention;
 			_nativeDelegateResolver = nativeDelegateResolver;
+			_argumentPreprocessorContextDecorator = argumentPreprocessorContextDecorator;
+			_returnPostprocessorContextDecorator = returnPostprocessorContextDecorator;
 		}
 
 		public void Intercept (IInvocation invocation)
@@ -126,6 +134,11 @@ namespace Sws.Spinvoke.Interception
 
 				if (!cache.ContainsKey (argIndex)) {
 					context = new ArgumentPreprocessorContext (invocation, nativeDelegateMapping, argIndex);
+
+					if (_argumentPreprocessorContextDecorator != null) {
+						context = _argumentPreprocessorContextDecorator (context);
+					}
+
 					cache [argIndex] = context;
 				} else {
 					context = cache [argIndex];
@@ -140,7 +153,13 @@ namespace Sws.Spinvoke.Interception
 			var contextualReturnPostprocessor = returnPostprocessor as IContextualReturnPostprocessor;
 
 			if (contextualReturnPostprocessor != null) {
-				contextualReturnPostprocessor.SetContext (new ReturnPostprocessorContext(invocation, nativeDelegateMapping, processedArguments.Select(processedArg => processedArg.Arg).ToArray(), nativeDelegateResolver, delegateSignature, delegateInstance));
+				var context = new ReturnPostprocessorContext (invocation, nativeDelegateMapping, processedArguments.Select (processedArg => processedArg.Arg).ToArray (), nativeDelegateResolver, delegateSignature, delegateInstance);
+
+				if (_returnPostprocessorContextDecorator != null) {
+					context = _returnPostprocessorContextDecorator (context);
+				}
+
+				contextualReturnPostprocessor.SetContext (context);
 			}
 		}
 

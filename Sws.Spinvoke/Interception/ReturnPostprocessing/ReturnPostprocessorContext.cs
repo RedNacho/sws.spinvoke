@@ -50,6 +50,18 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 		public Delegate DelegateInstance {
 			get { return _delegateInstance; }
 		}
+
+		public DecoratedReturnPostprocessorContext<TDecoration> DecorateWith<TDecoration>(TDecoration decoration) {
+			return new DecoratedReturnPostprocessorContext<TDecoration> (
+				Invocation,
+				NativeDelegateMapping,
+				ProcessedArguments,
+				NativeDelegateResolver,
+				DelegateSignature,
+				DelegateInstance,
+				decoration
+			);
+		}
 	}
 }
 

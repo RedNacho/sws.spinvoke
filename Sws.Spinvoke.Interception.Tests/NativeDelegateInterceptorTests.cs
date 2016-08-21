@@ -440,6 +440,24 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void InterceptorInvokesSetContextForContextualArgumentPreprocessor()
 		{
+			InterceptorInvokesSetContextForContextualArgumentPreprocessor (null, c => { });
+		}
+
+		[Test ()]
+		public void InterceptorInvokesSetContextForContextualArgumentPreprocessorWithDecorator() {
+
+
+			InterceptorInvokesSetContextForContextualArgumentPreprocessor (
+				context => context.DecorateWith("I'm decorated!"),
+				decoratedContext => {
+					Assert.IsInstanceOf<DecoratedArgumentPreprocessorContext<string>>(decoratedContext);
+					Assert.AreEqual("I'm decorated!",
+						(decoratedContext as DecoratedArgumentPreprocessorContext<string>).Decoration);
+				});
+		}
+
+		private void InterceptorInvokesSetContextForContextualArgumentPreprocessor(Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> contextDecorator,
+			Action<ArgumentPreprocessorContext> decoratedContextAssertions) {
 			const int X = 2;
 			const int Y = 3;
 			const int XPlusY = 5;
@@ -458,7 +476,13 @@ namespace Sws.Spinvoke.Interception.Tests
 			invocationMock.SetupProperty (i => i.ReturnValue);
 			invocationMock.SetupGet (i => i.Proxy).Returns(proxy);
 
-			var subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
+			NativeDelegateInterceptor subject;
+
+			if (contextDecorator == null) {
+				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
+			} else {
+				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object, argumentPreprocessorContextDecorator: contextDecorator);
+			}
 
 			ContextualArgumentPreprocessorMockAttribute.CanProcessContexts.Clear ();
 			ContextualArgumentPreprocessorMockAttribute.ProcessContexts.Clear ();
@@ -519,11 +543,30 @@ namespace Sws.Spinvoke.Interception.Tests
 				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.InputTypes[1]);
 				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.OutputType);
 				Assert.IsTrue (argContext.NativeDelegateMapping.MapNative);
+				decoratedContextAssertions (argContext);
 			}
 		}
 
 		[Test ()]
 		public void InterceptorInvokesSetContextForContextualReturnPostprocessor()
+		{
+			InterceptorInvokesSetContextForContextualReturnPostprocessor (null, c => { });
+		}
+
+		[Test ()]
+		public void InterceptorInvokesSetContextForContextualReturnPostprocessorWithDecorator()
+		{
+			InterceptorInvokesSetContextForContextualReturnPostprocessor (
+				context => context.DecorateWith("I'm decorated!"),
+				decoratedContext => {
+					Assert.IsInstanceOf<DecoratedReturnPostprocessorContext<string>>(decoratedContext);
+					Assert.AreEqual("I'm decorated!", (decoratedContext as DecoratedReturnPostprocessorContext<string>).Decoration);
+				}
+			);
+		}
+
+		private void InterceptorInvokesSetContextForContextualReturnPostprocessor(Func<ReturnPostprocessorContext, ReturnPostprocessorContext> contextDecorator,
+			Action<ReturnPostprocessorContext> decoratedContextAssertions)
 		{
 			const int X = 2;
 			const int Y = 3;
@@ -543,7 +586,13 @@ namespace Sws.Spinvoke.Interception.Tests
 			invocationMock.SetupProperty (i => i.ReturnValue);
 			invocationMock.SetupGet (i => i.Proxy).Returns(proxy);
 
-			var subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
+			NativeDelegateInterceptor subject;
+
+			if (contextDecorator == null) {
+				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
+			} else {
+				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object, returnPostprocessorContextDecorator: contextDecorator);
+			}
 
 			ContextualReturnPostprocessorMockAttribute.CanProcessContexts.Clear ();
 			ContextualReturnPostprocessorMockAttribute.ProcessContexts.Clear ();
@@ -594,6 +643,7 @@ namespace Sws.Spinvoke.Interception.Tests
 			Assert.AreEqual (CallingConvention, returnContext.DelegateSignature.CallingConvention);
 			Assert.IsNotNull (returnContext.DelegateInstance as AddDelegate);
 			Assert.AreEqual (_nativeDelegateResolverMock.Object, returnContext.NativeDelegateResolver);
+			decoratedContextAssertions (returnContext);
 		}
 
 		private void VerifyNativeDelegateResolverResolveCall(NativeDelegateDefinition nativeDelegateDefinition, Times times)

@@ -6,7 +6,11 @@ namespace Sws.Spinvoke.Interception
 	{
 		public IInterceptor CreateInterceptor (NativeDelegateInterceptorContext context)
 		{
-			return new NativeDelegateInterceptor (context.LibraryName, context.CallingConvention, context.NativeDelegateResolver);
+			return new NativeDelegateInterceptor (context.LibraryName,
+				context.CallingConvention,
+				context.NativeDelegateResolver,
+				context.ArgumentPreprocessorContextDecorator,
+				context.ReturnPostprocessorContextDecorator);
 		}
 	}
 }
