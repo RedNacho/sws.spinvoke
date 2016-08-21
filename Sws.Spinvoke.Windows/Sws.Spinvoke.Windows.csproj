@@ -37,9 +37,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
-      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
-      <Name>Sws.Spinvoke.Core</Name>
+    <ProjectReference Include="..\Sws.Spinvoke\Sws.Spinvoke.csproj">
+      <Project>{27D1F82C-5BA0-4733-AC2E-9F62B534B076}</Project>
+      <Name>Sws.Spinvoke</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
