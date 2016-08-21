@@ -7,7 +7,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class DelegateToPointerArgumentPreprocessor : IContextualArgumentPreprocessor
 	{
-		private IContextDecoration _contextDecoration = null;
+		private IContextCustomisation _contextCustomisation = null;
 
 		public bool CanProcess (object input)
 		{
@@ -27,54 +27,54 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public void SetContext (ArgumentPreprocessorContext context)
 		{
-			_contextDecoration = ExtractContextDecoration (context);
+			_contextCustomisation = ExtractContextCustomisation (context);
 		}
 
 		protected virtual Delegate MapToInteropCompatibleDelegate (Delegate del)
 		{
-			if (_contextDecoration != null) {
+			if (_contextCustomisation != null) {
 				DelegateSignature delegateSignature;
 
-				if (_contextDecoration.CallingConvention.HasValue) {
-					delegateSignature = _contextDecoration.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (), _contextDecoration.CallingConvention.Value);
+				if (_contextCustomisation.CallingConvention.HasValue) {
+					delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (), _contextCustomisation.CallingConvention.Value);
 				} else {
-					delegateSignature = _contextDecoration.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType ());
+					delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType ());
 				}
 
-				var delegateType = _contextDecoration.DelegateTypeProvider.GetDelegateType (delegateSignature);
+				var delegateType = _contextCustomisation.DelegateTypeProvider.GetDelegateType (delegateSignature);
 
 				del = Delegate.CreateDelegate (delegateType, del.Target, del.Method);
 
-				_contextDecoration.RegisterDelegate (del);
+				_contextCustomisation.RegisterDelegate (del);
 			}
 
 			return del;
 		}
 
-		private IContextDecoration ExtractContextDecoration(ArgumentPreprocessorContext context) {
-			var customDecoration = context as IContextDecoration;
+		private IContextCustomisation ExtractContextCustomisation(ArgumentPreprocessorContext context) {
+			var directCustomisation = context as IContextCustomisation;
 
-			if (customDecoration != null) {
-				return customDecoration;
+			if (directCustomisation != null) {
+				return directCustomisation;
 			}
 		
-			var standardDecoration = context as IDecorated<IContextDecoration>;
+			var standardCustomisation = context as ICustomised<IContextCustomisation>;
 
-			if (standardDecoration != null) {
-				return standardDecoration.Decoration;
+			if (standardCustomisation != null) {
+				return standardCustomisation.Customisation;
 			}
 
 			return null;
 		}
 
-		public interface IContextDecoration {
+		public interface IContextCustomisation {
 			IDelegateTypeToDelegateSignatureConverter DelegateTypeToDelegateSignatureConverter { get; }
 			IDelegateTypeProvider DelegateTypeProvider { get; }
 			CallingConvention? CallingConvention { get; }
 			void RegisterDelegate (Delegate del);
 		}
 
-		private class InternalContextDecoration : IContextDecoration {
+		private class InternalContextCustomisation : IContextCustomisation {
 			
 			public IDelegateTypeToDelegateSignatureConverter DelegateTypeToDelegateSignatureConverter {
 				get;
@@ -103,7 +103,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 			}
 		}
 
-		public static IContextDecoration CreateContextDecoration(
+		public static IContextCustomisation CreateContextCustomisation(
 			IDelegateTypeToDelegateSignatureConverter delegateTypeToDelegateSignatureConverter,
 			IDelegateTypeProvider delegateTypeProvider,
 			CallingConvention? callingConvention = null,
@@ -116,7 +116,8 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 			if (delegateTypeProvider == null) {
 				throw new ArgumentNullException ("delegateTypeProvider");
 			}
-			return new InternalContextDecoration {
+
+			return new InternalContextCustomisation {
 				DelegateTypeToDelegateSignatureConverter = delegateTypeToDelegateSignatureConverter,
 				DelegateTypeProvider = delegateTypeProvider,
 				DelegateRegistrationAction = delegateRegistrationAction,

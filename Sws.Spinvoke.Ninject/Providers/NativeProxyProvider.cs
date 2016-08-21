@@ -27,8 +27,8 @@ namespace Sws.Spinvoke.Ninject.Providers
 				                                       configuration.LibraryName,
 				                                       configuration.CallingConvention,
 				                                       configuration.NativeDelegateResolver,
-				                                       configuration.ArgumentPreprocessorContextDecorator,
-				                                       configuration.ReturnPostprocessorContextDecorator
+				                                       configuration.ArgumentPreprocessorContextCustomiser,
+				                                       configuration.ReturnPostprocessorContextCustomiser
 			                                       );
 
 			var nativeDelegateInterceptor = configuration.NativeDelegateInterceptorFactory.CreateInterceptor(nativeDelegateInterceptorContext);

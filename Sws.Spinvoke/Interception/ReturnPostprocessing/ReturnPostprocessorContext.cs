@@ -27,6 +27,12 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 			_delegateInstance = delegateInstance;
 		}
 
+		protected ReturnPostprocessorContext(ReturnPostprocessorContext source)
+			: this(source.Invocation, source.NativeDelegateMapping, source.ProcessedArguments,
+				source.NativeDelegateResolver, source.DelegateSignature, source._delegateInstance)
+		{
+		}
+
 		public IInvocation Invocation {
 			get { return _invocation; }
 		}
@@ -51,16 +57,8 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 			get { return _delegateInstance; }
 		}
 
-		public DecoratedReturnPostprocessorContext<TDecoration> DecorateWith<TDecoration>(TDecoration decoration) {
-			return new DecoratedReturnPostprocessorContext<TDecoration> (
-				Invocation,
-				NativeDelegateMapping,
-				ProcessedArguments,
-				NativeDelegateResolver,
-				DelegateSignature,
-				DelegateInstance,
-				decoration
-			);
+		public CustomisedReturnPostprocessorContext<TCustomisation> Customise<TCustomisation>(TCustomisation customisation) {
+			return new CustomisedReturnPostprocessorContext<TCustomisation> (this, customisation);
 		}
 	}
 }

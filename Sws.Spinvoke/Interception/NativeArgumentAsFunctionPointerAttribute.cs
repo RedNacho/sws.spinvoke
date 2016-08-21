@@ -13,11 +13,11 @@ namespace Sws.Spinvoke.Interception
 		{
 		}
 
-		public static DelegateToPointerArgumentPreprocessor.IContextDecoration CreateContextDecoration(IDelegateTypeToDelegateSignatureConverter delegateTypeToDelegateSignatureConverter,
+		public static DelegateToPointerArgumentPreprocessor.IContextCustomisation CreateContextCustomisation (IDelegateTypeToDelegateSignatureConverter delegateTypeToDelegateSignatureConverter,
 			IDelegateTypeProvider delegateTypeProvider,
 			CallingConvention? callingConvention = null,
 			Action<Delegate> delegateRegistrationAction = null) {
-			return DelegateToPointerArgumentPreprocessor.CreateContextDecoration (
+			return DelegateToPointerArgumentPreprocessor.CreateContextCustomisation (
 				delegateTypeToDelegateSignatureConverter,
 				delegateTypeProvider,
 				callingConvention,

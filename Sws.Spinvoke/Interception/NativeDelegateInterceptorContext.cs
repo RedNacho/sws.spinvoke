@@ -12,12 +12,12 @@ namespace Sws.Spinvoke.Interception
 		private readonly string _libraryName;
 		private readonly CallingConvention _callingConvention;
 		private readonly INativeDelegateResolver _nativeDelegateResolver;
-		private readonly Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> _argumentPreprocessorContextDecorator;
-		private readonly Func<ReturnPostprocessorContext, ReturnPostprocessorContext> _returnPostprocessorContextDecorator;
+		private readonly Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> _argumentPreprocessorContextCustomiser;
+		private readonly Func<ReturnPostprocessorContext, ReturnPostprocessorContext> _returnPostprocessorContextCustomiser;
 
 		public NativeDelegateInterceptorContext(string libraryName, CallingConvention callingConvention, INativeDelegateResolver nativeDelegateResolver,
-			Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> argumentPreprocessorContextDecorator = null,
-			Func<ReturnPostprocessorContext, ReturnPostprocessorContext> returnPostprocessorContextDecorator = null)
+			Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> argumentPreprocessorContextCustomiser = null,
+			Func<ReturnPostprocessorContext, ReturnPostprocessorContext> returnPostprocessorContextCustomiser = null)
 		{
 			if (libraryName == null)
 				throw new ArgumentNullException ("libraryName");
@@ -28,8 +28,8 @@ namespace Sws.Spinvoke.Interception
 			_libraryName = libraryName;
 			_callingConvention = callingConvention;
 			_nativeDelegateResolver = nativeDelegateResolver;
-			_argumentPreprocessorContextDecorator = argumentPreprocessorContextDecorator;
-			_returnPostprocessorContextDecorator = returnPostprocessorContextDecorator;
+			_argumentPreprocessorContextCustomiser = argumentPreprocessorContextCustomiser;
+			_returnPostprocessorContextCustomiser = returnPostprocessorContextCustomiser;
 		}
 
 		public string LibraryName { get { return _libraryName; } }
@@ -38,8 +38,8 @@ namespace Sws.Spinvoke.Interception
 
 		public INativeDelegateResolver NativeDelegateResolver { get { return _nativeDelegateResolver; } }
 
-		public Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> ArgumentPreprocessorContextDecorator { get { return _argumentPreprocessorContextDecorator; } }
+		public Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> ArgumentPreprocessorContextCustomiser { get { return _argumentPreprocessorContextCustomiser; } }
 
-		public Func<ReturnPostprocessorContext, ReturnPostprocessorContext> ReturnPostprocessorContextDecorator { get { return _returnPostprocessorContextDecorator; } }
+		public Func<ReturnPostprocessorContext, ReturnPostprocessorContext> ReturnPostprocessorContextCustomiser { get { return _returnPostprocessorContextCustomiser; } }
 	}
 }

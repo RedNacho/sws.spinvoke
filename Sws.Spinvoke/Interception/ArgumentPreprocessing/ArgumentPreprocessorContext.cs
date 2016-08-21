@@ -16,17 +16,17 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 			_argumentIndex = argumentIndex;
 		}
 
+		protected ArgumentPreprocessorContext (ArgumentPreprocessorContext source)
+			: this(source.Invocation, source.NativeDelegateMapping, source._argumentIndex)
+		{
+		}
+
 		public IInvocation Invocation { get { return _invocation; } }
 		public NativeDelegateMapping NativeDelegateMapping { get { return _nativeDelegateMapping; } }
 		public int ArgumentIndex { get { return _argumentIndex; } }
 
-		public DecoratedArgumentPreprocessorContext<TDecoration> DecorateWith<TDecoration>(TDecoration decoration) {
-			return new DecoratedArgumentPreprocessorContext<TDecoration> (
-				Invocation,
-				NativeDelegateMapping,
-				ArgumentIndex,
-				decoration
-			);
+		public CustomisedArgumentPreprocessorContext<TCustomisation> Customise<TCustomisation>(TCustomisation customisation) {
+			return new CustomisedArgumentPreprocessorContext<TCustomisation> (this, customisation);
 		}
 	}
 }

@@ -9,8 +9,8 @@ namespace Sws.Spinvoke.Interception
 			return new NativeDelegateInterceptor (context.LibraryName,
 				context.CallingConvention,
 				context.NativeDelegateResolver,
-				context.ArgumentPreprocessorContextDecorator,
-				context.ReturnPostprocessorContextDecorator);
+				context.ArgumentPreprocessorContextCustomiser,
+				context.ReturnPostprocessorContextCustomiser);
 		}
 	}
 }

@@ -24,9 +24,9 @@ namespace Sws.Spinvoke.Ninject.Extensions
 
 		private readonly Action<IProxyGenerator> _proxyGeneratorCallback;
 
-		private readonly Action<Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext>> _argumentPreprocessorContextDecoratorCallback;
+		private readonly Action<Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext>> _argumentPreprocessorContextCustomiserCallback;
 
-		private readonly Action<Func<ReturnPostprocessorContext, ReturnPostprocessorContext>> _returnPostprocessorContextDecoratorCallback;
+		private readonly Action<Func<ReturnPostprocessorContext, ReturnPostprocessorContext>> _returnPostprocessorContextCustomiserCallback;
 
 		public SpinvokeBindingConfigurationBuilder (IBindingConfiguration bindingConfiguration,
 			string serviceNames,
@@ -36,8 +36,8 @@ namespace Sws.Spinvoke.Ninject.Extensions
 			Action<INativeDelegateResolver> nativeDelegateResolverCallback,
 			Action<INativeDelegateInterceptorFactory> nativeDelegateInterceptorFactoryCallback,
 			Action<IProxyGenerator> proxyGeneratorCallback,
-			Action<Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext>> argumentPreprocessorContextDecoratorCallback,
-			Action<Func<ReturnPostprocessorContext, ReturnPostprocessorContext>> returnPostprocessorContextDecoratorCallback)
+			Action<Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext>> argumentPreprocessorContextCustomiserCallback,
+			Action<Func<ReturnPostprocessorContext, ReturnPostprocessorContext>> returnPostprocessorContextCustomiserCallback)
 			: base(bindingConfiguration, serviceNames, kernel)
 		{
 			if (callingConventionCallback == null) {
@@ -60,12 +60,12 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				throw new ArgumentNullException ("proxyGeneratorCallback");
 			}
 
-			if (argumentPreprocessorContextDecoratorCallback == null) {
-				throw new ArgumentNullException ("argumentPreprocessorContextDecoratorCallback");
+			if (argumentPreprocessorContextCustomiserCallback == null) {
+				throw new ArgumentNullException ("argumentPreprocessorContextCustomiserCallback");
 			}
 
-			if (returnPostprocessorContextDecoratorCallback == null) {
-				throw new ArgumentNullException ("returnPostprocessorContextDecoratorCallback");
+			if (returnPostprocessorContextCustomiserCallback == null) {
+				throw new ArgumentNullException ("returnPostprocessorContextCustomiserCallback");
 			}
 
 			_callingConventionCallback = callingConventionCallback;
@@ -73,8 +73,8 @@ namespace Sws.Spinvoke.Ninject.Extensions
 			_nativeDelegateResolverCallback = nativeDelegateResolverCallback;
 			_nativeDelegateInterceptorFactoryCallback = nativeDelegateInterceptorFactoryCallback;
 			_proxyGeneratorCallback = proxyGeneratorCallback;
-			_argumentPreprocessorContextDecoratorCallback = argumentPreprocessorContextDecoratorCallback;
-			_returnPostprocessorContextDecoratorCallback = returnPostprocessorContextDecoratorCallback;
+			_argumentPreprocessorContextCustomiserCallback = argumentPreprocessorContextCustomiserCallback;
+			_returnPostprocessorContextCustomiserCallback = returnPostprocessorContextCustomiserCallback;
 		}
 
 		public ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithCallingConvention(CallingConvention callingConvention)
@@ -124,18 +124,18 @@ namespace Sws.Spinvoke.Ninject.Extensions
 			return this;
 		}
 
-		public ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithArgumentPreprocessorContextDecorator (
-			Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> decorator)
+		public ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithArgumentPreprocessorContextCustomiser (
+			Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> customiser)
 		{
-			_argumentPreprocessorContextDecoratorCallback (decorator);
+			_argumentPreprocessorContextCustomiserCallback (customiser);
 
 			return this;
 		}
 
-		public ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithReturnPostprocessorContextDecorator(
-			Func<ReturnPostprocessorContext, ReturnPostprocessorContext> decorator)
+		public ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithReturnPostprocessorContextCustomiser (
+			Func<ReturnPostprocessorContext, ReturnPostprocessorContext> customiser)
 		{
-			_returnPostprocessorContextDecoratorCallback (decorator);
+			_returnPostprocessorContextCustomiserCallback (customiser);
 
 			return this;
 		}

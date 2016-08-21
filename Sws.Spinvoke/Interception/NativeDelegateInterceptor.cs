@@ -19,17 +19,17 @@ namespace Sws.Spinvoke.Interception
 
 		private readonly INativeDelegateResolver _nativeDelegateResolver;
 
-		private readonly Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> _argumentPreprocessorContextDecorator;
+		private readonly Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> _argumentPreprocessorContextCustomiser;
 
-		private readonly Func<ReturnPostprocessorContext, ReturnPostprocessorContext> _returnPostprocessorContextDecorator;
+		private readonly Func<ReturnPostprocessorContext, ReturnPostprocessorContext> _returnPostprocessorContextCustomiser;
 
 		private readonly object _nativeDelegateMappingsSyncObject = new object ();
 
 		private readonly IDictionary<MethodInfo, NativeDelegateMapping> _nativeDelegateMappings = new Dictionary<MethodInfo, NativeDelegateMapping>();
 
 		public NativeDelegateInterceptor(string libraryName, CallingConvention callingConvention, INativeDelegateResolver nativeDelegateResolver,
-			Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> argumentPreprocessorContextDecorator = null,
-			Func<ReturnPostprocessorContext, ReturnPostprocessorContext> returnPostprocessorContextDecorator = null)
+			Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> argumentPreprocessorContextCustomiser = null,
+			Func<ReturnPostprocessorContext, ReturnPostprocessorContext> returnPostprocessorContextCustomiser = null)
 		{
 			if (libraryName == null)
 				throw new ArgumentNullException ("libraryName");
@@ -40,8 +40,8 @@ namespace Sws.Spinvoke.Interception
 			_libraryName = libraryName;
 			_callingConvention = callingConvention;
 			_nativeDelegateResolver = nativeDelegateResolver;
-			_argumentPreprocessorContextDecorator = argumentPreprocessorContextDecorator;
-			_returnPostprocessorContextDecorator = returnPostprocessorContextDecorator;
+			_argumentPreprocessorContextCustomiser = argumentPreprocessorContextCustomiser;
+			_returnPostprocessorContextCustomiser = returnPostprocessorContextCustomiser;
 		}
 
 		public void Intercept (IInvocation invocation)
@@ -135,8 +135,8 @@ namespace Sws.Spinvoke.Interception
 				if (!cache.ContainsKey (argIndex)) {
 					context = new ArgumentPreprocessorContext (invocation, nativeDelegateMapping, argIndex);
 
-					if (_argumentPreprocessorContextDecorator != null) {
-						context = _argumentPreprocessorContextDecorator (context);
+					if (_argumentPreprocessorContextCustomiser != null) {
+						context = _argumentPreprocessorContextCustomiser (context);
 					}
 
 					cache [argIndex] = context;
@@ -155,8 +155,8 @@ namespace Sws.Spinvoke.Interception
 			if (contextualReturnPostprocessor != null) {
 				var context = new ReturnPostprocessorContext (invocation, nativeDelegateMapping, processedArguments.Select (processedArg => processedArg.Arg).ToArray (), nativeDelegateResolver, delegateSignature, delegateInstance);
 
-				if (_returnPostprocessorContextDecorator != null) {
-					context = _returnPostprocessorContextDecorator (context);
+				if (_returnPostprocessorContextCustomiser != null) {
+					context = _returnPostprocessorContextCustomiser (context);
 				}
 
 				contextualReturnPostprocessor.SetContext (context);
