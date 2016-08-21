@@ -93,6 +93,8 @@
     <Compile Include="Interception\ReturnPostprocessing\PointerToStructReturnPostprocessor.cs" />
     <Compile Include="Interception\ReturnPostprocessing\ReturnPostprocessorContext.cs" />
     <Compile Include="Interception\Facade\SpinvokeInterceptionFacade.cs" />
+    <Compile Include="Interception\ReturnPostprocessing\DecoratedReturnPostprocessorContext.cs" />
+    <Compile Include="Interception\ArgumentPreprocessing\DecoratedArgumentPreprocessorContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

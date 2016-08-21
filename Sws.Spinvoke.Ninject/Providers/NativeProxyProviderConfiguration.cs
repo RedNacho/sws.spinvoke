@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 
 using Sws.Spinvoke.Core;
 using Sws.Spinvoke.Interception;
+using Sws.Spinvoke.Interception.ArgumentPreprocessing;
+using Sws.Spinvoke.Interception.ReturnPostprocessing;
 
 namespace Sws.Spinvoke.Ninject.Providers
 {
@@ -21,6 +23,9 @@ namespace Sws.Spinvoke.Ninject.Providers
 		public INativeDelegateInterceptorFactory NativeDelegateInterceptorFactory { get; set; }
 
 		public IProxyGenerator ProxyGenerator { get; set; }
+
+		public Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> ArgumentPreprocessorContextDecorator { get; set; }
+
+		public Func<ReturnPostprocessorContext, ReturnPostprocessorContext> ReturnPostprocessorContextDecorator { get; set; }
 	}
 }
-

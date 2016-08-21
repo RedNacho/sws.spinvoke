@@ -19,6 +19,15 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		public IInvocation Invocation { get { return _invocation; } }
 		public NativeDelegateMapping NativeDelegateMapping { get { return _nativeDelegateMapping; } }
 		public int ArgumentIndex { get { return _argumentIndex; } }
+
+		public DecoratedArgumentPreprocessorContext<TDecoration> DecorateWith<TDecoration>(TDecoration decoration) {
+			return new DecoratedArgumentPreprocessorContext<TDecoration> (
+				Invocation,
+				NativeDelegateMapping,
+				ArgumentIndex,
+				decoration
+			);
+		}
 	}
 }
 

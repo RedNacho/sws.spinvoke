@@ -62,7 +62,10 @@ namespace Sws.Spinvoke.Ninject.Extensions
 					NativeDelegateResolver = DefaultNativeDelegateResolver,
 					NonNativeFallbackSource = context => null,
 					ProxyGenerator = DefaultProxyGenerator,
-					ServiceType = serviceType };
+					ServiceType = serviceType,
+					ArgumentPreprocessorContextDecorator = null,
+					ReturnPostprocessorContextDecorator = null
+			};
 
 			bindingToSyntax.BindingConfiguration.ProviderCallback = context => new NativeProxyProvider<T> (nativeProxyProviderConfiguration);
 
@@ -80,7 +83,9 @@ namespace Sws.Spinvoke.Ninject.Extensions
 				},
 				ndr => nativeProxyProviderConfiguration.NativeDelegateResolver = ndr,
 				ndif => nativeProxyProviderConfiguration.NativeDelegateInterceptorFactory = ndif,
-				pg => nativeProxyProviderConfiguration.ProxyGenerator = pg
+				pg => nativeProxyProviderConfiguration.ProxyGenerator = pg,
+				appcd => nativeProxyProviderConfiguration.ArgumentPreprocessorContextDecorator = appcd,
+				rppcd => nativeProxyProviderConfiguration.ReturnPostprocessorContextDecorator = rppcd
 			);
 		}
 	}

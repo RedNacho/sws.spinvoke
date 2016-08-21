@@ -23,7 +23,13 @@ namespace Sws.Spinvoke.Ninject.Providers
 		{
 			var configuration = _configuration;
 
-			var nativeDelegateInterceptorContext = new NativeDelegateInterceptorContext (configuration.LibraryName, configuration.CallingConvention, configuration.NativeDelegateResolver);
+			var nativeDelegateInterceptorContext = new NativeDelegateInterceptorContext (
+				                                       configuration.LibraryName,
+				                                       configuration.CallingConvention,
+				                                       configuration.NativeDelegateResolver,
+				                                       configuration.ArgumentPreprocessorContextDecorator,
+				                                       configuration.ReturnPostprocessorContextDecorator
+			                                       );
 
 			var nativeDelegateInterceptor = configuration.NativeDelegateInterceptorFactory.CreateInterceptor(nativeDelegateInterceptorContext);
 
