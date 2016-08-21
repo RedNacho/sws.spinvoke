@@ -9,8 +9,6 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 	{
 		private IContextDecoration _contextDecoration = null;
 
-		private HashSet<object> _internalReferences = new HashSet<object> ();
-
 		public bool CanProcess (object input)
 		{
 			return input is Delegate;
@@ -25,7 +23,6 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public void ReleaseProcessedInput (object processedInput)
 		{
-			_internalReferences.Remove (processedInput);
 		}
 
 		public void SetContext (ArgumentPreprocessorContext context)
@@ -50,8 +47,6 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 				_contextDecoration.RegisterDelegate (del);
 			}
-
-			_internalReferences.Add (del);
 
 			return del;
 		}
