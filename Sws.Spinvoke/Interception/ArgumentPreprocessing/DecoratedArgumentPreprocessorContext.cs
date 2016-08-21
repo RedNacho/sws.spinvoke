@@ -2,7 +2,7 @@
 
 namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
-	public class DecoratedArgumentPreprocessorContext<TDecoration> : ArgumentPreprocessorContext {
+	public class DecoratedArgumentPreprocessorContext<TDecoration> : ArgumentPreprocessorContext, IDecorated<TDecoration> {
 		private readonly TDecoration _decoration;
 
 		public DecoratedArgumentPreprocessorContext(IInvocation invocation,
