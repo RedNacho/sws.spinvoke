@@ -57,12 +57,12 @@
     <Compile Include="LibraryLoading\Kernel32NativeLibraryLoaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
-      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
-      <Name>Sws.Spinvoke.Core</Name>
-    </ProjectReference>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\Sws.Spinvoke\Sws.Spinvoke.csproj">
+      <Project>{27D1F82C-5BA0-4733-AC2E-9F62B534B076}</Project>
+      <Name>Sws.Spinvoke</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

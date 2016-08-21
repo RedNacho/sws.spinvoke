@@ -53,10 +53,6 @@
       <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
       <Name>Sws.Spinvoke.Bootstrapper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
-      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
-      <Name>Sws.Spinvoke.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj">
       <Project>{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}</Project>
       <Name>Sws.Spinvoke.Linux</Name>
@@ -69,9 +65,9 @@
       <Project>{220D8827-FC49-4FB1-A0BD-A9344AABD92A}</Project>
       <Name>Sws.Spinvoke.OSX</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Core.Facade\Sws.Spinvoke.Core.Facade.csproj">
-      <Project>{81DE20AF-6A08-438D-9B72-3A685960DBD1}</Project>
-      <Name>Sws.Spinvoke.Core.Facade</Name>
+    <ProjectReference Include="..\Sws.Spinvoke\Sws.Spinvoke.csproj">
+      <Project>{27D1F82C-5BA0-4733-AC2E-9F62B534B076}</Project>
+      <Name>Sws.Spinvoke</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

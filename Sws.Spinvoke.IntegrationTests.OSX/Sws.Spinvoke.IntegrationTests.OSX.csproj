@@ -44,14 +44,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj">
-      <Project>{8E064250-3BEE-4AAA-93E3-80EF7CAED595}</Project>
-      <Name>Sws.Spinvoke.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj">
-      <Project>{07B0EAEF-E365-4145-AC9A-04760D888F18}</Project>
-      <Name>Sws.Spinvoke.Interception</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sws.Spinvoke.IntegrationTests.Agnostic\Sws.Spinvoke.IntegrationTests.Agnostic.csproj">
       <Project>{36387693-E300-4C2B-BB13-CC4D86ECEF32}</Project>
       <Name>Sws.Spinvoke.IntegrationTests.Agnostic</Name>
@@ -63,6 +55,10 @@
     <ProjectReference Include="..\Sws.Spinvoke.Bootstrapper\Sws.Spinvoke.Bootstrapper.csproj">
       <Project>{C9060F82-7105-454A-A243-F7837140E416}</Project>
       <Name>Sws.Spinvoke.Bootstrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sws.Spinvoke\Sws.Spinvoke.csproj">
+      <Project>{27D1F82C-5BA0-4733-AC2E-9F62B534B076}</Project>
+      <Name>Sws.Spinvoke</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
