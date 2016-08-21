@@ -146,7 +146,7 @@ Most of the usage and examples I've given assume a certain default usage, which 
 
 * **You don't have to use Linux**.  Of course, it's hard to believe that there are Microsoft .NET developers in the world who use Microsoft Windows, but I've heard that there are one or two out there.  I'm currently unable to adequately test my code on an OS other than Linux.  However, to use this code on a different OS, you just need to supply your own INativeLibraryLoader.  I've included an implementation for Windows and an implementation for OSX, but they are not as well-tested as the Linux version.  If you need to roll your own, hopefully the existing implementations provide enough of a guide.
 
-* **You don't have to use Ninject**.  Ninject is my DI container of choice, and the Sws.Spinvoke.Ninject library is the easiest way to wire everything up.  However, in case you don't want to use this, you have a couple of options.  Firstly, if you can track through the Ninject modules, you can infer some poor man's DI, and wire everything up yourself.  Secondly, I've added facades for the core (Sws.Spinvoke.Core.Facade) and the interception (Sws.Spinvoke.Interception.Facade) libraries, which should make life a bit easier.  Complete Ninject-free proxy generation can be done as follows:
+* **You don't have to use Ninject**.  Ninject is my DI container of choice, and the Sws.Spinvoke.Ninject library is the easiest way to wire everything up.  However, in case you don't want to use this, you have a couple of options.  Firstly, if you can track through the Ninject modules, you can infer some poor man's DI, and wire everything up yourself.  Secondly, I've added facades for the core (Sws.Spinvoke.Core.Facade) and the interception (Sws.Spinvoke.Interception.Facade) namespaces, which should make life a bit easier.  Complete Ninject-free proxy generation can be done as follows:
 
 ```
 #!c#
@@ -211,11 +211,9 @@ In case you're incredibly nerdy, or you've tried to use my code and found some i
 
 Firstly, the projects:
 
-* **Sws.Spinvoke.Core**: This is the core library.  In a nutshell, it includes everything you need to generate a delegate for native code, given a NativeDelegateDefinition.  The standard entry point to this functionality is INativeDelegateResolver, which has Resolve and Release methods.  (Release can be used to allow a library to be unloaded when you're done with it.)
+* **Sws.Spinvoke**: This is the main library.  It has two main namespaces: Core and Interception (formerly separate libraries).  In a nutshell, the Core includes everything you need to generate a delegate for native code, given a NativeDelegateDefinition.  The standard entry point to this functionality is INativeDelegateResolver, which has Resolve and Release methods.  (Release can be used to allow a library to be unloaded when you're done with it.)  Meanwhile, everything in the Interception namespace revolves around NativeDelegateInterceptor, which has the job of intercepting method calls, getting together a NativeDelegateDefinition, calling INativeDelegateResolver.Resolve, and then invoking the delegate. Finally, both the Core and the Interception namespaces include facades, which you can use to wire up the dependencies if you aren't using the Ninject functionality.
 
-* **Sws.Spinvoke.Interception**: This is the interception library.  Everything here revolves around NativeDelegateInterceptor, which has the job of intercepting method calls, getting together a NativeDelegateDefinition, calling INativeDelegateResolver.Resolve, and then invoking the delegate.
-
-* **Sws.Spinvoke.Interception.DynamicProxy**: This library ties the interception library up to Castle DynamicProxy (you can provide your own implementation if you wish).  There are two modes of operation: use SpinvokeInterceptor to adapt a Spinvoke interceptor to a Castle DynamicProxy interceptor (which you can then use in conjunction with DynamicProxy to create native code proxies), or use ProxyGenerator to adapt a Castle DynamicProxy proxy generator to the Spinvoke interception library's IProxyGenerator interface (which you can use to configure the Ninject library).
+* **Sws.Spinvoke.Interception.DynamicProxy**: This library ties the interception code up to Castle DynamicProxy (you can provide your own implementation if you wish).  There are two modes of operation: use SpinvokeInterceptor to adapt a Spinvoke interceptor to a Castle DynamicProxy interceptor (which you can then use in conjunction with DynamicProxy to create native code proxies), or use ProxyGenerator to adapt a Castle DynamicProxy proxy generator to the Spinvoke interception library's IProxyGenerator interface (which you can use to configure the Ninject library).
 
 * **Sws.Spinvoke.Linux**: The Core code is dependent upon an INativeLibraryLoader interface, the implementation of which is platform-specific.  This is a Linux implementation of the interface.
 
@@ -223,11 +221,7 @@ Firstly, the projects:
 
 * **Sws.Spinvoke.OSX**: As above, except it's an OSX implementation.
 
-* **Sws.Spinvoke.Ninject**: This is Ninject-specific code.  The primary entry point is the ToNative extension method, which binds an interface to a native code wrapper using the other libraries.  It uses SpinvokeModule, which you can also use directly if you want to use Sws.Spinvoke.Core without interception.
-
-* **Sws.Spinvoke.Core.Facade**: A facade into Sws.Spinvoke.Core, which saves you having to wire up your own dependencies if you're not using Sws.Spinvoke.Ninject.
-
-* **Sws.Spinvoke.Interception.Facade**: A facade into Sws.Spinvoke.Interception, which saves you having to wire up your own dependencies if you're not using Sws.Spinvoke.Ninject.
+* **Sws.Spinvoke.Ninject**: This is Ninject-specific code.  The primary entry point is the ToNative extension method, which binds an interface to a native code wrapper using the other libraries.  It uses SpinvokeModule, which you can also use directly if you want to use Sws.Spinvoke without interception.
 
 Secondly, here's a complete guide to what happens when you use the Ninject ToNative extension method:
 
@@ -303,3 +297,19 @@ I recently tried to use this library with Mono running inside a Docker container
 2. Add dllmap configuration for the Sws.Spinvoke.Linux library (Google can also explain this one), pointing "libdl.so" to the version which is available, e.g. "libdl.so.2".
 
 I also attempted to implement a platform-detecting bootstrapper (Sws.Spinvoke.Bootstrapper) but it is highly experimental. Feel free to try it, but don't feel free to rely on it.
+
+**IMPORTANT BREAKING CHANGE (AUGUST 2016)**
+
+Sws.Spinvoke.Core, Sws.Spinvoke.Interception, Sws.Spinvoke.Core.Facade, and Sws.Spinvoke.Interception.Facade no longer compile as separate libraries! Anywhere where you are using any of these libraries, you should instead use the single Sws.Spinvoke library.
+
+Explanation:
+
+When I first wrote Sws.Spinvoke, I felt that the interception code should be in a separate assembly from the core. The reason was that it constituted a significant amount of bloat which users of the Core would not necessarily want to carry around. I also expected it to required additional dependencies.
+
+In reality, however, the core is really just a glorified P/Invoke helper, while the interception code is where Sws.Spinvoke really starts to do something useful. Furthermore, any extra dependencies required by the interception code have already been refactored out, so the code itself is lightweight, depending only on the core.
+
+I therefore decided to refactor Sws.Spinvoke.Core and Sws.Spinvoke.Interception into a single library: Sws.Spinvoke. I also rolled the facades into this library, since they are extremely lightweight, and you can just not use them if you don't like them.
+
+This dramatically simplifies the dependency model, requiring you only to introduce additional dependencies for your OS (e.g. Sws.Spinvoke.Linux), your proxy generator (e.g. Sws.Spinvoke.Interception.DynamicProxy), and your DI container (e.g. Sws.Ninject).
+
+I've done my best to update this ridiculous readme (itself long overdue a colossal refactoring), but if you see any references to libraries which no longer exist, they're probably in Sws.Spinvoke.
