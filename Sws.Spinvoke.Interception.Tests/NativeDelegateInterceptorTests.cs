@@ -444,20 +444,20 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
-		public void InterceptorInvokesSetContextForContextualArgumentPreprocessorWithDecorator() {
+		public void InterceptorInvokesSetContextForContextualArgumentPreprocessorWithCustomiser() {
 
 
 			InterceptorInvokesSetContextForContextualArgumentPreprocessor (
-				context => context.DecorateWith("I'm decorated!"),
-				decoratedContext => {
-					Assert.IsInstanceOf<DecoratedArgumentPreprocessorContext<string>>(decoratedContext);
-					Assert.AreEqual("I'm decorated!",
-						(decoratedContext as DecoratedArgumentPreprocessorContext<string>).Decoration);
+				context => context.Customise("I'm customised!"),
+				customisedContext => {
+					Assert.IsInstanceOf<CustomisedArgumentPreprocessorContext<string>>(customisedContext);
+					Assert.AreEqual("I'm customised!",
+						(customisedContext as CustomisedArgumentPreprocessorContext<string>).Customisation);
 				});
 		}
 
-		private void InterceptorInvokesSetContextForContextualArgumentPreprocessor(Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> contextDecorator,
-			Action<ArgumentPreprocessorContext> decoratedContextAssertions) {
+		private void InterceptorInvokesSetContextForContextualArgumentPreprocessor(Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> contextCustomiser,
+			Action<ArgumentPreprocessorContext> customisedContextAssertions) {
 			const int X = 2;
 			const int Y = 3;
 			const int XPlusY = 5;
@@ -478,10 +478,10 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			NativeDelegateInterceptor subject;
 
-			if (contextDecorator == null) {
+			if (contextCustomiser == null) {
 				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
 			} else {
-				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object, argumentPreprocessorContextDecorator: contextDecorator);
+				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object, argumentPreprocessorContextCustomiser: contextCustomiser);
 			}
 
 			ContextualArgumentPreprocessorMockAttribute.CanProcessContexts.Clear ();
@@ -543,7 +543,7 @@ namespace Sws.Spinvoke.Interception.Tests
 				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.InputTypes[1]);
 				Assert.AreEqual (typeof(int), argContext.NativeDelegateMapping.OutputType);
 				Assert.IsTrue (argContext.NativeDelegateMapping.MapNative);
-				decoratedContextAssertions (argContext);
+				customisedContextAssertions (argContext);
 			}
 		}
 
@@ -554,19 +554,19 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
-		public void InterceptorInvokesSetContextForContextualReturnPostprocessorWithDecorator()
+		public void InterceptorInvokesSetContextForContextualReturnPostprocessorWithCustomiser()
 		{
 			InterceptorInvokesSetContextForContextualReturnPostprocessor (
-				context => context.DecorateWith("I'm decorated!"),
-				decoratedContext => {
-					Assert.IsInstanceOf<DecoratedReturnPostprocessorContext<string>>(decoratedContext);
-					Assert.AreEqual("I'm decorated!", (decoratedContext as DecoratedReturnPostprocessorContext<string>).Decoration);
+				context => context.Customise("I'm customised!"),
+				customisedContext => {
+					Assert.IsInstanceOf<CustomisedReturnPostprocessorContext<string>>(customisedContext);
+					Assert.AreEqual("I'm customised!", (customisedContext as CustomisedReturnPostprocessorContext<string>).Customisation);
 				}
 			);
 		}
 
-		private void InterceptorInvokesSetContextForContextualReturnPostprocessor(Func<ReturnPostprocessorContext, ReturnPostprocessorContext> contextDecorator,
-			Action<ReturnPostprocessorContext> decoratedContextAssertions)
+		private void InterceptorInvokesSetContextForContextualReturnPostprocessor(Func<ReturnPostprocessorContext, ReturnPostprocessorContext> contextCustomiser,
+			Action<ReturnPostprocessorContext> customisedContextAssertions)
 		{
 			const int X = 2;
 			const int Y = 3;
@@ -588,10 +588,10 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			NativeDelegateInterceptor subject;
 
-			if (contextDecorator == null) {
+			if (contextCustomiser == null) {
 				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object);
 			} else {
-				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object, returnPostprocessorContextDecorator: contextDecorator);
+				subject = new NativeDelegateInterceptor (LibraryName, CallingConvention, _nativeDelegateResolverMock.Object, returnPostprocessorContextCustomiser: contextCustomiser);
 			}
 
 			ContextualReturnPostprocessorMockAttribute.CanProcessContexts.Clear ();
@@ -643,7 +643,7 @@ namespace Sws.Spinvoke.Interception.Tests
 			Assert.AreEqual (CallingConvention, returnContext.DelegateSignature.CallingConvention);
 			Assert.IsNotNull (returnContext.DelegateInstance as AddDelegate);
 			Assert.AreEqual (_nativeDelegateResolverMock.Object, returnContext.NativeDelegateResolver);
-			decoratedContextAssertions (returnContext);
+			customisedContextAssertions (returnContext);
 		}
 
 		private void VerifyNativeDelegateResolverResolveCall(NativeDelegateDefinition nativeDelegateDefinition, Times times)

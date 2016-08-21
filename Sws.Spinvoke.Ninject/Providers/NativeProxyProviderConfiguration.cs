@@ -24,8 +24,8 @@ namespace Sws.Spinvoke.Ninject.Providers
 
 		public IProxyGenerator ProxyGenerator { get; set; }
 
-		public Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> ArgumentPreprocessorContextDecorator { get; set; }
+		public Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> ArgumentPreprocessorContextCustomiser { get; set; }
 
-		public Func<ReturnPostprocessorContext, ReturnPostprocessorContext> ReturnPostprocessorContextDecorator { get; set; }
+		public Func<ReturnPostprocessorContext, ReturnPostprocessorContext> ReturnPostprocessorContextCustomiser { get; set; }
 	}
 }

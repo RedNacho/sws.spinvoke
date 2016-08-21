@@ -19,8 +19,8 @@ namespace Sws.Spinvoke.Ninject.Extensions
 		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithNativeDelegateResolver(INativeDelegateResolver nativeDelegateResolver);
 		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithNativeDelegateInterceptorFactory(INativeDelegateInterceptorFactory nativeDelegateInterceptorFactory);
 		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithProxyGenerator(IProxyGenerator proxyGenerator);
-		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithArgumentPreprocessorContextDecorator(Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> decorator);
-		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithReturnPostprocessorContextDecorator(Func<ReturnPostprocessorContext, ReturnPostprocessorContext> decorator);
+		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithArgumentPreprocessorContextCustomiser(Func<ArgumentPreprocessorContext, ArgumentPreprocessorContext> customiser);
+		ISpinvokeBindingWhenInNamedWithOrOnSyntax<T> WithReturnPostprocessorContextCustomiser(Func<ReturnPostprocessorContext, ReturnPostprocessorContext> customiser);
 	}
 }
 

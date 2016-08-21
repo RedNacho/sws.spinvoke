@@ -85,9 +85,9 @@ namespace Sws.Spinvoke.Interception.Tests
 				Mock.Of<IReturnPostprocessor>()
 			), 0);
 
-			// Decorate the context with the stuff we do care about.
-			argumentPreprocessorContext = argumentPreprocessorContext.DecorateWith (
-				DelegateToPointerArgumentPreprocessor.CreateContextDecoration(
+			// Customise the context with the stuff we do care about.
+			argumentPreprocessorContext = argumentPreprocessorContext.Customise (
+				DelegateToPointerArgumentPreprocessor.CreateContextCustomisation (
 					delegateTypeToDelegateSignatureConverterMock.Object,
 					delegateTypeProviderMock.Object,
 					CallingConvention.Cdecl,
