@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Core", "Sws.Spinvoke.Core\Sws.Spinvoke.Core.csproj", "{8E064250-3BEE-4AAA-93E3-80EF7CAED595}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Core.Tests", "Sws.Spinvoke.Core.Tests\Sws.Spinvoke.Core.Tests.csproj", "{5D3ED5BF-AE5E-46C7-BD1D-0C5BFC8DFCDD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Linux", "Sws.Spinvoke.Linux\Sws.Spinvoke.Linux.csproj", "{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}"
@@ -13,17 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.IntegrationTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Ninject", "Sws.Spinvoke.Ninject\Sws.Spinvoke.Ninject.csproj", "{664932B5-8879-401C-B444-C3EDA8945037}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception", "Sws.Spinvoke.Interception\Sws.Spinvoke.Interception.csproj", "{07B0EAEF-E365-4145-AC9A-04760D888F18}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.Tests", "Sws.Spinvoke.Interception.Tests\Sws.Spinvoke.Interception.Tests.csproj", "{FE0212AC-62FE-46AA-9EC8-6500020C5479}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.DynamicProxy", "Sws.Spinvoke.Interception.DynamicProxy\Sws.Spinvoke.Interception.DynamicProxy.csproj", "{279EBCDB-CE26-419D-AD43-5283E7E25648}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Demo", "Sws.Spinvoke.Demo\Sws.Spinvoke.Demo.csproj", "{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Core.Facade", "Sws.Spinvoke.Core.Facade\Sws.Spinvoke.Core.Facade.csproj", "{81DE20AF-6A08-438D-9B72-3A685960DBD1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Interception.Facade", "Sws.Spinvoke.Interception.Facade\Sws.Spinvoke.Interception.Facade.csproj", "{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Windows", "Sws.Spinvoke.Windows\Sws.Spinvoke.Windows.csproj", "{B4D13E8C-610A-4CAA-BD67-2007A0EB9BAA}"
 EndProject
@@ -39,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Bootstrapper",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke.Bootstrapper.Tests", "Sws.Spinvoke.Bootstrapper.Tests\Sws.Spinvoke.Bootstrapper.Tests.csproj", "{D1D5524C-6D1E-4C5A-9822-322E7929338D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sws.Spinvoke", "Sws.Spinvoke\Sws.Spinvoke.csproj", "{27D1F82C-5BA0-4733-AC2E-9F62B534B076}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -49,10 +43,6 @@ Global
 		{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}.Debug|x86.Build.0 = Debug|Any CPU
 		{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}.Release|x86.ActiveCfg = Release|Any CPU
 		{02DBC2DB-5396-4F8A-B7B5-66C174F850A9}.Release|x86.Build.0 = Release|Any CPU
-		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Debug|x86.Build.0 = Debug|Any CPU
-		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Release|x86.ActiveCfg = Release|Any CPU
-		{07B0EAEF-E365-4145-AC9A-04760D888F18}.Release|x86.Build.0 = Release|Any CPU
 		{220D8827-FC49-4FB1-A0BD-A9344AABD92A}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{220D8827-FC49-4FB1-A0BD-A9344AABD92A}.Debug|x86.Build.0 = Debug|Any CPU
 		{220D8827-FC49-4FB1-A0BD-A9344AABD92A}.Release|x86.ActiveCfg = Release|Any CPU
@@ -61,6 +51,10 @@ Global
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Debug|x86.Build.0 = Debug|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.ActiveCfg = Release|Any CPU
 		{279EBCDB-CE26-419D-AD43-5283E7E25648}.Release|x86.Build.0 = Release|Any CPU
+		{27D1F82C-5BA0-4733-AC2E-9F62B534B076}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27D1F82C-5BA0-4733-AC2E-9F62B534B076}.Debug|x86.Build.0 = Debug|Any CPU
+		{27D1F82C-5BA0-4733-AC2E-9F62B534B076}.Release|x86.ActiveCfg = Release|Any CPU
+		{27D1F82C-5BA0-4733-AC2E-9F62B534B076}.Release|x86.Build.0 = Release|Any CPU
 		{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}.Debug|x86.Build.0 = Debug|Any CPU
 		{2EFA1FE3-3E3B-4F2D-AB6D-CF48C55E69BC}.Release|x86.ActiveCfg = Release|Any CPU
@@ -81,14 +75,6 @@ Global
 		{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}.Debug|x86.Build.0 = Debug|x86
 		{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}.Release|x86.ActiveCfg = Release|x86
 		{6D9F3A4A-BFF5-420F-BFA7-EBDFF350C6FC}.Release|x86.Build.0 = Release|x86
-		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Debug|x86.Build.0 = Debug|Any CPU
-		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Release|x86.ActiveCfg = Release|Any CPU
-		{81DE20AF-6A08-438D-9B72-3A685960DBD1}.Release|x86.Build.0 = Release|Any CPU
-		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Debug|x86.ActiveCfg = Debug|x86
-		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Debug|x86.Build.0 = Debug|x86
-		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Release|x86.ActiveCfg = Release|x86
-		{8E064250-3BEE-4AAA-93E3-80EF7CAED595}.Release|x86.Build.0 = Release|x86
 		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Debug|x86.ActiveCfg = Debug|x86
 		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Debug|x86.Build.0 = Debug|x86
 		{A8556FA2-F4F5-47A3-88A3-D4E43CCEB670}.Release|x86.ActiveCfg = Release|x86
@@ -105,10 +91,6 @@ Global
 		{C9060F82-7105-454A-A243-F7837140E416}.Debug|x86.Build.0 = Debug|Any CPU
 		{C9060F82-7105-454A-A243-F7837140E416}.Release|x86.ActiveCfg = Release|Any CPU
 		{C9060F82-7105-454A-A243-F7837140E416}.Release|x86.Build.0 = Release|Any CPU
-		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Debug|x86.Build.0 = Debug|Any CPU
-		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Release|x86.ActiveCfg = Release|Any CPU
-		{CBD77B56-350C-400C-ABD8-D0DC1C1941EB}.Release|x86.Build.0 = Release|Any CPU
 		{D1D5524C-6D1E-4C5A-9822-322E7929338D}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{D1D5524C-6D1E-4C5A-9822-322E7929338D}.Debug|x86.Build.0 = Debug|Any CPU
 		{D1D5524C-6D1E-4C5A-9822-322E7929338D}.Release|x86.ActiveCfg = Release|Any CPU
