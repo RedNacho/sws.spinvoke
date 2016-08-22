@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.Interception
 {
-	public class NativeArgumentAsFunctionPointerAttribute : NativeArgumentDefinitionOverrideAttribute
+	public class NativeArgumentAsUnmanagedFunctionAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
-		public NativeArgumentAsFunctionPointerAttribute ()
-			: base(new DelegateToPointerArgumentPreprocessor(), typeof(Delegate))
+		public NativeArgumentAsUnmanagedFunctionAttribute ()
+			: base(new DelegateToUnmanagedFunctionArgumentPreprocessor(), typeof(Delegate))
 		{
 		}
 
@@ -17,7 +17,7 @@ namespace Sws.Spinvoke.Interception
 			IDelegateTypeProvider delegateTypeProvider,
 			CallingConvention? callingConvention = null,
 			Action<Delegate> delegateRegistrationAction = null) {
-			return DelegateToPointerArgumentPreprocessor.CreateContextCustomisation (
+			return DelegateToUnmanagedFunctionArgumentPreprocessor.CreateContextCustomisation (
 				delegateTypeToDelegateSignatureConverter,
 				delegateTypeProvider,
 				callingConvention,
