@@ -49,6 +49,7 @@
     <Compile Include="ReturnPostprocessing\PointerToStringReturnPostprocessorTests.cs" />
     <Compile Include="ArgumentPreprocessing\DelegateToPointerArgumentPreprocessorTests.cs" />
     <Compile Include="MemoryManagement\PointerMemoryManagerTests.cs" />
+    <Compile Include="ArgumentPreprocessing\DelegateToUnmanagedFunctionArgumentPreprocessorTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
