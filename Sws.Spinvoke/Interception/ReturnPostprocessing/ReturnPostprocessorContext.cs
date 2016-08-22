@@ -29,7 +29,7 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 
 		protected ReturnPostprocessorContext(ReturnPostprocessorContext source)
 			: this(source.Invocation, source.NativeDelegateMapping, source.ProcessedArguments,
-				source.NativeDelegateResolver, source.DelegateSignature, source._delegateInstance)
+				source.NativeDelegateResolver, source.DelegateSignature, source.DelegateInstance)
 		{
 		}
 
