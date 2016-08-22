@@ -17,7 +17,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		}
 
 		protected ArgumentPreprocessorContext (ArgumentPreprocessorContext source)
-			: this(source.Invocation, source.NativeDelegateMapping, source._argumentIndex)
+			: this(source.Invocation, source.NativeDelegateMapping, source.ArgumentIndex)
 		{
 		}
 
