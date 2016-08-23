@@ -6,7 +6,15 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class DelegateToInteropCompatibleDelegateArgumentPreprocessor : IContextualArgumentPreprocessor
 	{
+		private readonly CallingConvention? _callingConvention;
+
+		private CallingConvention _methodCallingConvention;
+
 		private IContextCustomisation _contextCustomisation = null;
+
+		public DelegateToInteropCompatibleDelegateArgumentPreprocessor(CallingConvention? callingConvention) {
+			_callingConvention = callingConvention;
+		}
 
 		public bool CanProcess (object input)
 		{
@@ -24,6 +32,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public void SetContext (ArgumentPreprocessorContext context)
 		{
+			_methodCallingConvention = context.NativeDelegateMapping.CallingConvention;
 			_contextCustomisation = ExtractContextCustomisation (context);
 		}
 
@@ -31,11 +40,8 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		{
 			DelegateSignature delegateSignature;
 
-			if (_contextCustomisation.CallingConvention.HasValue) {
-				delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (), _contextCustomisation.CallingConvention.Value);
-			} else {
-				delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType ());
-			}
+			delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (),
+				_callingConvention.GetValueOrDefault(_contextCustomisation.CallingConvention.GetValueOrDefault (_methodCallingConvention)));
 
 			var delegateType = _contextCustomisation.DelegateTypeProvider.GetDelegateType (delegateSignature);
 
