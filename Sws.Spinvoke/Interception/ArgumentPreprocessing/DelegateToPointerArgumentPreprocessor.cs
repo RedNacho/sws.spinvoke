@@ -12,7 +12,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		/// Constructor provided for backwards compatibility only. Please inject a delegateToInteropCompatibleDelegateArgumentPreprocessor.
 		/// The standard implementation is DelegateToInteropCompatibleDelegateArgumentPreprocessor.
 		/// </summary>
-		public DelegateToPointerArgumentPreprocessor() : this(new DelegateToInteropCompatibleDelegateArgumentPreprocessor()) {
+		public DelegateToPointerArgumentPreprocessor() : this(new DelegateToInteropCompatibleDelegateArgumentPreprocessor(null)) {
 		}
 
 		public DelegateToPointerArgumentPreprocessor(IContextualArgumentPreprocessor delegateToInteropCompatibleDelegateArgumentPreprocessor) {

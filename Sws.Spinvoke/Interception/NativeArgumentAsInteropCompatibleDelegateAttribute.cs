@@ -9,8 +9,8 @@ namespace Sws.Spinvoke.Interception
 	[AttributeUsage(AttributeTargets.Parameter)]
 	public class NativeArgumentAsInteropCompatibleDelegateAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
-		public NativeArgumentAsInteropCompatibleDelegateAttribute ()
-			: base(new DelegateToInteropCompatibleDelegateArgumentPreprocessor(), typeof(Delegate))
+		public NativeArgumentAsInteropCompatibleDelegateAttribute (CallingConvention? callingConvention = null)
+			: base(new DelegateToInteropCompatibleDelegateArgumentPreprocessor(callingConvention), typeof(Delegate))
 		{
 		}
 

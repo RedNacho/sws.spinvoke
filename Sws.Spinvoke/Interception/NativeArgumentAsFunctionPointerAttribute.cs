@@ -9,9 +9,9 @@ namespace Sws.Spinvoke.Interception
 	[AttributeUsage(AttributeTargets.Parameter)]
 	public class NativeArgumentAsFunctionPointerAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
-		public NativeArgumentAsFunctionPointerAttribute ()
+		public NativeArgumentAsFunctionPointerAttribute (CallingConvention? callingConvention = null)
 			: base(new DelegateToPointerArgumentPreprocessor(
-				new DelegateToInteropCompatibleDelegateArgumentPreprocessor()), typeof(Delegate))
+				new DelegateToInteropCompatibleDelegateArgumentPreprocessor(callingConvention)), typeof(Delegate))
 		{
 		}
 

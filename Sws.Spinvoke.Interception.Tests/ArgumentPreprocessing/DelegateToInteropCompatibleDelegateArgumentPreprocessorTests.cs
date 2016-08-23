@@ -11,14 +11,18 @@ namespace Sws.Spinvoke.Interception.Tests
 {
 	[TestFixture ()]
 	public class DelegateToInteropCompatibleDelegateArgumentPreprocessorTests
-	{	
+	{
 		private ArgumentPreprocessorContext CreateDummyContext() {
-			// Completely dummy context, we don't care about any of these values.
+			return CreateDummyContext (CallingConvention.Cdecl);
+		}
+
+		private ArgumentPreprocessorContext CreateDummyContext(CallingConvention callingConvention) {
+			// Mostly dummy context, we don't care about any of these values except the calling convention.
 			return new ArgumentPreprocessorContext (Mock.Of<IInvocation> (), new NativeDelegateMapping(
 					true,
 					"dummy",
 					"dummy",
-					CallingConvention.Cdecl,
+					callingConvention,
 					new IArgumentPreprocessor[0],
 					typeof(AddOneDelegate),
 					new Type[0],
@@ -30,7 +34,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForDelegateAndCustomisedContext()
 		{
-			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor (null);
 
 			Func<int, int> addOne = i => i + 1;
 
@@ -49,7 +53,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonDelegate()
 		{
-			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor (null);
 
 			subject.SetContext (CreateDummyContext().Customise (
 				DelegateToInteropCompatibleDelegateArgumentPreprocessor.CreateContextCustomisation (
@@ -66,7 +70,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForDelegateWithoutCustomisedContext()
 		{
-			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor (null);
 
 			Func<int, int> addOne = i => i + 1;
 
@@ -80,16 +84,36 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void DelegateIsConvertedToInteropCompatibleDelegate()
 		{
-			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
+			DelegateIsConvertedToInteropCompatibleDelegate (CallingConvention.Cdecl, null);
+		}
+
+		[Test ()]
+		public void DelegateIsConvertedToInteropCompatibleDelegateWithOverriddenCallingConvention() {
+			DelegateIsConvertedToInteropCompatibleDelegate (CallingConvention.Cdecl, CallingConvention.Winapi);
+		}
+
+		[Test ()]
+		public void CallingConventionOfNativeCallIsAssumedIfNoCallingConventionSpecified() {
+			DelegateIsConvertedToInteropCompatibleDelegate (null, null);
+		}
+
+		private void DelegateIsConvertedToInteropCompatibleDelegate(CallingConvention? contextCallingConvention, CallingConvention? argumentCallingConvention)
+		{
+			var nativeCallCallingConvention = CallingConvention.FastCall;
+
+			var expectedCallingConvention = argumentCallingConvention.GetValueOrDefault
+				(contextCallingConvention.GetValueOrDefault (nativeCallCallingConvention));
+
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor (argumentCallingConvention);
 
 			var register = new List<Delegate> ();
 
 			var delegateTypeToDelegateSignatureConverterMock = new Mock<IDelegateTypeToDelegateSignatureConverter> ();
 
-			var delegateSignature = new DelegateSignature (new [] { typeof(int) }, typeof(int), CallingConvention.Cdecl);
+			var delegateSignature = new DelegateSignature (new [] { typeof(int) }, typeof(int), expectedCallingConvention);
 
 			delegateTypeToDelegateSignatureConverterMock.Setup (
-				dttdsc => dttdsc.CreateDelegateSignature (typeof(Func<int, int>), CallingConvention.Cdecl))
+				dttdsc => dttdsc.CreateDelegateSignature (typeof(Func<int, int>), expectedCallingConvention))
 				.Returns (delegateSignature);
 
 			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
@@ -97,14 +121,14 @@ namespace Sws.Spinvoke.Interception.Tests
 			delegateTypeProviderMock.Setup (dtp => dtp.GetDelegateType (delegateSignature))
 				.Returns (typeof(AddOneDelegate));
 
-			var argumentPreprocessorContext = CreateDummyContext();
+			var argumentPreprocessorContext = CreateDummyContext (nativeCallCallingConvention);
 
 			// Customise the context with the stuff we do care about.
 			argumentPreprocessorContext = argumentPreprocessorContext.Customise (
 				DelegateToInteropCompatibleDelegateArgumentPreprocessor.CreateContextCustomisation (
 					delegateTypeToDelegateSignatureConverterMock.Object,
 					delegateTypeProviderMock.Object,
-					CallingConvention.Cdecl,
+					contextCallingConvention,
 					register.Add
 				)	
 			);
