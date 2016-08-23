@@ -41,7 +41,9 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 			DelegateSignature delegateSignature;
 
 			delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (),
-				_callingConvention.GetValueOrDefault(_contextCustomisation.CallingConvention.GetValueOrDefault (_methodCallingConvention)));
+				_callingConvention.GetValueOrDefault(
+					_contextCustomisation.CallingConvention.GetValueOrDefault (
+						_methodCallingConvention)));
 
 			var delegateType = _contextCustomisation.DelegateTypeProvider.GetDelegateType (delegateSignature);
 
