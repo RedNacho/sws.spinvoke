@@ -6,14 +6,17 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class DelegateToInteropCompatibleDelegateArgumentPreprocessor : IContextualArgumentPreprocessor
 	{
-		private readonly CallingConvention? _callingConvention;
-
 		private CallingConvention _methodCallingConvention;
 
 		private IContextCustomisation _contextCustomisation = null;
 
 		public DelegateToInteropCompatibleDelegateArgumentPreprocessor(CallingConvention? callingConvention) {
-			_callingConvention = callingConvention;
+			this.CallingConvention = callingConvention;
+		}
+
+		public CallingConvention? CallingConvention {
+			get;
+			set;
 		}
 
 		public bool CanProcess (object input)
@@ -39,7 +42,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		protected virtual Delegate MapToInteropCompatibleDelegate (Delegate del)
 		{
 			var delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (),
-				_callingConvention.GetValueOrDefault(
+				CallingConvention.GetValueOrDefault(
 					_contextCustomisation.CallingConvention.GetValueOrDefault (
 						_methodCallingConvention)));
 

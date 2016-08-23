@@ -9,10 +9,25 @@ namespace Sws.Spinvoke.Interception
 	[AttributeUsage(AttributeTargets.Parameter)]
 	public class NativeArgumentAsFunctionPointerAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
-		public NativeArgumentAsFunctionPointerAttribute (CallingConvention? callingConvention = null)
+		private readonly DelegateToInteropCompatibleDelegateArgumentPreprocessor _delegateToInteropCompatibleDelegateArgumentPreprocessor;
+
+		public NativeArgumentAsFunctionPointerAttribute () : this(new DelegateToInteropCompatibleDelegateArgumentPreprocessor(null)) {
+		}
+
+		protected NativeArgumentAsFunctionPointerAttribute (DelegateToInteropCompatibleDelegateArgumentPreprocessor delegateToInteropCompatibleDelegateArgumentPreprocessor)
 			: base(new DelegateToPointerArgumentPreprocessor(
-				new DelegateToInteropCompatibleDelegateArgumentPreprocessor(callingConvention)), typeof(Delegate))
+				delegateToInteropCompatibleDelegateArgumentPreprocessor), typeof(Delegate))
 		{
+			_delegateToInteropCompatibleDelegateArgumentPreprocessor = delegateToInteropCompatibleDelegateArgumentPreprocessor;
+		}
+
+		public CallingConvention? CallingConvention {
+			get {
+				return _delegateToInteropCompatibleDelegateArgumentPreprocessor.CallingConvention;
+			}
+			set {
+				_delegateToInteropCompatibleDelegateArgumentPreprocessor.CallingConvention = value;
+			}
 		}
 
 		public static DelegateToInteropCompatibleDelegateArgumentPreprocessor.IContextCustomisation CreateContextCustomisation (IDelegateTypeToDelegateSignatureConverter delegateTypeToDelegateSignatureConverter,
