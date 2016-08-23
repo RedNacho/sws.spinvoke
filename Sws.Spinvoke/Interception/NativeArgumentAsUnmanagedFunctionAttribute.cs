@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.Interception
 {
+	[AttributeUsage(AttributeTargets.Parameter)]
 	public class NativeArgumentAsUnmanagedFunctionAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
 		public NativeArgumentAsUnmanagedFunctionAttribute ()

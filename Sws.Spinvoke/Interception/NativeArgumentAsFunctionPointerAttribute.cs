@@ -6,10 +6,12 @@ using System.Runtime.InteropServices;
 
 namespace Sws.Spinvoke.Interception
 {
+	[AttributeUsage(AttributeTargets.Parameter)]
 	public class NativeArgumentAsFunctionPointerAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
 		public NativeArgumentAsFunctionPointerAttribute ()
-			: base(new DelegateToPointerArgumentPreprocessor(), typeof(Delegate))
+			: base(new DelegateToPointerArgumentPreprocessor(
+				new DelegateToUnmanagedFunctionArgumentPreprocessor()), typeof(Delegate))
 		{
 		}
 
