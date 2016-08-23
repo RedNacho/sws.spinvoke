@@ -41,4 +41,3 @@ namespace Sws.Spinvoke.Interception
 		}
 	}
 }
-
