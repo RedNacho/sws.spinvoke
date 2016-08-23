@@ -7,11 +7,10 @@ using System.Runtime.InteropServices;
 namespace Sws.Spinvoke.Interception
 {
 	[AttributeUsage(AttributeTargets.Parameter)]
-	public class NativeArgumentAsFunctionPointerAttribute : NativeArgumentDefinitionOverrideAttribute
+	public class NativeArgumentAsInteropCompatibleDelegateAttribute : NativeArgumentDefinitionOverrideAttribute
 	{
-		public NativeArgumentAsFunctionPointerAttribute ()
-			: base(new DelegateToPointerArgumentPreprocessor(
-				new DelegateToInteropCompatibleDelegateArgumentPreprocessor()), typeof(Delegate))
+		public NativeArgumentAsInteropCompatibleDelegateAttribute ()
+			: base(new DelegateToInteropCompatibleDelegateArgumentPreprocessor(), typeof(Delegate))
 		{
 		}
 
