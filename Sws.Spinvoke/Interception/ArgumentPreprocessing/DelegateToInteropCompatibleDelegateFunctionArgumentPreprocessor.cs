@@ -4,7 +4,7 @@ using Sws.Spinvoke.Core;
 
 namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
-	public class DelegateToUnmanagedFunctionArgumentPreprocessor : IContextualArgumentPreprocessor
+	public class DelegateToInteropCompatibleDelegateArgumentPreprocessor : IContextualArgumentPreprocessor
 	{
 		private IContextCustomisation _contextCustomisation = null;
 

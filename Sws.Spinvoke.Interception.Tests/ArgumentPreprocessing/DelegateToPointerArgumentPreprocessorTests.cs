@@ -53,18 +53,18 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
-		public void DelegateIsConvertedIfAllowedByTheDelegateToUnmanagedFunctionArgumentPreprocessor()
+		public void DelegateIsConvertedIfAllowedByTheDelegateToInteropCompatibleDelegateArgumentPreprocessor()
 		{
-			var delegateToUnmanagedFunctionArgumentPreprocessorMock = new Mock<IContextualArgumentPreprocessor> ();
+			var delegateToInteropCompatibleDelegateArgumentPreprocessorMock = new Mock<IContextualArgumentPreprocessor> ();
 
-			var subject = new DelegateToPointerArgumentPreprocessor (delegateToUnmanagedFunctionArgumentPreprocessorMock.Object);
+			var subject = new DelegateToPointerArgumentPreprocessor (delegateToInteropCompatibleDelegateArgumentPreprocessorMock.Object);
 
 			Func<int, int> addOne = i => i + 1;
 
 			AddOneDelegate unmanagedAddOne = i => i + 1;
 
-			delegateToUnmanagedFunctionArgumentPreprocessorMock.Setup (a => a.CanProcess(addOne)).Returns (true);
-			delegateToUnmanagedFunctionArgumentPreprocessorMock.Setup (a => a.Process(addOne)).Returns (unmanagedAddOne);
+			delegateToInteropCompatibleDelegateArgumentPreprocessorMock.Setup (a => a.CanProcess(addOne)).Returns (true);
+			delegateToInteropCompatibleDelegateArgumentPreprocessorMock.Setup (a => a.Process(addOne)).Returns (unmanagedAddOne);
 
 			// Completely dummy context, we don't care about any of these values.
 			var argumentPreprocessorContext = new ArgumentPreprocessorContext (Mock.Of<IInvocation> (), new NativeDelegateMapping(
@@ -81,7 +81,7 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			subject.SetContext (argumentPreprocessorContext);
 
-			delegateToUnmanagedFunctionArgumentPreprocessorMock.Verify (d => d.SetContext (argumentPreprocessorContext));
+			delegateToInteropCompatibleDelegateArgumentPreprocessorMock.Verify (d => d.SetContext (argumentPreprocessorContext));
 
 			var ptr = (IntPtr) subject.Process (addOne);
 
