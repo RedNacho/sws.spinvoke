@@ -38,9 +38,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		protected virtual Delegate MapToInteropCompatibleDelegate (Delegate del)
 		{
-			DelegateSignature delegateSignature;
-
-			delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (),
+			var delegateSignature = _contextCustomisation.DelegateTypeToDelegateSignatureConverter.CreateDelegateSignature (del.GetType (),
 				_callingConvention.GetValueOrDefault(
 					_contextCustomisation.CallingConvention.GetValueOrDefault (
 						_methodCallingConvention)));
