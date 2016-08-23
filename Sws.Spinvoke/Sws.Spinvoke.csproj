@@ -96,6 +96,8 @@
     <Compile Include="Interception\ICustomised.cs" />
     <Compile Include="Interception\ArgumentPreprocessing\CustomisedArgumentPreprocessorContext.cs" />
     <Compile Include="Interception\ReturnPostprocessing\CustomisedReturnPostprocessorContext.cs" />
+    <Compile Include="Interception\ArgumentPreprocessing\DelegateToInteropCompatibleDelegateFunctionArgumentPreprocessor.cs" />
+    <Compile Include="Interception\NativeArgumentAsInteropCompatibleDelegateAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
