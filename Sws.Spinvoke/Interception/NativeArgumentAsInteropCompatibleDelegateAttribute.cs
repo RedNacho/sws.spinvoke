@@ -20,9 +20,9 @@ namespace Sws.Spinvoke.Interception
 			_delegateToInteropCompatibleDelegateArgumentPreprocessor = delegateToInteropCompatibleDelegateArgumentPreprocessor;
 		}
 
-		public CallingConvention? CallingConvention {
+		public CallingConvention CallingConvention {
 			get {
-				return _delegateToInteropCompatibleDelegateArgumentPreprocessor.CallingConvention;
+				return _delegateToInteropCompatibleDelegateArgumentPreprocessor.CallingConvention.Value;
 			}
 			set {
 				_delegateToInteropCompatibleDelegateArgumentPreprocessor.CallingConvention = value;
