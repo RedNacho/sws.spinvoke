@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Sws.Spinvoke.Interception.Tests
 {
 	[TestFixture ()]
-	public class DelegateToUnmanagedFunctionArgumentPreprocessorTests
+	public class DelegateToInteropCompatibleDelegateArgumentPreprocessorTests
 	{	
 		private ArgumentPreprocessorContext CreateDummyContext() {
 			// Completely dummy context, we don't care about any of these values.
@@ -30,12 +30,12 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForDelegateAndCustomisedContext()
 		{
-			var subject = new DelegateToUnmanagedFunctionArgumentPreprocessor ();
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
 
 			Func<int, int> addOne = i => i + 1;
 
 			subject.SetContext (CreateDummyContext().Customise (
-				DelegateToPointerArgumentPreprocessor.CreateContextCustomisation (
+				DelegateToInteropCompatibleDelegateArgumentPreprocessor.CreateContextCustomisation (
 					Mock.Of<IDelegateTypeToDelegateSignatureConverter> (),
 					Mock.Of<IDelegateTypeProvider> ()
 				)
@@ -49,10 +49,10 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonDelegate()
 		{
-			var subject = new DelegateToUnmanagedFunctionArgumentPreprocessor ();
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
 
 			subject.SetContext (CreateDummyContext().Customise (
-				DelegateToPointerArgumentPreprocessor.CreateContextCustomisation (
+				DelegateToInteropCompatibleDelegateArgumentPreprocessor.CreateContextCustomisation (
 					Mock.Of<IDelegateTypeToDelegateSignatureConverter> (),
 					Mock.Of<IDelegateTypeProvider> ()
 				)
@@ -66,7 +66,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForDelegateWithoutCustomisedContext()
 		{
-			var subject = new DelegateToUnmanagedFunctionArgumentPreprocessor ();
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
 
 			Func<int, int> addOne = i => i + 1;
 
@@ -78,9 +78,9 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
-		public void DelegateIsConvertedToUnmanagedFunction()
+		public void DelegateIsConvertedToInteropCompatibleDelegate()
 		{
-			var subject = new DelegateToUnmanagedFunctionArgumentPreprocessor ();
+			var subject = new DelegateToInteropCompatibleDelegateArgumentPreprocessor ();
 
 			var register = new List<Delegate> ();
 
@@ -101,7 +101,7 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			// Customise the context with the stuff we do care about.
 			argumentPreprocessorContext = argumentPreprocessorContext.Customise (
-				DelegateToPointerArgumentPreprocessor.CreateContextCustomisation (
+				DelegateToInteropCompatibleDelegateArgumentPreprocessor.CreateContextCustomisation (
 					delegateTypeToDelegateSignatureConverterMock.Object,
 					delegateTypeProviderMock.Object,
 					CallingConvention.Cdecl,

@@ -6,25 +6,26 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class DelegateToPointerArgumentPreprocessor : IContextualArgumentPreprocessor
 	{
-		private readonly IContextualArgumentPreprocessor _delegateToUnmanagedFunctionArgumentPreprocessor;
+		private readonly IContextualArgumentPreprocessor _delegateToInteropCompatibleDelegateArgumentPreprocessor;
 
 		/// <summary>
-		/// Constructor provided for backwards compatibility only. Please inject a delegateToUnmanagedFunctionArgumentPreprocessor.
+		/// Constructor provided for backwards compatibility only. Please inject a delegateToInteropCompatibleDelegateArgumentPreprocessor.
+		/// The standard implementation is DelegateToInteropCompatibleDelegateArgumentPreprocessor.
 		/// </summary>
-		public DelegateToPointerArgumentPreprocessor() : this(new DelegateToUnmanagedFunctionArgumentPreprocessor()) {
+		public DelegateToPointerArgumentPreprocessor() : this(new DelegateToInteropCompatibleDelegateArgumentPreprocessor()) {
 		}
 
-		public DelegateToPointerArgumentPreprocessor(IContextualArgumentPreprocessor delegateToUnmanagedFunctionArgumentPreprocessor) {
-			if (delegateToUnmanagedFunctionArgumentPreprocessor == null) {
-				throw new ArgumentNullException ("delegateToUnmanagedFunctionArgumentPreprocessor");
+		public DelegateToPointerArgumentPreprocessor(IContextualArgumentPreprocessor delegateToInteropCompatibleDelegateArgumentPreprocessor) {
+			if (delegateToInteropCompatibleDelegateArgumentPreprocessor == null) {
+				throw new ArgumentNullException ("delegateToInteropCompatibleDelegateArgumentPreprocessor");
 			}
 
-			_delegateToUnmanagedFunctionArgumentPreprocessor = delegateToUnmanagedFunctionArgumentPreprocessor;
+			_delegateToInteropCompatibleDelegateArgumentPreprocessor = delegateToInteropCompatibleDelegateArgumentPreprocessor;
 		}
 
 		public void SetContext (ArgumentPreprocessorContext context)
 		{
-			_delegateToUnmanagedFunctionArgumentPreprocessor.SetContext (context);
+			_delegateToInteropCompatibleDelegateArgumentPreprocessor.SetContext (context);
 		}
 
 		public bool CanProcess (object input)
@@ -41,28 +42,14 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 
 		public void ReleaseProcessedInput (object processedInput)
 		{
-			throw new NotImplementedException ();
 		}
 
 		protected virtual Delegate MapToInteropCompatibleDelegate (Delegate del) {
-			if (_delegateToUnmanagedFunctionArgumentPreprocessor.CanProcess (del)) {
-				return (Delegate) _delegateToUnmanagedFunctionArgumentPreprocessor.Process (del);
+			if (_delegateToInteropCompatibleDelegateArgumentPreprocessor.CanProcess (del)) {
+				return (Delegate) _delegateToInteropCompatibleDelegateArgumentPreprocessor.Process (del);
 			}
 
 			return del;
-		}
-
-		public static DelegateToUnmanagedFunctionArgumentPreprocessor.IContextCustomisation CreateContextCustomisation(
-			IDelegateTypeToDelegateSignatureConverter delegateTypeToDelegateSignatureConverter,
-			IDelegateTypeProvider delegateTypeProvider,
-			CallingConvention? callingConvention = null,
-			Action<Delegate> delegateRegistrationAction = null) {
-			return DelegateToUnmanagedFunctionArgumentPreprocessor.CreateContextCustomisation (
-				delegateTypeToDelegateSignatureConverter,
-				delegateTypeProvider,
-				callingConvention,
-				delegateRegistrationAction
-			);
 		}
 	}
 }
