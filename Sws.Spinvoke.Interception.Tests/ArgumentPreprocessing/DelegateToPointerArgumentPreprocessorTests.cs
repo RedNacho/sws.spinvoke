@@ -17,7 +17,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsTrueForDelegate()
 		{
-			var subject = new DelegateToPointerArgumentPreprocessor ();
+			var subject = new DelegateToPointerArgumentPreprocessor (Mock.Of<IContextualArgumentPreprocessor> ());
 
 			AddOneDelegate addOne = i => i + 1;
 
@@ -29,7 +29,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void CanProcessReturnsFalseForNonDelegate()
 		{
-			var subject = new DelegateToPointerArgumentPreprocessor ();
+			var subject = new DelegateToPointerArgumentPreprocessor (Mock.Of<IContextualArgumentPreprocessor> ());
 
 			var canProcess = subject.CanProcess (new object ());
 
@@ -39,7 +39,7 @@ namespace Sws.Spinvoke.Interception.Tests
 		[Test ()]
 		public void DelegateCanBeMarshaledBackFromPointer()
 		{
-			var subject = new DelegateToPointerArgumentPreprocessor ();
+			var subject = new DelegateToPointerArgumentPreprocessor (Mock.Of<IContextualArgumentPreprocessor> ());
 
 			AddOneDelegate addOne = i => i + 1;
 
@@ -53,24 +53,18 @@ namespace Sws.Spinvoke.Interception.Tests
 		}
 
 		[Test ()]
-		public void DelegateIsConvertedIfNecessaryContextSupplied()
+		public void DelegateIsConvertedIfAllowedByTheDelegateToUnmanagedFunctionArgumentPreprocessor()
 		{
-			var subject = new DelegateToPointerArgumentPreprocessor ();
+			var delegateToUnmanagedFunctionArgumentPreprocessorMock = new Mock<IContextualArgumentPreprocessor> ();
 
-			var register = new List<Delegate> ();
+			var subject = new DelegateToPointerArgumentPreprocessor (delegateToUnmanagedFunctionArgumentPreprocessorMock.Object);
 
-			var delegateTypeToDelegateSignatureConverterMock = new Mock<IDelegateTypeToDelegateSignatureConverter> ();
+			Func<int, int> addOne = i => i + 1;
 
-			var delegateSignature = new DelegateSignature (new [] { typeof(int) }, typeof(int), CallingConvention.Cdecl);
+			AddOneDelegate unmanagedAddOne = i => i + 1;
 
-			delegateTypeToDelegateSignatureConverterMock.Setup (
-				dttdsc => dttdsc.CreateDelegateSignature (typeof(Func<int, int>), CallingConvention.Cdecl))
-					.Returns (delegateSignature);
-
-			var delegateTypeProviderMock = new Mock<IDelegateTypeProvider> ();
-
-			delegateTypeProviderMock.Setup (dtp => dtp.GetDelegateType (delegateSignature))
-				.Returns (typeof(AddOneDelegate));
+			delegateToUnmanagedFunctionArgumentPreprocessorMock.Setup (a => a.CanProcess(addOne)).Returns (true);
+			delegateToUnmanagedFunctionArgumentPreprocessorMock.Setup (a => a.Process(addOne)).Returns (unmanagedAddOne);
 
 			// Completely dummy context, we don't care about any of these values.
 			var argumentPreprocessorContext = new ArgumentPreprocessorContext (Mock.Of<IInvocation> (), new NativeDelegateMapping(
@@ -85,19 +79,9 @@ namespace Sws.Spinvoke.Interception.Tests
 				Mock.Of<IReturnPostprocessor>()
 			), 0);
 
-			// Customise the context with the stuff we do care about.
-			argumentPreprocessorContext = argumentPreprocessorContext.Customise (
-				DelegateToPointerArgumentPreprocessor.CreateContextCustomisation (
-					delegateTypeToDelegateSignatureConverterMock.Object,
-					delegateTypeProviderMock.Object,
-					CallingConvention.Cdecl,
-					register.Add
-				)	
-			);
-
 			subject.SetContext (argumentPreprocessorContext);
 
-			Func<int, int> addOne = i => i + 1;
+			delegateToUnmanagedFunctionArgumentPreprocessorMock.Verify (d => d.SetContext (argumentPreprocessorContext));
 
 			var ptr = (IntPtr) subject.Process (addOne);
 
@@ -109,9 +93,7 @@ namespace Sws.Spinvoke.Interception.Tests
 
 			Assert.IsInstanceOf<AddOneDelegate> (delegateFromPtr);
 
-			Assert.AreEqual (1, register.Count);
-
-			Assert.AreEqual (delegateFromPtr, register[0]);
+			Assert.AreEqual (delegateFromPtr, unmanagedAddOne);
 		}
 
 		public delegate int AddOneDelegate(int i);

@@ -6,7 +6,21 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class DelegateToPointerArgumentPreprocessor : IContextualArgumentPreprocessor
 	{
-		private readonly DelegateToUnmanagedFunctionArgumentPreprocessor _delegateToUnmanagedFunctionArgumentPreprocessor = new DelegateToUnmanagedFunctionArgumentPreprocessor();
+		private readonly IContextualArgumentPreprocessor _delegateToUnmanagedFunctionArgumentPreprocessor;
+
+		/// <summary>
+		/// Constructor provided for backwards compatibility only. Please inject a delegateToUnmanagedFunctionArgumentPreprocessor.
+		/// </summary>
+		public DelegateToPointerArgumentPreprocessor() : this(new DelegateToUnmanagedFunctionArgumentPreprocessor()) {
+		}
+
+		public DelegateToPointerArgumentPreprocessor(IContextualArgumentPreprocessor delegateToUnmanagedFunctionArgumentPreprocessor) {
+			if (delegateToUnmanagedFunctionArgumentPreprocessor == null) {
+				throw new ArgumentNullException ("delegateToUnmanagedFunctionArgumentPreprocessor");
+			}
+
+			_delegateToUnmanagedFunctionArgumentPreprocessor = delegateToUnmanagedFunctionArgumentPreprocessor;
+		}
 
 		public void SetContext (ArgumentPreprocessorContext context)
 		{
