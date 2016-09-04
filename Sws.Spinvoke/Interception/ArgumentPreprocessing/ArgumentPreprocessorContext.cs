@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 {
 	public class ArgumentPreprocessorContext
@@ -25,8 +24,16 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		public NativeDelegateMapping NativeDelegateMapping { get { return _nativeDelegateMapping; } }
 		public int ArgumentIndex { get { return _argumentIndex; } }
 
-		public CustomisedArgumentPreprocessorContext<TCustomisation> Customise<TCustomisation>(TCustomisation customisation) {
+		public CustomisedArgumentPreprocessorContext<TCustomisation> Customise<TCustomisation>(TCustomisation customisation)
+			where TCustomisation : class
+		{
 			return new CustomisedArgumentPreprocessorContext<TCustomisation> (this, customisation);
+		}
+
+		public TCustomisation ScanForCustomisation<TCustomisation>()
+			where TCustomisation : class
+		{
+			return CustomisationHelper.ScanForCustomisation<TCustomisation> (this);
 		}
 	}
 }
