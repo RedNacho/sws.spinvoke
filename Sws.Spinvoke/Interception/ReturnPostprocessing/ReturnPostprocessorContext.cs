@@ -57,8 +57,16 @@ namespace Sws.Spinvoke.Interception.ReturnPostprocessing
 			get { return _delegateInstance; }
 		}
 
-		public CustomisedReturnPostprocessorContext<TCustomisation> Customise<TCustomisation>(TCustomisation customisation) {
+		public CustomisedReturnPostprocessorContext<TCustomisation> Customise<TCustomisation>(TCustomisation customisation)
+			where TCustomisation : class
+		{
 			return new CustomisedReturnPostprocessorContext<TCustomisation> (this, customisation);
+		}
+
+		public TCustomisation ScanForCustomisation<TCustomisation>()
+			where TCustomisation : class
+		{
+			return CustomisationHelper.ScanForCustomisation<TCustomisation> (this);
 		}
 	}
 }

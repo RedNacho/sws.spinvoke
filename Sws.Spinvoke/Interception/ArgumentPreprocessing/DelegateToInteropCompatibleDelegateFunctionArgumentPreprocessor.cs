@@ -56,19 +56,7 @@ namespace Sws.Spinvoke.Interception.ArgumentPreprocessing
 		}
 
 		private IContextCustomisation ExtractContextCustomisation(ArgumentPreprocessorContext context) {
-			var directCustomisation = context as IContextCustomisation;
-
-			if (directCustomisation != null) {
-				return directCustomisation;
-			}
-
-			var standardCustomisation = context as ICustomised<IContextCustomisation>;
-
-			if (standardCustomisation != null) {
-				return standardCustomisation.Customisation;
-			}
-
-			return null;
+			return context.ScanForCustomisation<IContextCustomisation> ();
 		}
 
 		public interface IContextCustomisation {
