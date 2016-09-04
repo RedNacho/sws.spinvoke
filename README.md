@@ -313,3 +313,51 @@ I therefore decided to refactor Sws.Spinvoke.Core and Sws.Spinvoke.Interception 
 This dramatically simplifies the dependency model, requiring you only to introduce additional dependencies for your OS (e.g. Sws.Spinvoke.Linux), your proxy generator (e.g. Sws.Spinvoke.Interception.DynamicProxy), and your DI container (e.g. Sws.Spinvoke.Ninject).
 
 I've done my best to update this ridiculous readme (itself long overdue a colossal refactoring), but if you see any references to libraries which no longer exist, they're probably in Sws.Spinvoke.
+
+**ARGUMENT PREPROCESSOR/RETURN POSTPROCESSOR CONTEXT CUSTOMISATION (EXPERIMENTAL, AUGUST 2016)**
+
+Right now, this is exactly as complicated as it sounds, so I'm going to start with the rationale before I dive into the experimental functionality.
+
+Something that's been bugging me for a while is that if you pass e.g. a Func<int, int> as an argument to a native function, the framework can't convert it into a usable function pointer, because Interop does not support generic delegates. You have to declare your own delegate type, and this is one of the things that Sws.Spinvoke tries to avoid. And in fact, the functionality to automate the conversion process is all there. By combining IDelegateTypeToDelegateSignatureConverter and IDelegateTypeProvider implementations, you can get from a Func to a usable delegate. I wanted to provide an argument attribute which, when set, uses this functionality to convert the argument as required.
+
+However, there's a wrinkle: There's no way to inject these dependencies into attributes, as they are created too early in the application lifecycle.
+
+Somewhere earlier in this readme I mentioned IContextualArgumentPreprocessor. An argument preprocessor is used under the hood by my argument attributes to take an argument and convert it in some way (e.g. struct to pointer). The contextual version is the same, except it is also supplied with the broader context of the invocation - the method info, the library, the calling convention, the argument index, basically anything I thought might be useful. I wanted a way to use this context to pass arbitrary things, such as the Sws.Spinvoke classes mentioned above. If I could do this, I could implement my NativeArgumentToInteropCompatibleDelegate attribute.
+
+And thus, the nightmare of context customisation was born. The idea is this: When you create the interceptor for your library (or, if using Ninject, when you configure the Ninject binding), you can supply a context customiser, which accepts the basic context as an argument, and returns a new context, possibly with information added/modified which is only relevant to custom attribute implementations. By default, of course, the customiser is a pass-through.
+
+Then, in the pre/postprocessor class, when I get the context, I can check whether it's customised with the thing that I need (e.g. IDelegateTypeToDelegateSignatureConverter, IDelegateTypeProvider). If it is, I can proceed, if it isn't, I return false from CanProcess, or I have some fallback logic.
+
+In summary, it's horrifically complicated, and I need to work out a way to simplify it. But in the meantime, it's in use in the NativeArgumentAsInteropCompatibleDelegate attribute, which can be used as follows:
+
+1. Declare the method call which expects a function pointer with the attribute, e.g. void doSomething([NativeArgumentAsInteropCompatibleDelegate] Action<string> logger);
+2. Use the Ninject SpinvokeModule, or manually instantiate, to get to an IDelegateTypeToDelegateSignatureConverter and an IDelegateTypeProvider. If wiring it up yourself, example code is available in the Ninject module or in the SpinvokeCoreFacade (if you can't follow Ninject bindings).
+3. Take a look at the NativeArgumentAsInteropCompatibleDelegateAttribute.CreateContextCustomisation method. This returns what you need for the customisation. For the attribute to work, either the ArgumentPreprocessorContext needs to implement this interface directly, or it needs to implement ICustomised<...> of the interface. The latter can be acquired easily by calling the .Customise method on the ArgumentPreprocessorContext with the customisation.
+4. In this case, because the dependencies are fixed, the simplest thing to do is to create the customisation up-front, at the same time as you acquire the dependencies, but you can also do it on-the-fly inside the customiser function...
+5. When the interceptor is instantiated, pass an argumentPreprocessorContextCustomiser function which takes the context and adds the customisation, e.g. by calling the .Customise method with the customisation. If you are using Ninject, you can use the .WithArgumentPreprocessorContextCustomiser method when binding (this of course configures the interceptor under the hood).
+
+That's it, your doSomething native method should now work with a regular Action<string>.
+
+
+```
+#!c#
+
+public interface IMyLibrary {
+    // Declare the method with the attribute...
+    void doSomething([NativeArgumentAsInteropCompatibleDelegate] Action<string> logger);
+}
+
+public void Configure(IKernel ninjectKernel) {
+    // Create the customisation using Sws.Spinvoke.Ninject to acquire the dependencies. The dynamic assembly is where your generated delegate types live; it can be anywhere you like.
+    ninjectKernel.Load(new SpinvokeModule(StandardScopeCallbacks.Transient, "MyDynamicAssembly"));
+    var customisation = NativeArgumentAsInteropCompatibleDelegateAttribute.CreateContextCustomisation(ninjectKernel.Get<IDelegateTypeToDelegateSignatureConverter>(), ninjectKernel.Get<IDelegateTypeProvider>());
+
+    // Bind the interface to the library, using context.Customise to add the customisation to the argument preprocessor context.
+    ninjectKernel.Bind<IMyLibrary>()
+        .ToNative("mylib.dll")
+        .WithArgumentPreprocessorContextCustomiser(context => context.Customise(customisation));
+}
+
+```
+
+The more general pattern here is that the interface and data supplied by the CreateContextCustomisation method give you what you need to work with the class. It's saying, "I would like this information provided in the context, and you need to supply it through this interface." Of course, it's entirely possible that multiple customisations needs to be combined - in this case, the only solution I have right now is a wrapper: You create your own class, which implements all of the required customisation interfaces.
